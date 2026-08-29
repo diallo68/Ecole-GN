@@ -6,7 +6,9 @@ use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\EtablissementController;
 use App\Http\Controllers\EtablissementUtilisateurController;
+use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\MatiereController;
+use App\Http\Controllers\PeriodeEvaluationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,9 +54,17 @@ Route::prefix('v1')->group(function () {
         Route::post('/etablissements/{etablissementId}/eleves', [EleveController::class, 'store']);
         Route::get('/eleves/{id}', [EleveController::class, 'show']);
         Route::post('/eleves/{id}/inscriptions', [EleveController::class, 'inscrire']);
+
+        Route::get('/etablissements/{etablissementId}/periodes', [PeriodeEvaluationController::class, 'index']);
+        Route::post('/etablissements/{etablissementId}/periodes', [PeriodeEvaluationController::class, 'store']);
+        Route::patch('/periodes/{id}', [PeriodeEvaluationController::class, 'update']);
+
+        Route::post('/classes/{classeId}/matieres/{matiereId}/evaluations', [EvaluationController::class, 'store']);
+        Route::get('/evaluations/{id}/notes', [EvaluationController::class, 'notesIndex']);
+        Route::put('/evaluations/{id}/notes', [EvaluationController::class, 'notesStore']);
     });
 
     // TODO Phase 1 — voir docs/api-contract.md pour l'index complet :
-    // Emploi du temps, Évaluations, Bulletins, Présences, Finances,
-    // Communication, Synchronisation.
+    // Emploi du temps, Bulletins, Présences, Finances, Communication,
+    // Synchronisation.
 });

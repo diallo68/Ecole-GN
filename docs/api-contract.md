@@ -47,6 +47,8 @@ Le schéma de base de données est posé ; le contrat d'API est ce qui débloque
 | POST | `/etablissements/{id}/eleves/import` | Import en masse (CSV) | admin_etablissement |
 | GET | `/eleves/{id}` | Dossier élève | admin_etablissement, enseignant, parent |
 | POST | `/eleves/{id}/inscriptions` | Inscrire l'élève dans une classe | admin_etablissement |
+| GET, POST | `/etablissements/{id}/periodes` | Lister / créer une période d'évaluation (trimestre) | admin_etablissement |
+| PATCH | `/periodes/{id}` | Clôturer une période (verrouille la saisie de notes) | admin_etablissement |
 | POST | `/classes/{classeId}/matieres/{matiereId}/evaluations` | Créer une évaluation | enseignant |
 | GET | `/evaluations/{id}/notes` | Notes saisies pour l'évaluation | enseignant, admin_etablissement |
 | PUT | `/evaluations/{id}/notes` | Saisie en lot des notes de la classe | enseignant |

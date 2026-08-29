@@ -553,6 +553,63 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Erreur' }
 
+  # ---------- Périodes d'évaluation ----------
+  # Absent de la version initiale de ce contrat : les évaluations
+  # référencent periode_id sans qu'aucun endpoint ne permette d'en créer.
+  # Ajouté en construisant le module Évaluations/Notes.
+  /etablissements/{etablissementId}/periodes:
+    parameters:
+      - $ref: '#/components/parameters/EtablissementIdPath'
+    get:
+      tags: [Évaluations]
+      summary: Lister les périodes d'évaluation (trimestres/semestres)
+      parameters:
+        - name: annee_scolaire_id
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/PeriodeEvaluation' }
+    post:
+      tags: [Évaluations]
+      summary: Créer une période d'évaluation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PeriodeEvaluationEcriture' }
+      responses:
+        '201':
+          description: Créée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PeriodeEvaluation' }
+
+  /periodes/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    patch:
+      tags: [Évaluations]
+      summary: Clôturer une période (verrouille la saisie de notes)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                statut: { type: string, enum: [en_cours, cloturee] }
+      responses:
+        '200':
+          description: Mise à jour
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PeriodeEvaluation' }
+
   # ---------- Évaluations & notes ----------
   /classes/{classeId}/matieres/{matiereId}/evaluations:
     parameters:
@@ -1137,6 +1194,25 @@ components:
         heure_debut: { type: string }
         heure_fin: { type: string }
         salle: { type: string, nullable: true }
+
+    PeriodeEvaluation:
+      type: object
+      properties:
+        id: { type: integer }
+        libelle: { type: string, example: "Trimestre 1" }
+        annee_scolaire_id: { type: integer }
+        date_debut: { type: string, format: date }
+        date_fin: { type: string, format: date }
+        statut: { type: string, enum: [en_cours, cloturee] }
+
+    PeriodeEvaluationEcriture:
+      type: object
+      required: [libelle, annee_scolaire_id, date_debut, date_fin]
+      properties:
+        libelle: { type: string }
+        annee_scolaire_id: { type: integer }
+        date_debut: { type: string, format: date }
+        date_fin: { type: string, format: date }
 
     Evaluation:
       type: object
