@@ -6,6 +6,7 @@ import '../auth/auth_service.dart';
 import '../models/models.dart';
 import '../offline/sync_service.dart';
 import 'appel_screen.dart';
+import 'matieres_screen.dart';
 
 class MesClassesScreen extends StatefulWidget {
   const MesClassesScreen({super.key});
@@ -137,6 +138,43 @@ class _ListeClasses extends StatelessWidget {
 
   const _ListeClasses({required this.classesFuture});
 
+  void _choisirAction(BuildContext context, Classe classe) {
+    showModalBottomSheet(
+      context: context,
+      builder: (contexteFeuille) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.checklist),
+              title: const Text("Faire l'appel"),
+              onTap: () {
+                Navigator.of(contexteFeuille).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => AppelScreen(classe: classe),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.grade_outlined),
+              title: const Text('Saisir des notes'),
+              onTap: () {
+                Navigator.of(contexteFeuille).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => MatieresScreen(classe: classe),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Classe>>(
@@ -180,11 +218,7 @@ class _ListeClasses extends StatelessWidget {
                 title: Text(classe.libelle),
                 subtitle: Text(classe.niveau),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => AppelScreen(classe: classe),
-                  ),
-                ),
+                onTap: () => _choisirAction(context, classe),
               ),
             );
           },

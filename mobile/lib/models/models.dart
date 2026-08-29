@@ -98,3 +98,111 @@ extension StatutPresenceJson on StatutPresence {
   static StatutPresence depuisApi(String v) =>
       StatutPresence.values.firstWhere((s) => s.name == v);
 }
+
+class Matiere {
+  final int id;
+  final String nom;
+
+  Matiere({required this.id, required this.nom});
+
+  factory Matiere.fromJson(Map<String, dynamic> json) =>
+      Matiere(id: json['id'] as int, nom: json['nom'] as String);
+}
+
+/// Une ligne de GET /classes/{id}/matieres : l'affectation d'un enseignant
+/// à une matière pour une classe donnée (table classe_matiere_enseignant).
+class MatiereEnseignee {
+  final int id;
+  final int matiereId;
+  final int enseignantId;
+  final Matiere matiere;
+  final Utilisateur enseignant;
+
+  MatiereEnseignee({
+    required this.id,
+    required this.matiereId,
+    required this.enseignantId,
+    required this.matiere,
+    required this.enseignant,
+  });
+
+  factory MatiereEnseignee.fromJson(Map<String, dynamic> json) =>
+      MatiereEnseignee(
+        id: json['id'] as int,
+        matiereId: json['matiere_id'] as int,
+        enseignantId: json['enseignant_id'] as int,
+        matiere: Matiere.fromJson(json['matiere'] as Map<String, dynamic>),
+        enseignant: Utilisateur.fromJson(
+          json['enseignant'] as Map<String, dynamic>,
+        ),
+      );
+}
+
+class PeriodeEvaluation {
+  final int id;
+  final String libelle;
+  final String statut;
+
+  PeriodeEvaluation({
+    required this.id,
+    required this.libelle,
+    required this.statut,
+  });
+
+  factory PeriodeEvaluation.fromJson(Map<String, dynamic> json) =>
+      PeriodeEvaluation(
+        id: json['id'] as int,
+        libelle: json['libelle'] as String,
+        statut: json['statut'] as String,
+      );
+}
+
+class Evaluation {
+  final int id;
+  final String type;
+  final String libelle;
+  final String dateEvaluation;
+  final int periodeId;
+
+  Evaluation({
+    required this.id,
+    required this.type,
+    required this.libelle,
+    required this.dateEvaluation,
+    required this.periodeId,
+  });
+
+  factory Evaluation.fromJson(Map<String, dynamic> json) => Evaluation(
+    id: json['id'] as int,
+    type: json['type'] as String,
+    libelle: json['libelle'] as String,
+    // L'API sérialise les champs `date` Laravel en ISO 8601 complet
+    // ("2026-11-05T00:00:00.000000Z"), pas au format `date` promis par
+    // openapi.yaml — tronqué ici pour un affichage lisible côté mobile
+    // plutôt que de propager le correctif à toute l'API (hors scope).
+    dateEvaluation: (json['date_evaluation'] as String).split('T').first,
+    periodeId: json['periode_id'] as int,
+  );
+}
+
+class Note {
+  final int eleveId;
+  final num? valeur;
+
+  Note({required this.eleveId, this.valeur});
+
+  factory Note.fromJson(Map<String, dynamic> json) => Note(
+    eleveId: json['eleve_id'] as int,
+    // Le cast Eloquent `decimal:2` sérialise en chaîne ("15.50"), pas en
+    // nombre JSON — vérifié en rejouant l'écran contre l'API réelle
+    // (`json['valeur'] as num?` levait une exception au premier
+    // chargement d'une note déjà saisie). NoteEcriture (écriture) reste
+    // un vrai nombre côté client, seule la lecture doit composer avec ça.
+    valeur: switch (json['valeur']) {
+      null => null,
+      final num v => v,
+      final String s => num.tryParse(s),
+      _ => null,
+    },
+  );
+}

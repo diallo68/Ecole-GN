@@ -693,6 +693,25 @@ paths:
         in: path
         required: true
         schema: { type: integer }
+    get:
+      tags: [Évaluations]
+      summary: Lister les évaluations de cette classe/matière
+      description: >-
+        Ajouté avec l'écran de saisie de notes de l'app mobile : sans lui,
+        rien ne permettait de retrouver les évaluations déjà créées pour y
+        saisir des notes (seule la création existait).
+      parameters:
+        - name: periode_id
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Evaluation' }
     post:
       tags: [Évaluations]
       summary: Créer une évaluation

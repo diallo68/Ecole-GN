@@ -18,6 +18,23 @@ use Illuminate\Http\Request;
  */
 class EvaluationController extends Controller
 {
+    public function index(Request $request, int $classeId, int $matiereId)
+    {
+        $affectation = ClasseMatiereEnseignant::where('classe_id', $classeId)
+            ->where('matiere_id', $matiereId)
+            ->first();
+
+        abort_if(! $affectation, 404, 'Aucun enseignant affecté à cette matière pour cette classe.');
+
+        $query = Evaluation::where('classe_matiere_enseignant_id', $affectation->id);
+
+        if ($request->filled('periode_id')) {
+            $query->where('periode_id', $request->integer('periode_id'));
+        }
+
+        return response()->json($query->orderBy('date_evaluation')->get());
+    }
+
     public function store(Request $request, int $classeId, int $matiereId)
     {
         // La RLS confirme déjà que classeId/matiereId appartiennent à

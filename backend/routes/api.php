@@ -70,6 +70,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/etablissements/{etablissementId}/periodes', [PeriodeEvaluationController::class, 'store']);
         Route::patch('/periodes/{id}', [PeriodeEvaluationController::class, 'update']);
 
+        Route::get('/classes/{classeId}/matieres/{matiereId}/evaluations', [EvaluationController::class, 'index']);
         Route::post('/classes/{classeId}/matieres/{matiereId}/evaluations', [EvaluationController::class, 'store']);
         Route::get('/evaluations/{id}/notes', [EvaluationController::class, 'notesIndex']);
         Route::put('/evaluations/{id}/notes', [EvaluationController::class, 'notesStore']);

@@ -51,6 +51,7 @@ Le schéma de base de données est posé ; le contrat d'API est ce qui débloque
 | GET, POST | `/eleves/{id}/parents` | Lister / lier un parent à l'élève | admin_etablissement, personnel_administratif |
 | GET, POST | `/etablissements/{id}/periodes` | Lister / créer une période d'évaluation (trimestre) | admin_etablissement |
 | PATCH | `/periodes/{id}` | Clôturer une période (verrouille la saisie de notes) | admin_etablissement |
+| GET | `/classes/{classeId}/matieres/{matiereId}/evaluations` | Lister les évaluations de la classe/matière | enseignant, admin_etablissement |
 | POST | `/classes/{classeId}/matieres/{matiereId}/evaluations` | Créer une évaluation | enseignant |
 | GET | `/evaluations/{id}/notes` | Notes saisies pour l'évaluation | enseignant, admin_etablissement |
 | PUT | `/evaluations/{id}/notes` | Saisie en lot des notes de la classe | enseignant |
