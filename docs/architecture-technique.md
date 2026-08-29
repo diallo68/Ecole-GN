@@ -90,7 +90,7 @@ Chaque choix est motivé par les contraintes propres au projet — connectivité
 | Stockage médias | Stockage objet (S3) + CDN | Diffusion des vidéos et bulletins PDF optimisée pour les zones à faible bande passante. |
 | File d'attente | Jobs Laravel sur Redis | Traitement asynchrone des envois SMS/push et de la génération de documents, sans bloquer les requêtes API. |
 
-> **Arbitrage ouvert** : NestJS (TypeScript) reste une alternative sérieuse à Laravel si l'équipe constituée est majoritairement JavaScript et souhaite partager des types entre backend et web. Décision à confirmer en Phase 0 selon les profils recrutés.
+> **Décision tranchée (29 août 2026)** : Laravel retenu. NestJS restait une alternative sérieuse si l'équipe recrutée s'avère majoritairement JavaScript ; à défaut de profils déjà connus à ce stade, la disponibilité de main-d'œuvre Laravel en Afrique francophone et la productivité sur du CRUD administratif l'emportent. Squelette backend amorcé dans `backend/`.
 
 ---
 
