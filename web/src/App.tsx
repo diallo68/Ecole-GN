@@ -6,6 +6,7 @@ import { LoginPage } from './pages/LoginPage'
 import { AnneesScolairesPage } from './pages/AnneesScolairesPage'
 import { ClassesPage } from './pages/ClassesPage'
 import { ElevesPage } from './pages/ElevesPage'
+import { BulletinsPage } from './pages/BulletinsPage'
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="/annees-scolaires" element={<AnneesScolairesPage />} />
             <Route path="/classes" element={<ClassesPage />} />
             <Route path="/eleves" element={<ElevesPage />} />
+            <Route path="/bulletins" element={<BulletinsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

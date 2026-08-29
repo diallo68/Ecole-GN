@@ -49,6 +49,25 @@ export interface Classe {
   effectif_max: number | null
 }
 
+export interface PeriodeEvaluation {
+  id: number
+  libelle: string
+  annee_scolaire_id: number
+  date_debut: string
+  date_fin: string
+  statut: 'en_cours' | 'cloturee'
+}
+
+export interface Bulletin {
+  id: number
+  eleve_id: number
+  periode_id: number
+  moyenne_generale: string | null
+  rang: number | null
+  effectif_classe: number | null
+  statut: 'brouillon' | 'valide' | 'publie'
+}
+
 export interface Eleve {
   id: number
   matricule: string
