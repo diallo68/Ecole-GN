@@ -168,7 +168,11 @@ paths:
                   meta: { $ref: '#/components/schemas/Pagination' }
     post:
       tags: [Utilisateurs]
-      summary: Créer un compte et le rattacher à l'établissement
+      summary: Rattacher un compte à l'établissement (créé s'il n'existe pas)
+      description: >
+        Le téléphone identifie la personne globalement : si un compte existe
+        déjà (ex. un enseignant déjà rattaché à un autre établissement), il
+        est réutilisé plutôt que dupliqué — seul le rattachement est créé.
       requestBody:
         required: true
         content:
@@ -176,12 +180,12 @@ paths:
             schema: { $ref: '#/components/schemas/UtilisateurEcriture' }
       responses:
         '201':
-          description: Créé
+          description: Rattachement créé (compte réutilisé ou nouvellement créé)
           content:
             application/json:
               schema: { $ref: '#/components/schemas/EtablissementUtilisateur' }
         '409':
-          description: Téléphone déjà utilisé par un autre compte
+          description: Ce compte a déjà ce rôle dans cet établissement
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Erreur' }

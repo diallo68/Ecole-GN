@@ -7,6 +7,12 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
+     * Rôle propriétaire des tables — voir config/database.php et
+     * db/README.md (RLS ne filtre rien pour le propriétaire).
+     */
+    protected $connection = 'pgsql_migrate';
+
+    /**
      * Run the migrations.
      */
     public function up(): void

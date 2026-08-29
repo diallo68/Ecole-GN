@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\DB;
  */
 return new class extends Migration
 {
+    /**
+     * Rôle propriétaire des tables — voir config/database.php et
+     * db/README.md (RLS ne filtre rien pour le propriétaire).
+     */
+    protected $connection = 'pgsql_migrate';
+
     public function up(): void
     {
         DB::unprepared(<<<'SQL'

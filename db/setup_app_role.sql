@@ -10,13 +10,13 @@
 -- se connecter avec ce rôle applicatif, jamais avec le rôle propriétaire ni
 -- un superuser.
 
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'app_ecole_gn') THEN
-    CREATE ROLE app_ecole_gn LOGIN PASSWORD :'app_role_password';
-  END IF;
-END
-$$;
+-- Note technique : la substitution cliente psql (:'var') ne traverse pas un
+-- bloc dollar-quoté ($$...$$), donc pas de DO $$ ... $$ ici. On construit le
+-- DDL avec format(%L) et on l'exécute conditionnellement via \gexec.
+SELECT NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'app_ecole_gn') AS role_manquant \gset
+\if :role_manquant
+  SELECT format('CREATE ROLE app_ecole_gn LOGIN PASSWORD %L', :'app_role_password') AS ddl \gexec
+\endif
 
 GRANT USAGE ON SCHEMA public TO app_ecole_gn;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_ecole_gn;

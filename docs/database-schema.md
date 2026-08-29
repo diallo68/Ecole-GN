@@ -483,6 +483,15 @@ L'API pose `SET app.current_etablissement_id = '<id>'` au début de chaque trans
 
 Postgres exempte par défaut le **propriétaire** d'une table de ses propres politiques RLS. En testant avec le rôle ayant fait tourner les migrations, la RLS ne filtrait **rien du tout** — silencieusement, sans erreur. La correction : l'API doit se connecter avec un rôle applicatif dédié, distinct du propriétaire et non superuser (`db/setup_app_role.sql`). Vérifié après correction : le même jeu de données est correctement filtré par établissement.
 
+### Deux policies permissives supplémentaires (023, 024), trouvées en câblant le backend
+
+Vérifier manuellement en `psql` (comme ci-dessus) ne suffit pas : deux bugs ne sont apparus qu'en interrogeant les tables *via l'application*, dans l'ordre réel des requêtes. Postgres combine les policies RLS **permissives** en OR (pas en AND), ce qui permet de les ajouter sans toucher à `tenant_isolation` :
+
+- **`023_super_admin_rls_bypass.sql`** — `GET /etablissements` (liste globale, super-admin) n'a par construction aucun établissement dans son URL, donc pas de `app.current_etablissement_id` possible. Policy permissive : une ligne de `etablissements` passe aussi si `app.is_super_admin = 'true'`, posé par l'application après vérification du rôle.
+- **`024_own_rattachement_rls_bypass.sql`** — pour décider si l'utilisateur a accès à l'établissement demandé, l'API lit `etablissement_utilisateurs` — qui exige, elle aussi, `app.current_etablissement_id`. Sauf que c'est précisément cette variable qu'on est en train de déterminer : sans correctif, la vérification se bloque elle-même et renvoie 0 ligne même pour l'utilisateur légitime. Policy permissive : un utilisateur voit toujours **ses propres** lignes de rattachement (`utilisateur_id = app.current_utilisateur_id`), quel que soit le contexte tenant déjà fixé ou non.
+
+Voir [`backend/app/Http/Middleware/ResolveEtablissementContext.php`](../backend/app/Http/Middleware/ResolveEtablissementContext.php) pour l'ordre exact dans lequel les trois variables de session (`app.current_utilisateur_id`, `app.is_super_admin`, `app.current_etablissement_id`) sont posées — cet ordre n'est pas arbitraire, l'inverser réintroduit le bug 024.
+
 ---
 
 ## 6. Hors périmètre de ce schéma
