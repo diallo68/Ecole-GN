@@ -162,6 +162,14 @@ export interface Eleve {
   statut: 'actif' | 'inactif' | 'diplome'
 }
 
+export interface ResultatImport {
+  import_id: string
+  lignes_recues: number
+  nb_crees: number
+  nb_erreurs: number
+  erreurs: { ligne: number; message: string }[]
+}
+
 export interface Pagination {
   page: number
   per_page: number

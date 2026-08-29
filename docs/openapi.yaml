@@ -195,27 +195,33 @@ paths:
       - $ref: '#/components/parameters/EtablissementIdPath'
     post:
       tags: [Utilisateurs]
-      summary: Import en masse (CSV/Excel)
+      summary: Import en masse (CSV) — parcours critique n°1 (mvp-scope.md)
+      description: >-
+        CSV uniquement (le "Excel" du cahier des charges se résout par un
+        export CSV côté utilisateur, pas par le parsing de .xlsx binaire).
+        Colonnes attendues, en-tête insensible à la casse : nom, prenom,
+        telephone, email (optionnel), role.
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              required: [fichier]
               properties:
                 fichier:
                   type: string
                   format: binary
       responses:
         '202':
-          description: Import accepté, traité en tâche de fond
+          description: >-
+            Traité de façon synchrone (202 + import_id conservés pour
+            compatibilité future avec un traitement en tâche de fond, voir
+            POST /periodes/{id}/bulletins/generer) — résultat complet déjà
+            disponible dans la réponse.
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  import_id: { type: string }
-                  lignes_recues: { type: integer }
+              schema: { $ref: '#/components/schemas/ResultatImport' }
         '422': { $ref: '#/components/responses/ValidationError' }
 
   # ---------- Années scolaires ----------
@@ -525,27 +531,29 @@ paths:
       - $ref: '#/components/parameters/EtablissementIdPath'
     post:
       tags: [Élèves]
-      summary: Import en masse (CSV/Excel)
+      summary: Import en masse (CSV) — parcours critique n°1 (mvp-scope.md)
+      description: >-
+        CSV uniquement (voir la même note sur POST .../utilisateurs/import).
+        Colonnes attendues, en-tête insensible à la casse : nom, prenom,
+        matricule (optionnel, généré comme sur POST .../eleves si absent),
+        date_naissance (optionnel, AAAA-MM-JJ), sexe (optionnel, M ou F).
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              required: [fichier]
               properties:
                 fichier:
                   type: string
                   format: binary
       responses:
         '202':
-          description: Import accepté, traité en tâche de fond
+          description: Traité de façon synchrone — voir la même note sur POST .../utilisateurs/import.
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  import_id: { type: string }
-                  lignes_recues: { type: integer }
+              schema: { $ref: '#/components/schemas/ResultatImport' }
 
   /eleves/{id}:
     parameters:
@@ -589,6 +597,41 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Erreur' }
+
+  /inscriptions/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    patch:
+      tags: [Élèves]
+      summary: Transférer l'élève vers une autre classe (même année scolaire)
+      description: >-
+        Ajouté suite à un écart repéré entre mvp-scope.md (qui déclarait ce
+        parcours "Complet") et l'API réelle : UNIQUE(eleve_id,
+        annee_scolaire_id) sur inscriptions n'autorisait qu'une inscription
+        par élève et par année — aucune route ne permettait d'en changer la
+        classe. POST /eleves/{id}/inscriptions rejetait la nouvelle
+        inscription en 409 sans offrir d'alternative.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [classe_id]
+              properties:
+                classe_id: { type: integer }
+      responses:
+        '200':
+          description: Transfert effectué
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Inscription' }
+        '422':
+          description: La classe cible n'appartient pas à la même année scolaire que l'inscription
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erreur' }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /eleves/{id}/parents:
     parameters:
@@ -1140,6 +1183,24 @@ components:
         page: { type: integer }
         per_page: { type: integer }
         total: { type: integer }
+
+    ResultatImport:
+      type: object
+      properties:
+        import_id: { type: string, format: uuid }
+        lignes_recues: { type: integer }
+        nb_crees: { type: integer }
+        nb_erreurs: { type: integer }
+        erreurs:
+          type: array
+          description: >-
+            Une entrée par ligne rejetée — les lignes valides ont déjà été
+            créées, une ligne en erreur n'affecte jamais les autres.
+          items:
+            type: object
+            properties:
+              ligne: { type: integer, description: 'Numéro de ligne dans le fichier (en-tête = ligne 1)' }
+              message: { type: string }
 
     Role:
       type: string

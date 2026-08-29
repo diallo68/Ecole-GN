@@ -43,6 +43,7 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/etablissements/{etablissementId}/utilisateurs', [EtablissementUtilisateurController::class, 'index']);
         Route::post('/etablissements/{etablissementId}/utilisateurs', [EtablissementUtilisateurController::class, 'store']);
+        Route::post('/etablissements/{etablissementId}/utilisateurs/import', [EtablissementUtilisateurController::class, 'import']);
 
         Route::get('/etablissements/{etablissementId}/annees-scolaires', [AnneeScolaireController::class, 'index']);
         Route::post('/etablissements/{etablissementId}/annees-scolaires', [AnneeScolaireController::class, 'store']);
@@ -61,8 +62,10 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/etablissements/{etablissementId}/eleves', [EleveController::class, 'index']);
         Route::post('/etablissements/{etablissementId}/eleves', [EleveController::class, 'store']);
+        Route::post('/etablissements/{etablissementId}/eleves/import', [EleveController::class, 'import']);
         Route::get('/eleves/{id}', [EleveController::class, 'show']);
         Route::post('/eleves/{id}/inscriptions', [EleveController::class, 'inscrire']);
+        Route::patch('/inscriptions/{id}', [EleveController::class, 'transferer']);
         Route::get('/eleves/{id}/parents', [EleveController::class, 'parents']);
         Route::post('/eleves/{id}/parents', [EleveController::class, 'lierParent']);
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AnneeScolaire;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Correspond à /etablissements/{etablissementId}/annees-scolaires et
@@ -47,7 +48,10 @@ class AnneeScolaireController extends Controller
         ]);
 
         try {
-            $annee->update($validated);
+            // DB::transaction — même piège Postgres que
+            // EleveController::store()/inscrire() : un update() nu avorte
+            // toute transaction englobante sur une violation de contrainte.
+            DB::transaction(fn () => $annee->update($validated));
         } catch (QueryException $e) {
             if ($e->getCode() === '23505') { // uniq_annee_active_par_etablissement
                 return response()->json([

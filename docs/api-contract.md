@@ -48,6 +48,7 @@ Le schéma de base de données est posé ; le contrat d'API est ce qui débloque
 | POST | `/etablissements/{id}/eleves/import` | Import en masse (CSV) | admin_etablissement |
 | GET | `/eleves/{id}` | Dossier élève | admin_etablissement, enseignant, parent |
 | POST | `/eleves/{id}/inscriptions` | Inscrire l'élève dans une classe | admin_etablissement |
+| PATCH | `/inscriptions/{id}` | Transférer l'élève vers une autre classe (même année) | admin_etablissement |
 | GET, POST | `/eleves/{id}/parents` | Lister / lier un parent à l'élève | admin_etablissement, personnel_administratif |
 | GET, POST | `/etablissements/{id}/periodes` | Lister / créer une période d'évaluation (trimestre) | admin_etablissement |
 | PATCH | `/periodes/{id}` | Clôturer une période (verrouille la saisie de notes) | admin_etablissement |

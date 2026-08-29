@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/AuthContext'
 import { ApiError, apiFetch } from '../lib/api'
-import type { Eleve, Pagination } from '../lib/types'
+import type { Eleve, Pagination, ResultatImport } from '../lib/types'
 import { Modal } from '../components/Modal'
 
 export function ElevesPage() {
@@ -10,6 +10,7 @@ export function ElevesPage() {
   const queryClient = useQueryClient()
   const [recherche, setRecherche] = useState('')
   const [formulaireOuvert, setFormulaireOuvert] = useState(false)
+  const [importOuvert, setImportOuvert] = useState(false)
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['eleves', etablissementCourantId, recherche],
@@ -28,12 +29,20 @@ export function ElevesPage() {
     <div>
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-lg font-semibold text-slate-900">Élèves</h1>
-        <button
-          onClick={() => setFormulaireOuvert(true)}
-          className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
-        >
-          Inscrire un élève
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setImportOuvert(true)}
+            className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            Importer un CSV
+          </button>
+          <button
+            onClick={() => setFormulaireOuvert(true)}
+            className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            Inscrire un élève
+          </button>
+        </div>
       </div>
 
       <input
@@ -88,6 +97,14 @@ export function ElevesPage() {
           etablissementId={etablissementCourantId}
           onFerme={() => setFormulaireOuvert(false)}
           onCree={() => queryClient.invalidateQueries({ queryKey: ['eleves', etablissementCourantId] })}
+        />
+      )}
+
+      {importOuvert && (
+        <FormulaireImport
+          etablissementId={etablissementCourantId}
+          onFerme={() => setImportOuvert(false)}
+          onImporte={() => queryClient.invalidateQueries({ queryKey: ['eleves', etablissementCourantId] })}
         />
       )}
     </div>
@@ -181,6 +198,101 @@ function FormulaireEleve({
           </button>
         </div>
       </form>
+    </Modal>
+  )
+}
+
+function FormulaireImport({
+  etablissementId,
+  onFerme,
+  onImporte,
+}: {
+  etablissementId: number
+  onFerme: () => void
+  onImporte: () => void
+}) {
+  const [fichier, setFichier] = useState<File | null>(null)
+  const [erreur, setErreur] = useState<string | null>(null)
+
+  const importer = useMutation({
+    mutationFn: () => {
+      const corps = new FormData()
+      corps.append('fichier', fichier!)
+      return apiFetch<ResultatImport>(`/etablissements/${etablissementId}/eleves/import`, {
+        method: 'POST',
+        body: corps,
+      })
+    },
+    onSuccess: () => onImporte(),
+    onError: (err) => setErreur(err instanceof ApiError ? err.message : "Échec de l'import."),
+  })
+
+  function onSubmit(e: FormEvent) {
+    e.preventDefault()
+    setErreur(null)
+    if (fichier) importer.mutate()
+  }
+
+  return (
+    <Modal>
+      {importer.isSuccess ? (
+        <div className="space-y-4">
+          <h2 className="text-base font-semibold text-slate-900">Import terminé</h2>
+          <p className="text-sm text-slate-700">
+            {importer.data.nb_crees} élève(s) créé(s) sur {importer.data.lignes_recues} ligne(s) reçue(s).
+          </p>
+          {importer.data.nb_erreurs > 0 && (
+            <div className="rounded-md bg-amber-50 p-3 text-sm text-amber-800">
+              <p className="mb-1 font-medium">{importer.data.nb_erreurs} ligne(s) ignorée(s) :</p>
+              <ul className="list-inside list-disc space-y-0.5">
+                {importer.data.erreurs.map((e) => (
+                  <li key={e.ligne}>
+                    Ligne {e.ligne} : {e.message}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <div className="flex justify-end pt-2">
+            <button onClick={onFerme} className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700">
+              Fermer
+            </button>
+          </div>
+        </div>
+      ) : (
+        <form onSubmit={onSubmit} className="space-y-4">
+          <h2 className="text-base font-semibold text-slate-900">Importer des élèves (CSV)</h2>
+
+          {erreur && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>}
+
+          <p className="text-sm text-slate-600">
+            Colonnes attendues (en-tête, casse indifférente) : <code className="text-xs">nom, prenom, matricule, date_naissance, sexe</code>.
+            Seuls <code className="text-xs">nom</code> et <code className="text-xs">prenom</code> sont obligatoires ; le matricule est généré
+            automatiquement si absent.
+          </p>
+
+          <input
+            required
+            type="file"
+            accept=".csv,text/csv"
+            onChange={(e) => setFichier(e.target.files?.[0] ?? null)}
+            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+          />
+
+          <div className="flex justify-end gap-2 pt-2">
+            <button type="button" onClick={onFerme} className="rounded-md px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100">
+              Annuler
+            </button>
+            <button
+              type="submit"
+              disabled={!fichier || importer.isPending}
+              className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+            >
+              {importer.isPending ? 'Import…' : 'Importer'}
+            </button>
+          </div>
+        </form>
+      )}
     </Modal>
   )
 }
