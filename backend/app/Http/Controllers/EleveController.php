@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Classe;
 use App\Models\Eleve;
+use App\Models\EtablissementUtilisateur;
 use App\Models\Inscription;
+use App\Models\ParentEleve;
+use App\Models\Utilisateur;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * Correspond à /etablissements/{etablissementId}/eleves, /eleves/{id} et
@@ -105,6 +110,72 @@ class EleveController extends Controller
         }
 
         return response()->json($inscription, 201);
+    }
+
+    public function parents(Request $request, int $id)
+    {
+        $eleve = Eleve::findOrFail($id);
+
+        return response()->json(
+            ParentEleve::where('eleve_id', $eleve->id)->with('utilisateur')->get()
+        );
+    }
+
+    public function lierParent(Request $request, int $id)
+    {
+        $this->autoriserAdmin($request);
+        $eleve = Eleve::findOrFail($id);
+
+        $validated = $request->validate([
+            'telephone' => ['required', 'string', 'max:20'],
+            'nom' => ['required', 'string', 'max:100'],
+            'prenom' => ['required', 'string', 'max:100'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'lien' => ['required', 'in:pere,mere,tuteur_legal,autre'],
+            'est_contact_principal' => ['sometimes', 'boolean'],
+        ]);
+
+        try {
+            $lien = DB::transaction(function () use ($validated, $eleve) {
+                // Même logique que EtablissementUtilisateurController::store :
+                // le téléphone identifie la personne globalement, le compte
+                // est réutilisé s'il existe déjà (parent avec un autre
+                // enfant, ou déjà rattaché à un autre établissement).
+                $parent = Utilisateur::firstOrCreate(
+                    ['telephone' => $validated['telephone']],
+                    [
+                        'nom' => $validated['nom'],
+                        'prenom' => $validated['prenom'],
+                        'email' => $validated['email'] ?? null,
+                        'mot_de_passe_hash' => Str::random(16),
+                        'langue_preferee' => 'fr',
+                        'statut' => 'actif',
+                    ]
+                );
+
+                EtablissementUtilisateur::firstOrCreate([
+                    'etablissement_id' => $eleve->etablissement_id,
+                    'utilisateur_id' => $parent->id,
+                    'role' => 'parent',
+                ]);
+
+                return ParentEleve::create([
+                    'utilisateur_id' => $parent->id,
+                    'eleve_id' => $eleve->id,
+                    'lien' => $validated['lien'],
+                    'est_contact_principal' => $validated['est_contact_principal'] ?? false,
+                ]);
+            });
+        } catch (QueryException $e) {
+            if ($e->getCode() === '23505') {
+                return response()->json([
+                    'error' => ['code' => 'lien_existant', 'message' => 'Ce parent est déjà lié à cet élève.'],
+                ], 409);
+            }
+            throw $e;
+        }
+
+        return response()->json($lien->load('utilisateur'), 201);
     }
 
     private function genererMatricule(int $etablissementId): string

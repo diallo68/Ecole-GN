@@ -559,6 +559,41 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Erreur' }
 
+  /eleves/{id}/parents:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    # Absent de la version initiale de ce contrat : un compte parent créé
+    # via POST /etablissements/{id}/utilisateurs (role=parent) n'avait
+    # aucun moyen d'être relié à un élève — le rôle parent était donc
+    # inutilisable de bout en bout. Trouvé et corrigé en testant le module
+    # Finances (un parent doit voir l'échéancier de SON enfant, pas de
+    # n'importe quel élève).
+    get:
+      tags: [Élèves]
+      summary: Lister les parents/tuteurs liés à l'élève
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ParentEleve' }
+    post:
+      tags: [Élèves]
+      summary: Lier un parent à l'élève (compte réutilisé ou créé, comme /etablissements/{id}/utilisateurs)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ParentEleveEcriture' }
+      responses:
+        '201':
+          description: Lien créé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ParentEleve' }
+
   # ---------- Périodes d'évaluation ----------
   # Absent de la version initiale de ce contrat : les évaluations
   # référencent periode_id sans qu'aucun endpoint ne permette d'en créer.
@@ -851,6 +886,25 @@ paths:
               schema:
                 type: array
                 items: { $ref: '#/components/schemas/Echeance' }
+    post:
+      # Absent de la version initiale de ce contrat : un barème
+      # (frais_scolarite) ne suffit pas à produire un échéancier — un
+      # établissement découpe en tranches (montants et dates propres),
+      # ce qui n'est pas dérivable automatiquement d'un montant_total
+      # unique. Ajouté en construisant le module Finances.
+      tags: [Finances]
+      summary: Ajouter une échéance à l'élève (une tranche du barème)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EcheanceEcriture' }
+      responses:
+        '201':
+          description: Créée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Echeance' }
 
   /echeances/{id}/paiements:
     parameters:
@@ -1183,6 +1237,26 @@ components:
         date_inscription: { type: string, format: date }
         statut: { type: string, enum: [inscrit, abandonne] }
 
+    ParentEleve:
+      type: object
+      properties:
+        id: { type: integer }
+        eleve_id: { type: integer }
+        utilisateur: { $ref: '#/components/schemas/Utilisateur' }
+        lien: { type: string, enum: [pere, mere, tuteur_legal, autre] }
+        est_contact_principal: { type: boolean }
+
+    ParentEleveEcriture:
+      type: object
+      required: [telephone, nom, prenom, lien]
+      properties:
+        telephone: { type: string, description: "Identifie le parent globalement ; compte réutilisé s'il existe déjà." }
+        nom: { type: string }
+        prenom: { type: string }
+        email: { type: string, nullable: true }
+        lien: { type: string, enum: [pere, mere, tuteur_legal, autre] }
+        est_contact_principal: { type: boolean, default: false }
+
     CreneauEmploiDuTemps:
       type: object
       properties:
@@ -1317,6 +1391,15 @@ components:
         montant_du: { type: number }
         date_echeance: { type: string, format: date }
         statut: { type: string, enum: [paye, partiel, impaye] }
+
+    EcheanceEcriture:
+      type: object
+      required: [frais_scolarite_id, libelle, montant_du, date_echeance]
+      properties:
+        frais_scolarite_id: { type: integer }
+        libelle: { type: string, example: "1ère tranche" }
+        montant_du: { type: number }
+        date_echeance: { type: string, format: date }
 
     Paiement:
       type: object

@@ -4,12 +4,15 @@ use App\Http\Controllers\AnneeScolaireController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BulletinController;
 use App\Http\Controllers\ClasseController;
+use App\Http\Controllers\EcheanceController;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\EmploiDuTempsController;
 use App\Http\Controllers\EtablissementController;
 use App\Http\Controllers\EtablissementUtilisateurController;
 use App\Http\Controllers\EvaluationController;
+use App\Http\Controllers\FraisScolariteController;
 use App\Http\Controllers\MatiereController;
+use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\PeriodeEvaluationController;
 use App\Http\Controllers\PresenceController;
 use Illuminate\Support\Facades\Route;
@@ -57,6 +60,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/etablissements/{etablissementId}/eleves', [EleveController::class, 'store']);
         Route::get('/eleves/{id}', [EleveController::class, 'show']);
         Route::post('/eleves/{id}/inscriptions', [EleveController::class, 'inscrire']);
+        Route::get('/eleves/{id}/parents', [EleveController::class, 'parents']);
+        Route::post('/eleves/{id}/parents', [EleveController::class, 'lierParent']);
 
         Route::get('/etablissements/{etablissementId}/periodes', [PeriodeEvaluationController::class, 'index']);
         Route::post('/etablissements/{etablissementId}/periodes', [PeriodeEvaluationController::class, 'store']);
@@ -76,8 +81,17 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/classes/{id}/emploi-du-temps', [EmploiDuTempsController::class, 'index']);
         Route::post('/classes/{id}/emploi-du-temps', [EmploiDuTempsController::class, 'store']);
+
+        Route::get('/etablissements/{etablissementId}/frais-scolarite', [FraisScolariteController::class, 'index']);
+        Route::post('/etablissements/{etablissementId}/frais-scolarite', [FraisScolariteController::class, 'store']);
+
+        Route::get('/eleves/{id}/echeances', [EcheanceController::class, 'index']);
+        Route::post('/eleves/{id}/echeances', [EcheanceController::class, 'store']);
+
+        Route::post('/echeances/{id}/paiements', [PaiementController::class, 'store']);
+        Route::get('/paiements/{id}/recu', [PaiementController::class, 'recu']);
     });
 
     // TODO Phase 1 — voir docs/api-contract.md pour l'index complet :
-    // Finances, Communication, Synchronisation.
+    // Communication, Synchronisation.
 });

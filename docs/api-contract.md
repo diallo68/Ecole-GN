@@ -47,6 +47,7 @@ Le schéma de base de données est posé ; le contrat d'API est ce qui débloque
 | POST | `/etablissements/{id}/eleves/import` | Import en masse (CSV) | admin_etablissement |
 | GET | `/eleves/{id}` | Dossier élève | admin_etablissement, enseignant, parent |
 | POST | `/eleves/{id}/inscriptions` | Inscrire l'élève dans une classe | admin_etablissement |
+| GET, POST | `/eleves/{id}/parents` | Lister / lier un parent à l'élève | admin_etablissement, personnel_administratif |
 | GET, POST | `/etablissements/{id}/periodes` | Lister / créer une période d'évaluation (trimestre) | admin_etablissement |
 | PATCH | `/periodes/{id}` | Clôturer une période (verrouille la saisie de notes) | admin_etablissement |
 | POST | `/classes/{classeId}/matieres/{matiereId}/evaluations` | Créer une évaluation | enseignant |
@@ -59,7 +60,8 @@ Le schéma de base de données est posé ; le contrat d'API est ce qui débloque
 | GET | `/classes/{id}/presences` | Présences d'une classe (`?date=`) | enseignant, admin_etablissement |
 | GET | `/eleves/{id}/presences` | Historique de présence d'un élève | parent, admin_etablissement |
 | GET, POST | `/etablissements/{id}/frais-scolarite` | Barème des frais | admin_etablissement |
-| GET | `/eleves/{id}/echeances` | Échéancier de l'élève | admin_etablissement, personnel_administratif, parent |
+| GET | `/eleves/{id}/echeances` | Échéancier de l'élève | admin_etablissement, personnel_administratif, parent de l'élève |
+| POST | `/eleves/{id}/echeances` | Ajouter une échéance (une tranche du barème) | admin_etablissement, personnel_administratif |
 | POST | `/echeances/{id}/paiements` | Enregistrer un encaissement manuel | personnel_administratif |
 | GET | `/paiements/{id}/recu` | Reçu PDF | personnel_administratif, parent |
 | GET, POST | `/etablissements/{id}/annonces` | Consulter / publier une annonce | admin_etablissement (post), tous (get) |
