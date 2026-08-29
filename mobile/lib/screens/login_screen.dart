@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../api/api_client.dart';
 import '../auth/auth_service.dart';
 
@@ -74,7 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.red.shade50,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Text(_erreur!, style: TextStyle(color: Colors.red.shade700)),
+                      child: Text(
+                        _erreur!,
+                        style: TextStyle(color: Colors.red.shade700),
+                      ),
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -86,7 +90,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.phone,
-                    validator: (v) => (v == null || v.isEmpty) ? 'Champ requis' : null,
+                    validator: (v) =>
+                        (v == null || v.isEmpty) ? 'Champ requis' : null,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
@@ -96,7 +101,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       border: OutlineInputBorder(),
                     ),
                     obscureText: true,
-                    validator: (v) => (v == null || v.isEmpty) ? 'Champ requis' : null,
+                    validator: (v) =>
+                        (v == null || v.isEmpty) ? 'Champ requis' : null,
                   ),
                   const SizedBox(height: 20),
                   FilledButton(

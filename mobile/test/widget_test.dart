@@ -17,14 +17,18 @@ Widget _enveloppePourTest(Widget enfant) {
   return MultiProvider(
     providers: [
       Provider<ApiClient>(create: (_) => ApiClient()),
-      ChangeNotifierProvider<AuthService>(create: (context) => AuthService(context.read<ApiClient>())),
+      ChangeNotifierProvider<AuthService>(
+        create: (context) => AuthService(context.read<ApiClient>()),
+      ),
     ],
     child: MaterialApp(home: enfant),
   );
 }
 
 void main() {
-  testWidgets("L'écran de connexion affiche le formulaire", (WidgetTester tester) async {
+  testWidgets("L'écran de connexion affiche le formulaire", (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(_enveloppePourTest(const LoginScreen()));
 
     expect(find.text('Plateforme scolaire'), findsOneWidget);
@@ -32,7 +36,9 @@ void main() {
     expect(find.text('Mot de passe'), findsOneWidget);
   });
 
-  testWidgets('Le formulaire de connexion refuse la soumission vide', (WidgetTester tester) async {
+  testWidgets('Le formulaire de connexion refuse la soumission vide', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(_enveloppePourTest(const LoginScreen()));
 
     await tester.tap(find.text('Se connecter'));

@@ -40,12 +40,18 @@ class Rattachement {
   final String role;
   final Etablissement etablissement;
 
-  Rattachement({required this.id, required this.role, required this.etablissement});
+  Rattachement({
+    required this.id,
+    required this.role,
+    required this.etablissement,
+  });
 
   factory Rattachement.fromJson(Map<String, dynamic> json) => Rattachement(
     id: json['id'] as int,
     role: json['role'] as String,
-    etablissement: Etablissement.fromJson(json['etablissement'] as Map<String, dynamic>),
+    etablissement: Etablissement.fromJson(
+      json['etablissement'] as Map<String, dynamic>,
+    ),
   );
 }
 
@@ -69,7 +75,12 @@ class Eleve {
   final String nom;
   final String prenom;
 
-  Eleve({required this.id, required this.matricule, required this.nom, required this.prenom});
+  Eleve({
+    required this.id,
+    required this.matricule,
+    required this.nom,
+    required this.prenom,
+  });
 
   factory Eleve.fromJson(Map<String, dynamic> json) => Eleve(
     id: json['id'] as int,

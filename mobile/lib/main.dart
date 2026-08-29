@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
+
 import 'api/api_client.dart';
 import 'auth/auth_service.dart';
+import 'offline/base_locale.dart';
+import 'offline/sync_service.dart';
 import 'screens/login_screen.dart';
 import 'screens/mes_classes_screen.dart';
 
@@ -18,7 +22,14 @@ class EcoleGnApp extends StatelessWidget {
       providers: [
         Provider<ApiClient>(create: (_) => ApiClient()),
         ChangeNotifierProvider<AuthService>(
-          create: (context) => AuthService(context.read<ApiClient>())..initialiser(),
+          create: (context) =>
+              AuthService(context.read<ApiClient>())..initialiser(),
+        ),
+        ChangeNotifierProvider<SyncService>(
+          create: (context) => SyncService(
+            context.read<ApiClient>(),
+            BaseLocale(factory: databaseFactory),
+          ),
         ),
       ],
       child: MaterialApp(
@@ -41,6 +52,8 @@ class _Racine extends StatelessWidget {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return auth.utilisateur == null ? const LoginScreen() : const MesClassesScreen();
+    return auth.utilisateur == null
+        ? const LoginScreen()
+        : const MesClassesScreen();
   }
 }

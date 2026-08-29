@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+
 import '../api/api_client.dart';
 import '../models/models.dart';
+import '../offline/ecriture_en_attente.dart';
+import '../offline/sync_service.dart';
 
 /// Parcours critique n°2 du MVP (docs/mvp-scope.md) : l'appel d'une classe
-/// entière en une requête.
+/// entière en une requête, y compris hors ligne.
 ///
-/// Chemin EN LIGNE uniquement dans cette première version : la requête part
-/// directement vers /classes/{id}/presences/appel. sync_uuid est déjà posé
-/// par élève (comme l'exige architecture-technique.md §04) pour que le
-/// futur chemin hors-ligne — file d'attente locale + retransmission via
-/// /sync/batch — puisse être branché sans changer ce format, mais la file
-/// d'attente locale (persistance SQLite quand le réseau est coupé,
-/// synchronisation automatique au retour) reste À CONSTRUIRE. Un appel fait
-/// sans réseau échoue aujourd'hui plutôt que d'être mis en attente.
+/// Écrit TOUJOURS dans la file locale (SyncService) d'abord, jamais en
+/// direct vers l'API — c'est ce qui rend le mode hors-ligne réel : la
+/// validation de l'appel réussit immédiatement que le réseau soit là ou
+/// non, la synchronisation est un souci séparé tenté juste après
+/// (architecture-technique.md §04).
 class AppelScreen extends StatefulWidget {
   final Classe classe;
 
@@ -28,7 +28,6 @@ class _AppelScreenState extends State<AppelScreen> {
   late Future<List<Eleve>> _eleves;
   final Map<int, StatutPresence> _statuts = {};
   bool _envoiEnCours = false;
-  String? _erreur;
 
   @override
   void initState() {
@@ -39,7 +38,9 @@ class _AppelScreenState extends State<AppelScreen> {
   Future<List<Eleve>> _charger() async {
     final api = context.read<ApiClient>();
     final donnees = await api.getList('/classes/${widget.classe.id}/eleves');
-    final eleves = donnees.map((d) => Eleve.fromJson(d as Map<String, dynamic>)).toList();
+    final eleves = donnees
+        .map((d) => Eleve.fromJson(d as Map<String, dynamic>))
+        .toList();
     // Par défaut, tout le monde est présent — l'enseignant n'a qu'à
     // corriger les exceptions, pas ressaisir 40 lignes identiques.
     for (final e in eleves) {
@@ -48,44 +49,38 @@ class _AppelScreenState extends State<AppelScreen> {
     return eleves;
   }
 
-  Future<void> _envoyer(List<Eleve> eleves) async {
-    setState(() {
-      _envoiEnCours = true;
-      _erreur = null;
-    });
+  Future<void> _valider(List<Eleve> eleves) async {
+    setState(() => _envoiEnCours = true);
 
-    final api = context.read<ApiClient>();
     const uuid = Uuid();
     final aujourdHui = DateTime.now().toIso8601String().split('T').first;
 
-    try {
-      await api.post(
-        '/classes/${widget.classe.id}/presences/appel',
-        body: {
+    final ecritures = eleves.map((e) {
+      final statut = _statuts[e.id]!;
+      return EcritureEnAttente(
+        syncUuid: uuid.v4(),
+        type: 'presence',
+        payload: {
+          'classe_id': widget.classe.id,
+          'eleve_id': e.id,
           'date': aujourdHui,
-          'presences': eleves
-              .map(
-                (e) => {
-                  'eleve_id': e.id,
-                  'statut': _statuts[e.id]!.valeurApi,
-                  'sync_uuid': uuid.v4(),
-                },
-              )
-              .toList(),
+          'statut': statut.valeurApi,
         },
+        libelle:
+            'Appel — ${widget.classe.libelle}, $aujourdHui — ${e.nom} ${e.prenom}',
+        creeLe: DateTime.now(),
       );
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Appel enregistré.')),
-        );
-        Navigator.of(context).pop();
-      }
-    } on ApiException catch (e) {
-      setState(() => _erreur = e.message);
-    } catch (_) {
-      setState(() => _erreur = "Échec de l'envoi. Vérifiez votre connexion.");
-    } finally {
-      if (mounted) setState(() => _envoiEnCours = false);
+    }).toList();
+
+    await context.read<SyncService>().enregistrerPlusieurs(ecritures);
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Appel enregistré — synchronisation en cours.'),
+        ),
+      );
+      Navigator.of(context).pop();
     }
   }
 
@@ -111,18 +106,13 @@ class _AppelScreenState extends State<AppelScreen> {
 
           final eleves = snapshot.data ?? [];
           if (eleves.isEmpty) {
-            return const Center(child: Text('Aucun élève inscrit dans cette classe.'));
+            return const Center(
+              child: Text('Aucun élève inscrit dans cette classe.'),
+            );
           }
 
           return Column(
             children: [
-              if (_erreur != null)
-                Container(
-                  width: double.infinity,
-                  color: Colors.red.shade50,
-                  padding: const EdgeInsets.all(12),
-                  child: Text(_erreur!, style: TextStyle(color: Colors.red.shade700)),
-                ),
               Expanded(
                 child: ListView.separated(
                   itemCount: eleves.length,
@@ -134,12 +124,24 @@ class _AppelScreenState extends State<AppelScreen> {
                       subtitle: Text(eleve.matricule),
                       trailing: SegmentedButton<StatutPresence>(
                         segments: const [
-                          ButtonSegment(value: StatutPresence.present, label: Text('P')),
-                          ButtonSegment(value: StatutPresence.retard, label: Text('R')),
-                          ButtonSegment(value: StatutPresence.absent, label: Text('A')),
+                          ButtonSegment(
+                            value: StatutPresence.present,
+                            label: Text('P'),
+                          ),
+                          ButtonSegment(
+                            value: StatutPresence.retard,
+                            label: Text('R'),
+                          ),
+                          ButtonSegment(
+                            value: StatutPresence.absent,
+                            label: Text('A'),
+                          ),
                         ],
-                        selected: {_statuts[eleve.id] ?? StatutPresence.present},
-                        onSelectionChanged: (s) => setState(() => _statuts[eleve.id] = s.first),
+                        selected: {
+                          _statuts[eleve.id] ?? StatutPresence.present,
+                        },
+                        onSelectionChanged: (s) =>
+                            setState(() => _statuts[eleve.id] = s.first),
                         showSelectedIcon: false,
                       ),
                     );
@@ -151,8 +153,10 @@ class _AppelScreenState extends State<AppelScreen> {
                 child: SizedBox(
                   width: double.infinity,
                   child: FilledButton(
-                    onPressed: _envoiEnCours ? null : () => _envoyer(eleves),
-                    child: Text(_envoiEnCours ? 'Envoi…' : "Valider l'appel"),
+                    onPressed: _envoiEnCours ? null : () => _valider(eleves),
+                    child: Text(
+                      _envoiEnCours ? 'Enregistrement…' : "Valider l'appel",
+                    ),
                   ),
                 ),
               ),

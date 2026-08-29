@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -60,7 +61,12 @@ class ApiClient {
       _requete<T>('PUT', chemin, body: body, etablissementId: etablissementId);
 
   Future<T> patch<T>(String chemin, {Object? body, int? etablissementId}) =>
-      _requete<T>('PATCH', chemin, body: body, etablissementId: etablissementId);
+      _requete<T>(
+        'PATCH',
+        chemin,
+        body: body,
+        etablissementId: etablissementId,
+      );
 
   Future<T> _requete<T>(
     String methode,
@@ -124,11 +130,15 @@ class ApiClient {
     final etabId = etablissementId ?? await etablissementCourant;
     if (etabId != null) headers['X-Etablissement-Id'] = etabId.toString();
 
-    final reponse = await http.get(Uri.parse('$_baseUrl$chemin'), headers: headers);
+    final reponse = await http.get(
+      Uri.parse('$_baseUrl$chemin'),
+      headers: headers,
+    );
 
     if (reponse.statusCode < 200 || reponse.statusCode >= 300) {
       final corps = reponse.body.isEmpty ? null : jsonDecode(reponse.body);
-      final erreur = (corps as Map<String, dynamic>?)?['error'] as Map<String, dynamic>?;
+      final erreur =
+          (corps as Map<String, dynamic>?)?['error'] as Map<String, dynamic>?;
       throw ApiException(
         erreur?['message'] as String? ?? 'Erreur ${reponse.statusCode}',
         reponse.statusCode,

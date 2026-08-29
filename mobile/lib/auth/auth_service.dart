@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import '../api/api_client.dart';
 import '../models/models.dart';
 
@@ -67,7 +68,9 @@ class AuthService extends ChangeNotifier {
 
   Future<void> _chargerProfil() async {
     final reponse = await api.get<Map<String, dynamic>>('/auth/me');
-    utilisateur = Utilisateur.fromJson(reponse['utilisateur'] as Map<String, dynamic>);
+    utilisateur = Utilisateur.fromJson(
+      reponse['utilisateur'] as Map<String, dynamic>,
+    );
     rattachements = (reponse['rattachements'] as List<dynamic>)
         .map((r) => Rattachement.fromJson(r as Map<String, dynamic>))
         .toList();

@@ -23,14 +23,16 @@ flutter run
 - `lib/auth/auth_service.dart` — `ChangeNotifier`, miroir de `web/src/auth/AuthContext.tsx`.
 - `lib/screens/` — Connexion, Mes classes (`?enseignant_id=`), Appel.
 
-## Ce qui est fait, et ce qui ne l'est pas
+## Mode hors-ligne
 
-**Fait et vérifié en HTTP réel** (même scénario que le backend/web : payloads et en-têtes identiques à travers `curl`, comparés à ce que le code Dart envoie) : connexion, chargement du profil et des rattachements, « mes classes » via le filtre `enseignant_id`, appel d'une classe entière en une requête avec `sync_uuid` par élève.
+`AppelScreen` écrit **toujours** dans une file locale (`lib/offline/`, SQLite via `sqflite`) avant tout appel réseau — la validation de l'appel réussit immédiatement, avec ou sans réseau. `SyncService` tente ensuite une synchronisation (`POST /sync/batch`) : immédiatement après l'écriture si le réseau répond, automatiquement à la reconnexion (`connectivity_plus`), ou manuellement via le bandeau affiché sur l'écran Mes classes tant qu'il reste des écritures en attente ou en erreur.
 
-**PAS fait dans cette première version — chemin en ligne uniquement** : `AppelScreen` envoie directement au serveur. La vraie promesse hors-ligne du cahier des charges (`docs/architecture-technique.md` §04 : file d'attente locale SQLite, écritures rejouées via `POST /sync/batch` au retour du réseau) n'est pas construite. Aujourd'hui, un appel fait sans réseau échoue avec un message d'erreur plutôt que d'être mis en attente. `sync_uuid` est déjà posé par élève pour que ce chemin puisse être branché sans changer le format d'échange, mais la persistance locale reste à construire.
+Ce que ce mécanisme ne fait PAS encore : rejouer la file au tout premier lancement de l'app avant que l'enseignant n'ouvre une classe (elle ne se déclenche qu'après une écriture ou un changement de connectivité) ; purger les écritures en erreur trop anciennes ; et la saisie de notes n'utilise pas encore cette file (seul l'appel de présence le fait pour l'instant).
 
 ## Vérifié / non vérifié
 
-Vérifié : `flutter analyze` (aucun problème), `flutter test` (2 tests), `flutter build web` (compilation réelle), et la chaîne réseau complète comparée manuellement à ce que chaque écran envoie.
+Vérifié : `flutter analyze` (propre), `flutter test` (10 tests — dont l'interprétation des réponses `/sync/batch` et un vrai aller-retour SQLite via `sqflite_common_ffi`), `flutter build web` (compilation réelle), et la chaîne réseau complète (connexion, mes classes, `/sync/batch`) comparée manuellement à ce que chaque écran envoie.
 
-Non vérifié dans cette session : rendu et interactions sur un vrai appareil ou émulateur (aucun émulateur Android configuré dans cet environnement — seuls macOS/web/un iPhone physique apparaissent dans `flutter doctor`). À tester avec `flutter run` sur votre machine avant de considérer ces écrans comme définitivement validés.
+Un vrai bug a été trouvé en écrivant le test d'intégration de la base locale (pas en le contournant) : la factory SQLite injectable ne l'était pas vraiment — `_ouvrir()` passait par une fonction globale qui ignorait l'injection, donc les tests auraient silencieusement utilisé le vrai plugin de plateforme (et échoué) sans le détecter. Corrigé.
+
+**Non vérifié dans cette session** : rendu et interactions sur un vrai appareil ou émulateur (aucun émulateur Android configuré dans cet environnement — seuls macOS/web/un iPhone physique apparaissent dans `flutter doctor`), et surtout — le support SQLite du plugin `sqflite` sur la cible web est incertain/limité ; `flutter build web` compile mais ne prouve rien sur le comportement réel de la file locale hors Android/iOS, les vraies cibles de cette fonctionnalité. À tester avec `flutter run` sur un appareil Android réel, y compris en coupant le réseau en cours d'appel, avant de considérer le mode hors-ligne comme validé.
