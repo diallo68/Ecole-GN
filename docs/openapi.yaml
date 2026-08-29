@@ -1,0 +1,1266 @@
+openapi: 3.0.3
+info:
+  title: API Plateforme Scolaire Guinée
+  version: "1.0.0-mvp"
+  description: >
+    Contrat d'API du MVP « Gestion scolaire » — voir docs/mvp-scope.md pour
+    le périmètre et docs/database-schema.md pour le modèle de données.
+  contact:
+    name: Équipe technique — Plateforme Scolaire Guinée
+
+servers:
+  - url: https://staging-api.plateforme-scolaire.gn/api/v1
+    description: Recette
+  - url: https://api.plateforme-scolaire.gn/api/v1
+    description: Production (à confirmer en Phase 0)
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Auth
+  - name: Établissements
+  - name: Utilisateurs
+  - name: Années scolaires
+  - name: Classes
+  - name: Matières
+  - name: Élèves
+  - name: Emploi du temps
+  - name: Évaluations
+  - name: Bulletins
+  - name: Présences
+  - name: Finances
+  - name: Communication
+  - name: Synchronisation
+
+paths:
+
+  # ---------- Auth ----------
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Connexion
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [identifiant, mot_de_passe]
+              properties:
+                identifiant:
+                  type: string
+                  description: Téléphone ou email
+                mot_de_passe:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+                  utilisateur: { $ref: '#/components/schemas/Utilisateur' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Profil et rattachements de l'utilisateur connecté
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  utilisateur: { $ref: '#/components/schemas/Utilisateur' }
+                  rattachements:
+                    type: array
+                    items: { $ref: '#/components/schemas/EtablissementUtilisateur' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  # ---------- Établissements ----------
+  /etablissements:
+    get:
+      tags: [Établissements]
+      summary: Lister les établissements
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200': { $ref: '#/components/responses/EtablissementListe' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    post:
+      tags: [Établissements]
+      summary: Créer un établissement (super-admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EtablissementEcriture' }
+      responses:
+        '201':
+          description: Créé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Etablissement' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /etablissements/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Établissements]
+      summary: Détail d'un établissement
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Etablissement' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Établissements]
+      summary: Mettre à jour un établissement
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EtablissementEcriture' }
+      responses:
+        '200':
+          description: Mis à jour
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Etablissement' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ---------- Utilisateurs ----------
+  /etablissements/{etablissementId}/utilisateurs:
+    parameters:
+      - $ref: '#/components/parameters/EtablissementIdPath'
+    get:
+      tags: [Utilisateurs]
+      summary: Lister les comptes rattachés à l'établissement
+      parameters:
+        - name: role
+          in: query
+          schema: { $ref: '#/components/schemas/Role' }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/EtablissementUtilisateur' }
+                  meta: { $ref: '#/components/schemas/Pagination' }
+    post:
+      tags: [Utilisateurs]
+      summary: Créer un compte et le rattacher à l'établissement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UtilisateurEcriture' }
+      responses:
+        '201':
+          description: Créé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EtablissementUtilisateur' }
+        '409':
+          description: Téléphone déjà utilisé par un autre compte
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erreur' }
+
+  /etablissements/{etablissementId}/utilisateurs/import:
+    parameters:
+      - $ref: '#/components/parameters/EtablissementIdPath'
+    post:
+      tags: [Utilisateurs]
+      summary: Import en masse (CSV/Excel)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                fichier:
+                  type: string
+                  format: binary
+      responses:
+        '202':
+          description: Import accepté, traité en tâche de fond
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  import_id: { type: string }
+                  lignes_recues: { type: integer }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  # ---------- Années scolaires ----------
+  /etablissements/{etablissementId}/annees-scolaires:
+    parameters:
+      - $ref: '#/components/parameters/EtablissementIdPath'
+    get:
+      tags: [Années scolaires]
+      summary: Lister les années scolaires
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AnneeScolaire' }
+    post:
+      tags: [Années scolaires]
+      summary: Créer une année scolaire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AnneeScolaireEcriture' }
+      responses:
+        '201':
+          description: Créée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AnneeScolaire' }
+
+  /annees-scolaires/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    patch:
+      tags: [Années scolaires]
+      summary: Activer ou archiver une année scolaire
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                statut:
+                  type: string
+                  enum: [en_preparation, active, archivee]
+      responses:
+        '200':
+          description: Mise à jour
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AnneeScolaire' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ---------- Classes ----------
+  /etablissements/{etablissementId}/classes:
+    parameters:
+      - $ref: '#/components/parameters/EtablissementIdPath'
+    get:
+      tags: [Classes]
+      summary: Lister les classes
+      parameters:
+        - name: annee_scolaire_id
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Classe' }
+    post:
+      tags: [Classes]
+      summary: Créer une classe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ClasseEcriture' }
+      responses:
+        '201':
+          description: Créée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Classe' }
+
+  /classes/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Classes]
+      summary: Détail d'une classe
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Classe' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Classes]
+      summary: Mettre à jour une classe
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ClasseEcriture' }
+      responses:
+        '200':
+          description: Mise à jour
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Classe' }
+
+  /classes/{id}/eleves:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Classes]
+      summary: Élèves inscrits dans la classe (année active)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Eleve' }
+
+  # ---------- Matières ----------
+  /etablissements/{etablissementId}/matieres:
+    parameters:
+      - $ref: '#/components/parameters/EtablissementIdPath'
+    get:
+      tags: [Matières]
+      summary: Lister les matières
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Matiere' }
+    post:
+      tags: [Matières]
+      summary: Créer une matière
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MatiereEcriture' }
+      responses:
+        '201':
+          description: Créée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Matiere' }
+
+  /classes/{classeId}/matieres/{matiereId}/enseignant:
+    parameters:
+      - name: classeId
+        in: path
+        required: true
+        schema: { type: integer }
+      - name: matiereId
+        in: path
+        required: true
+        schema: { type: integer }
+    put:
+      tags: [Matières]
+      summary: Affecter un enseignant à une matière de la classe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [enseignant_id]
+              properties:
+                enseignant_id: { type: integer }
+                coefficient: { type: number, nullable: true }
+      responses:
+        '200':
+          description: Affectation enregistrée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ClasseMatiereEnseignant' }
+
+  # ---------- Emploi du temps ----------
+  /classes/{id}/emploi-du-temps:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Emploi du temps]
+      summary: Consulter l'emploi du temps de la classe
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/CreneauEmploiDuTemps' }
+    post:
+      tags: [Emploi du temps]
+      summary: Créer un créneau
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreneauEmploiDuTempsEcriture' }
+      responses:
+        '201':
+          description: Créé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CreneauEmploiDuTemps' }
+        '409':
+          description: Conflit d'horaire détecté (non bloquant, avertissement renvoyé)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erreur' }
+
+  # ---------- Élèves ----------
+  /etablissements/{etablissementId}/eleves:
+    parameters:
+      - $ref: '#/components/parameters/EtablissementIdPath'
+    get:
+      tags: [Élèves]
+      summary: Lister les élèves de l'établissement
+      parameters:
+        - name: q
+          in: query
+          description: Recherche par nom, prénom ou matricule
+          schema: { type: string }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Eleve' }
+                  meta: { $ref: '#/components/schemas/Pagination' }
+    post:
+      tags: [Élèves]
+      summary: Créer un élève
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EleveEcriture' }
+      responses:
+        '201':
+          description: Créé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Eleve' }
+
+  /etablissements/{etablissementId}/eleves/import:
+    parameters:
+      - $ref: '#/components/parameters/EtablissementIdPath'
+    post:
+      tags: [Élèves]
+      summary: Import en masse (CSV/Excel)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                fichier:
+                  type: string
+                  format: binary
+      responses:
+        '202':
+          description: Import accepté, traité en tâche de fond
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  import_id: { type: string }
+                  lignes_recues: { type: integer }
+
+  /eleves/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Élèves]
+      summary: Dossier élève
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Eleve' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /eleves/{id}/inscriptions:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    post:
+      tags: [Élèves]
+      summary: Inscrire l'élève dans une classe pour une année scolaire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [classe_id, annee_scolaire_id]
+              properties:
+                classe_id: { type: integer }
+                annee_scolaire_id: { type: integer }
+                date_inscription: { type: string, format: date }
+      responses:
+        '201':
+          description: Inscription créée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Inscription' }
+        '409':
+          description: Élève déjà inscrit pour cette année scolaire
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Erreur' }
+
+  # ---------- Évaluations & notes ----------
+  /classes/{classeId}/matieres/{matiereId}/evaluations:
+    parameters:
+      - name: classeId
+        in: path
+        required: true
+        schema: { type: integer }
+      - name: matiereId
+        in: path
+        required: true
+        schema: { type: integer }
+    post:
+      tags: [Évaluations]
+      summary: Créer une évaluation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EvaluationEcriture' }
+      responses:
+        '201':
+          description: Créée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Evaluation' }
+
+  /evaluations/{id}/notes:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Évaluations]
+      summary: Notes saisies pour l'évaluation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Note' }
+    put:
+      tags: [Évaluations]
+      summary: Saisie en lot des notes de la classe pour cette évaluation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [notes]
+              properties:
+                notes:
+                  type: array
+                  items: { $ref: '#/components/schemas/NoteEcriture' }
+      responses:
+        '200':
+          description: Notes enregistrées
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Note' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  # ---------- Bulletins ----------
+  /periodes/{id}/bulletins/generer:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    post:
+      tags: [Bulletins]
+      summary: Générer les bulletins d'une classe pour cette période
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [classe_id]
+              properties:
+                classe_id: { type: integer }
+      responses:
+        '202':
+          description: Génération lancée (traitement en tâche de fond, un bulletin par élève)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tache_id: { type: string }
+                  nb_bulletins: { type: integer }
+
+  /eleves/{id}/bulletins:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Bulletins]
+      summary: Historique des bulletins de l'élève
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Bulletin' }
+
+  /bulletins/{id}/valider:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    post:
+      tags: [Bulletins]
+      summary: Valider et publier un bulletin (visible par le parent)
+      responses:
+        '200':
+          description: Bulletin validé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Bulletin' }
+
+  # ---------- Présences ----------
+  /classes/{id}/presences/appel:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    post:
+      tags: [Présences]
+      summary: Enregistrer l'appel du jour pour la classe (lot)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [date, presences]
+              properties:
+                date: { type: string, format: date }
+                presences:
+                  type: array
+                  items: { $ref: '#/components/schemas/PresenceEcriture' }
+      responses:
+        '200':
+          description: Appel enregistré
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Presence' }
+
+  /classes/{id}/presences:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Présences]
+      summary: Présences d'une classe pour une date
+      parameters:
+        - name: date
+          in: query
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Presence' }
+
+  /eleves/{id}/presences:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Présences]
+      summary: Historique de présence de l'élève
+      parameters:
+        - name: depuis
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Presence' }
+
+  # ---------- Finances ----------
+  /etablissements/{etablissementId}/frais-scolarite:
+    parameters:
+      - $ref: '#/components/parameters/EtablissementIdPath'
+    get:
+      tags: [Finances]
+      summary: Barème des frais de scolarité
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/FraisScolarite' }
+    post:
+      tags: [Finances]
+      summary: Définir un barème
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/FraisScolariteEcriture' }
+      responses:
+        '201':
+          description: Créé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FraisScolarite' }
+
+  /eleves/{id}/echeances:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Finances]
+      summary: Échéancier de l'élève
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Echeance' }
+
+  /echeances/{id}/paiements:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    post:
+      tags: [Finances]
+      summary: Enregistrer un encaissement manuel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PaiementEcriture' }
+      responses:
+        '201':
+          description: Paiement enregistré, reçu généré
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Paiement' }
+
+  /paiements/{id}/recu:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Finances]
+      summary: Reçu PDF du paiement
+      responses:
+        '200':
+          description: URL du reçu
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pdf_url: { type: string, format: uri }
+
+  # ---------- Communication ----------
+  /etablissements/{etablissementId}/annonces:
+    parameters:
+      - $ref: '#/components/parameters/EtablissementIdPath'
+    get:
+      tags: [Communication]
+      summary: Lister les annonces
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Annonce' }
+    post:
+      tags: [Communication]
+      summary: Publier une annonce
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AnnonceEcriture' }
+      responses:
+        '201':
+          description: Publiée
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Annonce' }
+
+  # ---------- Synchronisation hors-ligne ----------
+  /sync/batch:
+    post:
+      tags: [Synchronisation]
+      summary: Synchroniser un lot d'écritures effectuées hors-ligne
+      description: >
+        Idempotent par sync_uuid : une écriture déjà appliquée renvoie son
+        statut sans être rejouée. Utilisé par l'app mobile enseignant pour
+        les notes et les présences saisies sans connexion.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ecritures]
+              properties:
+                ecritures:
+                  type: array
+                  items:
+                    type: object
+                    required: [sync_uuid, type, payload]
+                    properties:
+                      sync_uuid: { type: string, format: uuid }
+                      type: { type: string, enum: [note, presence] }
+                      payload: { type: object }
+      responses:
+        '200':
+          description: Résultat par écriture
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultats:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        sync_uuid: { type: string, format: uuid }
+                        statut: { type: string, enum: [applique, deja_applique, rejete] }
+                        erreur: { type: string, nullable: true }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer }
+    EtablissementIdPath:
+      name: etablissementId
+      in: path
+      required: true
+      schema: { type: integer }
+    Page:
+      name: page
+      in: query
+      schema: { type: integer, default: 1 }
+    PerPage:
+      name: per_page
+      in: query
+      schema: { type: integer, default: 25, maximum: 100 }
+
+  responses:
+    Unauthorized:
+      description: Authentification manquante ou invalide
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Erreur' }
+    Forbidden:
+      description: Rôle insuffisant pour cette action
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Erreur' }
+    NotFound:
+      description: Ressource introuvable
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Erreur' }
+    ValidationError:
+      description: Corps de requête invalide
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Erreur' }
+    EtablissementListe:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items: { $ref: '#/components/schemas/Etablissement' }
+              meta: { $ref: '#/components/schemas/Pagination' }
+
+  schemas:
+    Erreur:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code: { type: string }
+            message: { type: string }
+            details: { type: object, nullable: true }
+
+    Pagination:
+      type: object
+      properties:
+        page: { type: integer }
+        per_page: { type: integer }
+        total: { type: integer }
+
+    Role:
+      type: string
+      enum: [admin_etablissement, enseignant, personnel_administratif, parent]
+
+    Utilisateur:
+      type: object
+      properties:
+        id: { type: integer }
+        nom: { type: string }
+        prenom: { type: string }
+        telephone: { type: string }
+        email: { type: string, nullable: true }
+        langue_preferee: { type: string }
+        statut: { type: string, enum: [actif, suspendu] }
+
+    UtilisateurEcriture:
+      type: object
+      required: [nom, prenom, telephone, role]
+      properties:
+        nom: { type: string }
+        prenom: { type: string }
+        telephone: { type: string }
+        email: { type: string, nullable: true }
+        role: { $ref: '#/components/schemas/Role' }
+
+    EtablissementUtilisateur:
+      type: object
+      properties:
+        id: { type: integer }
+        utilisateur: { $ref: '#/components/schemas/Utilisateur' }
+        role: { $ref: '#/components/schemas/Role' }
+        statut: { type: string, enum: [actif, invite, suspendu] }
+
+    Etablissement:
+      type: object
+      properties:
+        id: { type: integer }
+        nom: { type: string }
+        cycle: { type: string, enum: [primaire, college, lycee, mixte] }
+        adresse: { type: string, nullable: true }
+        ville: { type: string, nullable: true }
+        region: { type: string, nullable: true }
+        statut: { type: string, enum: [actif, inactif] }
+
+    EtablissementEcriture:
+      type: object
+      required: [nom, cycle]
+      properties:
+        nom: { type: string }
+        cycle: { type: string, enum: [primaire, college, lycee, mixte] }
+        adresse: { type: string, nullable: true }
+        ville: { type: string, nullable: true }
+        region: { type: string, nullable: true }
+
+    AnneeScolaire:
+      type: object
+      properties:
+        id: { type: integer }
+        libelle: { type: string, example: "2026-2027" }
+        date_debut: { type: string, format: date }
+        date_fin: { type: string, format: date }
+        statut: { type: string, enum: [en_preparation, active, archivee] }
+
+    AnneeScolaireEcriture:
+      type: object
+      required: [libelle, date_debut, date_fin]
+      properties:
+        libelle: { type: string }
+        date_debut: { type: string, format: date }
+        date_fin: { type: string, format: date }
+
+    Classe:
+      type: object
+      properties:
+        id: { type: integer }
+        niveau: { type: string, example: "CM2" }
+        libelle: { type: string, example: "CM2 A" }
+        annee_scolaire_id: { type: integer }
+        enseignant_titulaire_id: { type: integer, nullable: true }
+        effectif_max: { type: integer, nullable: true }
+
+    ClasseEcriture:
+      type: object
+      required: [niveau, libelle, annee_scolaire_id]
+      properties:
+        niveau: { type: string }
+        libelle: { type: string }
+        annee_scolaire_id: { type: integer }
+        enseignant_titulaire_id: { type: integer, nullable: true }
+        effectif_max: { type: integer, nullable: true }
+
+    Matiere:
+      type: object
+      properties:
+        id: { type: integer }
+        nom: { type: string }
+        coefficient_defaut: { type: number }
+
+    MatiereEcriture:
+      type: object
+      required: [nom]
+      properties:
+        nom: { type: string }
+        coefficient_defaut: { type: number, default: 1 }
+
+    ClasseMatiereEnseignant:
+      type: object
+      properties:
+        id: { type: integer }
+        classe_id: { type: integer }
+        matiere_id: { type: integer }
+        enseignant_id: { type: integer }
+        coefficient: { type: number, nullable: true }
+
+    Eleve:
+      type: object
+      properties:
+        id: { type: integer }
+        matricule: { type: string }
+        nom: { type: string }
+        prenom: { type: string }
+        date_naissance: { type: string, format: date, nullable: true }
+        sexe: { type: string, enum: [M, F], nullable: true }
+        photo_url: { type: string, format: uri, nullable: true }
+        statut: { type: string, enum: [actif, inactif, diplome] }
+
+    EleveEcriture:
+      type: object
+      required: [nom, prenom]
+      properties:
+        matricule: { type: string, nullable: true, description: "Généré automatiquement si absent" }
+        nom: { type: string }
+        prenom: { type: string }
+        date_naissance: { type: string, format: date, nullable: true }
+        sexe: { type: string, enum: [M, F], nullable: true }
+
+    Inscription:
+      type: object
+      properties:
+        id: { type: integer }
+        eleve_id: { type: integer }
+        classe_id: { type: integer }
+        annee_scolaire_id: { type: integer }
+        date_inscription: { type: string, format: date }
+        statut: { type: string, enum: [inscrit, abandonne] }
+
+    CreneauEmploiDuTemps:
+      type: object
+      properties:
+        id: { type: integer }
+        classe_id: { type: integer }
+        matiere_id: { type: integer }
+        enseignant_id: { type: integer }
+        jour_semaine: { type: integer, minimum: 1, maximum: 7 }
+        heure_debut: { type: string, example: "08:00" }
+        heure_fin: { type: string, example: "09:00" }
+        salle: { type: string, nullable: true }
+
+    CreneauEmploiDuTempsEcriture:
+      type: object
+      required: [matiere_id, enseignant_id, jour_semaine, heure_debut, heure_fin]
+      properties:
+        matiere_id: { type: integer }
+        enseignant_id: { type: integer }
+        jour_semaine: { type: integer, minimum: 1, maximum: 7 }
+        heure_debut: { type: string }
+        heure_fin: { type: string }
+        salle: { type: string, nullable: true }
+
+    Evaluation:
+      type: object
+      properties:
+        id: { type: integer }
+        type: { type: string, enum: [devoir, composition, interrogation] }
+        libelle: { type: string }
+        coefficient: { type: number }
+        date_evaluation: { type: string, format: date }
+        periode_id: { type: integer }
+
+    EvaluationEcriture:
+      type: object
+      required: [type, libelle, periode_id, date_evaluation]
+      properties:
+        type: { type: string, enum: [devoir, composition, interrogation] }
+        libelle: { type: string }
+        coefficient: { type: number, default: 1 }
+        periode_id: { type: integer }
+        date_evaluation: { type: string, format: date }
+
+    Note:
+      type: object
+      properties:
+        id: { type: integer }
+        eleve_id: { type: integer }
+        valeur: { type: number, nullable: true }
+        appreciation: { type: string, nullable: true }
+        statut_sync: { type: string, enum: [synced, pending] }
+
+    NoteEcriture:
+      type: object
+      required: [eleve_id]
+      properties:
+        eleve_id: { type: integer }
+        valeur: { type: number, nullable: true }
+        appreciation: { type: string, nullable: true }
+        sync_uuid: { type: string, format: uuid, nullable: true }
+
+    Bulletin:
+      type: object
+      properties:
+        id: { type: integer }
+        eleve_id: { type: integer }
+        periode_id: { type: integer }
+        moyenne_generale: { type: number, nullable: true }
+        rang: { type: integer, nullable: true }
+        effectif_classe: { type: integer, nullable: true }
+        pdf_url: { type: string, format: uri, nullable: true }
+        statut: { type: string, enum: [brouillon, valide, publie] }
+
+    Presence:
+      type: object
+      properties:
+        id: { type: integer }
+        eleve_id: { type: integer }
+        classe_id: { type: integer }
+        date: { type: string, format: date }
+        statut: { type: string, enum: [present, absent, retard, excuse] }
+        statut_sync: { type: string, enum: [synced, pending] }
+
+    PresenceEcriture:
+      type: object
+      required: [eleve_id, statut]
+      properties:
+        eleve_id: { type: integer }
+        statut: { type: string, enum: [present, absent, retard, excuse] }
+        sync_uuid: { type: string, format: uuid, nullable: true }
+
+    FraisScolarite:
+      type: object
+      properties:
+        id: { type: integer }
+        niveau: { type: string }
+        annee_scolaire_id: { type: integer }
+        montant_total: { type: number }
+
+    FraisScolariteEcriture:
+      type: object
+      required: [niveau, annee_scolaire_id, montant_total]
+      properties:
+        niveau: { type: string }
+        annee_scolaire_id: { type: integer }
+        montant_total: { type: number }
+
+    Echeance:
+      type: object
+      properties:
+        id: { type: integer }
+        libelle: { type: string }
+        montant_du: { type: number }
+        date_echeance: { type: string, format: date }
+        statut: { type: string, enum: [paye, partiel, impaye] }
+
+    Paiement:
+      type: object
+      properties:
+        id: { type: integer }
+        echeance_id: { type: integer }
+        montant: { type: number }
+        mode: { type: string, enum: [especes, cheque] }
+        reference_recu: { type: string }
+        date_paiement: { type: string, format: date }
+        pdf_recu_url: { type: string, format: uri, nullable: true }
+
+    PaiementEcriture:
+      type: object
+      required: [montant, mode]
+      properties:
+        montant: { type: number }
+        mode: { type: string, enum: [especes, cheque] }
+        date_paiement: { type: string, format: date }
+
+    Annonce:
+      type: object
+      properties:
+        id: { type: integer }
+        titre: { type: string }
+        contenu: { type: string }
+        cible_type: { type: string, enum: [etablissement, classe] }
+        cible_id: { type: integer, nullable: true }
+        publiee_le: { type: string, format: date-time }
+
+    AnnonceEcriture:
+      type: object
+      required: [titre, contenu, cible_type]
+      properties:
+        titre: { type: string }
+        contenu: { type: string }
+        cible_type: { type: string, enum: [etablissement, classe] }
+        cible_id: { type: integer, nullable: true }
