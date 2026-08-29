@@ -10,6 +10,7 @@ use App\Http\Controllers\EtablissementUtilisateurController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\MatiereController;
 use App\Http\Controllers\PeriodeEvaluationController;
+use App\Http\Controllers\PresenceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -67,8 +68,12 @@ Route::prefix('v1')->group(function () {
         Route::post('/periodes/{periodeId}/bulletins/generer', [BulletinController::class, 'generer']);
         Route::get('/eleves/{id}/bulletins', [BulletinController::class, 'pourEleve']);
         Route::post('/bulletins/{id}/valider', [BulletinController::class, 'valider']);
+
+        Route::post('/classes/{id}/presences/appel', [PresenceController::class, 'appel']);
+        Route::get('/classes/{id}/presences', [PresenceController::class, 'pourClasse']);
+        Route::get('/eleves/{id}/presences', [PresenceController::class, 'pourEleve']);
     });
 
     // TODO Phase 1 — voir docs/api-contract.md pour l'index complet :
-    // Emploi du temps, Présences, Finances, Communication, Synchronisation.
+    // Emploi du temps, Finances, Communication, Synchronisation.
 });

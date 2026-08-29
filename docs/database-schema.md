@@ -369,7 +369,7 @@ erDiagram
 | classe_id | bigint | FK |
 | date | date | NOT NULL |
 | statut | varchar(20) | `present` \| `absent` \| `retard` \| `excuse` |
-| saisi_par | bigint | FK → utilisateurs |
+| saisie_par | bigint | FK → utilisateurs |
 | sync_uuid | uuid | UNIQUE |
 | statut_sync | varchar(20) | `synced` \| `pending` |
 | — | | UNIQUE (eleve_id, classe_id, date) |
