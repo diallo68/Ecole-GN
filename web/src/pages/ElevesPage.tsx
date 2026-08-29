@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/AuthContext'
 import { ApiError, apiFetch } from '../lib/api'
 import type { Eleve, Pagination } from '../lib/types'
+import { Modal } from '../components/Modal'
 
 export function ElevesPage() {
   const { etablissementCourantId } = useAuth()
@@ -127,8 +128,8 @@ function FormulaireEleve({
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/30 px-4">
-      <form onSubmit={onSubmit} className="w-full max-w-sm space-y-4 rounded-lg bg-white p-6 shadow-lg">
+    <Modal>
+      <form onSubmit={onSubmit} className="space-y-4">
         <h2 className="text-base font-semibold text-slate-900">Inscrire un élève</h2>
 
         {erreur && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{erreur}</p>}
@@ -180,6 +181,6 @@ function FormulaireEleve({
           </button>
         </div>
       </form>
-    </div>
+    </Modal>
   )
 }

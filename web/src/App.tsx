@@ -1,8 +1,10 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './auth/AuthContext'
 import { RequireAuth } from './auth/RequireAuth'
 import { Layout } from './components/Layout'
 import { LoginPage } from './pages/LoginPage'
+import { AnneesScolairesPage } from './pages/AnneesScolairesPage'
+import { ClassesPage } from './pages/ClassesPage'
 import { ElevesPage } from './pages/ElevesPage'
 
 export default function App() {
@@ -12,15 +14,17 @@ export default function App() {
         <Routes>
           <Route path="/connexion" element={<LoginPage />} />
           <Route
-            path="/"
             element={
               <RequireAuth>
-                <Layout>
-                  <ElevesPage />
-                </Layout>
+                <Layout />
               </RequireAuth>
             }
-          />
+          >
+            <Route index element={<Navigate to="/eleves" replace />} />
+            <Route path="/annees-scolaires" element={<AnneesScolairesPage />} />
+            <Route path="/classes" element={<ClassesPage />} />
+            <Route path="/eleves" element={<ElevesPage />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>

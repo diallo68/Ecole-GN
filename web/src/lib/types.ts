@@ -32,6 +32,23 @@ export interface Etablissement {
   statut: 'actif' | 'inactif'
 }
 
+export interface AnneeScolaire {
+  id: number
+  libelle: string
+  date_debut: string
+  date_fin: string
+  statut: 'en_preparation' | 'active' | 'archivee'
+}
+
+export interface Classe {
+  id: number
+  niveau: string
+  libelle: string
+  annee_scolaire_id: number
+  enseignant_titulaire_id: number | null
+  effectif_max: number | null
+}
+
 export interface Eleve {
   id: number
   matricule: string
