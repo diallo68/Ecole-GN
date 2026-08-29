@@ -53,6 +53,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/classes/{id}', [ClasseController::class, 'show']);
         Route::patch('/classes/{id}', [ClasseController::class, 'update']);
         Route::get('/classes/{id}/eleves', [ClasseController::class, 'eleves']);
+        Route::get('/classes/{id}/matieres', [ClasseController::class, 'matieres']);
 
         Route::get('/etablissements/{etablissementId}/matieres', [MatiereController::class, 'index']);
         Route::post('/etablissements/{etablissementId}/matieres', [MatiereController::class, 'store']);

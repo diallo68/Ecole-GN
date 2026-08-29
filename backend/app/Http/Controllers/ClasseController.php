@@ -77,6 +77,15 @@ class ClasseController extends Controller
         );
     }
 
+    public function matieres(Request $request, int $id)
+    {
+        $classe = Classe::findOrFail($id);
+
+        return response()->json(
+            $classe->matieresEnseignees()->with('matiere', 'enseignant')->get()
+        );
+    }
+
     private function autoriserAdmin(Request $request): void
     {
         $superAdmin = $request->user()->est_super_admin;

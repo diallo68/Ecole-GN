@@ -8,6 +8,7 @@ import { ClassesPage } from './pages/ClassesPage'
 import { ElevesPage } from './pages/ElevesPage'
 import { BulletinsPage } from './pages/BulletinsPage'
 import { FinancesPage } from './pages/FinancesPage'
+import { UtilisateursPage } from './pages/UtilisateursPage'
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
             <Route path="/eleves" element={<ElevesPage />} />
             <Route path="/bulletins" element={<BulletinsPage />} />
             <Route path="/finances" element={<FinancesPage />} />
+            <Route path="/comptes" element={<UtilisateursPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

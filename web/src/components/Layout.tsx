@@ -5,6 +5,7 @@ const LIENS = [
   { to: '/annees-scolaires', label: 'Années scolaires' },
   { to: '/classes', label: 'Classes' },
   { to: '/eleves', label: 'Élèves' },
+  { to: '/comptes', label: 'Comptes' },
   { to: '/bulletins', label: 'Bulletins' },
   { to: '/finances', label: 'Finances' },
 ]

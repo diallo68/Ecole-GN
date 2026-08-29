@@ -93,6 +93,22 @@ export interface Paiement {
   date_paiement: string
 }
 
+export interface Matiere {
+  id: number
+  nom: string
+  coefficient_defaut: string
+}
+
+export interface ClasseMatiereEnseignant {
+  id: number
+  classe_id: number
+  matiere_id: number
+  enseignant_id: number
+  coefficient: string | null
+  matiere: Matiere
+  enseignant: Utilisateur
+}
+
 export interface Eleve {
   id: number
   matricule: string

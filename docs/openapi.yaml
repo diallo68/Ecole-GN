@@ -377,6 +377,27 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Matiere' }
 
+  /classes/{id}/matieres:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    # Absent de la version initiale de ce contrat : aucun endpoint ne
+    # permettait de voir quelles matières sont enseignées dans une classe
+    # et par qui — l'information n'existait que via PUT (écriture), jamais
+    # en lecture. Trouvé en construisant l'écran web de gestion des
+    # classes (une direction doit pouvoir voir l'état avant d'affecter un
+    # nouvel enseignant, pas seulement écrire à l'aveugle).
+    get:
+      tags: [Matières]
+      summary: Matières enseignées dans la classe, avec l'enseignant affecté
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ClasseMatiereEnseignant' }
+
   /classes/{classeId}/matieres/{matiereId}/enseignant:
     parameters:
       - name: classeId
@@ -1204,6 +1225,11 @@ components:
         matiere_id: { type: integer }
         enseignant_id: { type: integer }
         coefficient: { type: number, nullable: true }
+        # Présents sur GET /classes/{id}/matieres uniquement (pas sur la
+        # réponse de PUT .../enseignant) : évite un aller-retour de plus
+        # pour afficher le nom de la matière et de l'enseignant.
+        matiere: { $ref: '#/components/schemas/Matiere' }
+        enseignant: { $ref: '#/components/schemas/Utilisateur' }
 
     Eleve:
       type: object

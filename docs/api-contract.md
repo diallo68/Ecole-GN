@@ -41,6 +41,7 @@ Le schéma de base de données est posé ; le contrat d'API est ce qui débloque
 | GET, PATCH | `/classes/{id}` | Détail / mise à jour d'une classe | admin_etablissement |
 | GET | `/classes/{id}/eleves` | Élèves inscrits dans la classe | admin_etablissement, enseignant |
 | GET, POST | `/etablissements/{id}/matieres` | Lister / créer une matière | admin_etablissement |
+| GET | `/classes/{id}/matieres` | Matières enseignées dans la classe, avec l'enseignant affecté | tous les rattachés à l'établissement |
 | PUT | `/classes/{classeId}/matieres/{matiereId}/enseignant` | Affecter un enseignant à une matière de la classe | admin_etablissement |
 | GET, POST | `/classes/{id}/emploi-du-temps` | Consulter / créer un créneau | admin_etablissement, enseignant, parent |
 | GET, POST | `/etablissements/{id}/eleves` | Lister / créer un élève | admin_etablissement, personnel_administratif |
