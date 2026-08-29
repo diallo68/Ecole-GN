@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnneeScolaireController;
+use App\Http\Controllers\AnnonceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BulletinController;
 use App\Http\Controllers\ClasseController;
@@ -90,8 +91,11 @@ Route::prefix('v1')->group(function () {
 
         Route::post('/echeances/{id}/paiements', [PaiementController::class, 'store']);
         Route::get('/paiements/{id}/recu', [PaiementController::class, 'recu']);
+
+        Route::get('/etablissements/{etablissementId}/annonces', [AnnonceController::class, 'index']);
+        Route::post('/etablissements/{etablissementId}/annonces', [AnnonceController::class, 'store']);
     });
 
     // TODO Phase 1 — voir docs/api-contract.md pour l'index complet :
-    // Communication, Synchronisation.
+    // Synchronisation hors-ligne (POST /sync/batch).
 });
