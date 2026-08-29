@@ -37,7 +37,7 @@ Le schéma de base de données est posé ; le contrat d'API est ce qui débloque
 | POST | `/etablissements/{id}/utilisateurs/import` | Import en masse (CSV) | admin_etablissement |
 | GET, POST | `/etablissements/{id}/annees-scolaires` | Lister / créer une année scolaire | admin_etablissement |
 | PATCH | `/annees-scolaires/{id}` | Activer / archiver une année | admin_etablissement |
-| GET, POST | `/etablissements/{id}/classes` | Lister / créer une classe | admin_etablissement |
+| GET, POST | `/etablissements/{id}/classes` | Lister (`?enseignant_id=` pour « mes classes ») / créer une classe | tous (get), admin_etablissement (post) |
 | GET, PATCH | `/classes/{id}` | Détail / mise à jour d'une classe | admin_etablissement |
 | GET | `/classes/{id}/eleves` | Élèves inscrits dans la classe | admin_etablissement, enseignant |
 | GET, POST | `/etablissements/{id}/matieres` | Lister / créer une matière | admin_etablissement |

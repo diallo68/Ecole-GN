@@ -282,6 +282,16 @@ paths:
         - name: annee_scolaire_id
           in: query
           schema: { type: integer }
+        - name: enseignant_id
+          in: query
+          description: >
+            Ne retourne que les classes où cet utilisateur enseigne — comme
+            titulaire ou affecté à une matière (classe_matiere_enseignant).
+            Absent de la version initiale du contrat : sans lui, un
+            enseignant n'avait aucun moyen de récupérer « mes classes »,
+            l'écran d'accueil de l'app mobile. Trouvé en démarrant le
+            mobile, avant d'écrire le premier écran plutôt qu'après.
+          schema: { type: integer }
       responses:
         '200':
           description: OK

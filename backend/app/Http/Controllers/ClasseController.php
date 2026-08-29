@@ -19,6 +19,17 @@ class ClasseController extends Controller
             $query->where('annee_scolaire_id', $request->integer('annee_scolaire_id'));
         }
 
+        // « Mes classes » pour un enseignant : titulaire OU affecté à une
+        // matière de la classe (classe_matiere_enseignant) — écran
+        // d'accueil de l'app mobile enseignant.
+        if ($request->filled('enseignant_id')) {
+            $enseignantId = $request->integer('enseignant_id');
+            $query->where(function ($q) use ($enseignantId) {
+                $q->where('enseignant_titulaire_id', $enseignantId)
+                    ->orWhereHas('matieresEnseignees', fn ($q2) => $q2->where('enseignant_id', $enseignantId));
+            });
+        }
+
         return response()->json($query->orderBy('niveau')->orderBy('libelle')->get());
     }
 
