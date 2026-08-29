@@ -147,6 +147,13 @@ class BulletinCalculationTest extends TestCase
         $bA = $bulletinDe($eleves['A']);
         $this->assertEquals(13.20, (float) $bA['moyenne_generale']);
         $this->assertEquals(2, $bA['rang']);
+        // A : Maths 14.00 (devoir 10 coef1 + compo 16 coef2 = 42/3),
+        // Français 12.00 (compo seule) — détail persisté, pas juste
+        // consommé en interne pour le calcul de la moyenne générale.
+        $this->assertEquals(
+            [(string) $mathsId => 14.0, (string) $francaisId => 12.0],
+            $bA['detail_matieres']
+        );
 
         $bB = $bulletinDe($eleves['B']);
         $this->assertEquals(12.00, (float) $bB['moyenne_generale']);

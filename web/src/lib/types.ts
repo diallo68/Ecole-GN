@@ -65,6 +65,8 @@ export interface Bulletin {
   moyenne_generale: string | null
   rang: number | null
   effectif_classe: number | null
+  /** Moyenne par matière, clé = matiere_id en chaîne (contrainte JSON). */
+  detail_matieres: Record<string, number> | null
   statut: 'brouillon' | 'valide' | 'publie'
 }
 

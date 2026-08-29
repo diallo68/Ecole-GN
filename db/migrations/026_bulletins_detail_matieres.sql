@@ -1,0 +1,12 @@
+-- CalculBulletin::pourClasseEtPeriode() calcule déjà une moyenne par
+-- matière (detail_matieres) pour produire la moyenne générale pondérée,
+-- mais ce détail était jusqu'ici jeté après le calcul — seuls
+-- moyenne_generale et rang étaient persistés. Un bulletin sans le détail
+-- par matière n'est pas vraiment un bulletin consultable (ni pour la
+-- famille, ni pour l'administration) : on le conserve.
+--
+-- JSONB plutôt qu'une table lignes_bulletin séparée : la clé (matiere_id)
+-- change rarement de forme, pas besoin de la interroger indépendamment du
+-- bulletin qui la contient, et ça évite une jointure de plus sur un
+-- parcours de lecture fréquent (consultation d'un bulletin).
+ALTER TABLE bulletins ADD COLUMN detail_matieres jsonb;

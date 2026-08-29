@@ -16,8 +16,9 @@ use Illuminate\Support\Str;
  * implémentée ici : elle suppose un modèle officiel guinéen dont nous ne
  * disposons pas encore. pdf_url reste null tant que ce gabarit n'existe
  * pas — mieux vaut l'absence explicite qu'un PDF qui ressemblerait à un
- * bulletin officiel sans en être un. Le calcul (moyenne, rang), lui, est
- * la partie réellement livrée et testée ici.
+ * bulletin officiel sans en être un. Le calcul (moyenne, rang, et depuis
+ * la migration 026 le détail par matière), lui, est la partie réellement
+ * livrée et testée ici.
  */
 class BulletinController extends Controller
 {
@@ -54,6 +55,7 @@ class BulletinController extends Controller
                     'moyenne_generale' => $r['moyenne_generale'],
                     'rang' => $r['rang'],
                     'effectif_classe' => $r['effectif_classe'],
+                    'detail_matieres' => $r['detail_matieres'],
                     'statut' => 'brouillon',
                     'genere_le' => now(),
                 ]

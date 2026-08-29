@@ -353,6 +353,7 @@ erDiagram
 | moyenne_generale | numeric(4,2) | |
 | rang | int | |
 | effectif_classe | int | |
+| detail_matieres | jsonb | nullable — moyenne par matière, clé = matiere_id (migration 026, voir CalculBulletin) |
 | appreciation_generale | text | nullable |
 | pdf_url | text | |
 | statut | varchar(20) | `brouillon` \| `valide` \| `publie` |

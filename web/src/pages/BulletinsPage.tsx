@@ -1,8 +1,8 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { Fragment, useEffect, useState, type FormEvent } from 'react'
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/AuthContext'
 import { ApiError, apiFetch } from '../lib/api'
-import type { AnneeScolaire, Bulletin, Classe, Eleve, PeriodeEvaluation } from '../lib/types'
+import type { AnneeScolaire, Bulletin, Classe, ClasseMatiereEnseignant, Eleve, PeriodeEvaluation } from '../lib/types'
 import { Modal } from '../components/Modal'
 
 export function BulletinsPage() {
@@ -46,6 +46,18 @@ export function BulletinsPage() {
     queryFn: () => apiFetch<Eleve[]>(`/classes/${classeId}/eleves`),
     enabled: !!classeId,
   })
+
+  // Pour traduire les clés matiere_id de Bulletin.detail_matieres en noms
+  // affichables — le bulletin lui-même ne porte que l'id (voir openapi.yaml).
+  const { data: matieres } = useQuery({
+    queryKey: ['classe-matieres', classeId],
+    queryFn: () => apiFetch<ClasseMatiereEnseignant[]>(`/classes/${classeId}/matieres`),
+    enabled: !!classeId,
+  })
+  const nomMatiere = (matiereId: string) =>
+    matieres?.find((m) => m.matiere_id === Number(matiereId))?.matiere.nom ?? `Matière #${matiereId}`
+
+  const [bulletinDetaille, setBulletinDetaille] = useState<number | null>(null)
 
   // Un bulletin par élève, filtré à la période sélectionnée : l'API n'a pas
   // d'endpoint "bulletins de la classe" (juste /eleves/{id}/bulletins), donc
@@ -170,40 +182,72 @@ export function BulletinsPage() {
             <tbody>
               {eleves.map((eleve, i) => {
                 const bulletin = bulletinsParEleve[i]?.data?.find((b) => b.periode_id === periodeId)
+                const detailOuvert = bulletin && bulletinDetaille === bulletin.id
                 return (
-                  <tr key={eleve.id} className="border-b border-slate-100 last:border-0">
-                    <td className="px-4 py-2">
-                      {eleve.nom} {eleve.prenom}
-                    </td>
-                    <td className="px-4 py-2">{bulletin?.moyenne_generale ?? '—'}</td>
-                    <td className="px-4 py-2">{bulletin?.rang ?? '—'}</td>
-                    <td className="px-4 py-2">
-                      {bulletin ? (
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-xs ${
-                            bulletin.statut === 'publie'
-                              ? 'bg-emerald-50 text-emerald-700'
-                              : 'bg-amber-50 text-amber-700'
-                          }`}
-                        >
-                          {bulletin.statut}
-                        </span>
-                      ) : (
-                        <span className="text-xs text-slate-400">non généré</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-2 text-right">
-                      {bulletin && bulletin.statut === 'brouillon' && (
-                        <button
-                          onClick={() => publier.mutate({ bulletinId: bulletin.id, eleveId: eleve.id })}
-                          disabled={publier.isPending}
-                          className="text-xs font-medium text-blue-600 hover:underline disabled:opacity-50"
-                        >
-                          Publier
-                        </button>
-                      )}
-                    </td>
-                  </tr>
+                  <Fragment key={eleve.id}>
+                    <tr className="border-b border-slate-100 last:border-0">
+                      <td className="px-4 py-2">
+                        {eleve.nom} {eleve.prenom}
+                      </td>
+                      <td className="px-4 py-2">
+                        {bulletin && bulletin.detail_matieres ? (
+                          <button
+                            onClick={() => setBulletinDetaille(detailOuvert ? null : bulletin.id)}
+                            className="underline decoration-dotted underline-offset-2 hover:text-blue-700"
+                            title="Voir le détail par matière"
+                          >
+                            {bulletin.moyenne_generale ?? '—'}
+                          </button>
+                        ) : (
+                          (bulletin?.moyenne_generale ?? '—')
+                        )}
+                      </td>
+                      <td className="px-4 py-2">{bulletin?.rang ?? '—'}</td>
+                      <td className="px-4 py-2">
+                        {bulletin ? (
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-xs ${
+                              bulletin.statut === 'publie'
+                                ? 'bg-emerald-50 text-emerald-700'
+                                : 'bg-amber-50 text-amber-700'
+                            }`}
+                          >
+                            {bulletin.statut}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-400">non généré</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        {bulletin && bulletin.statut === 'brouillon' && (
+                          <button
+                            onClick={() => publier.mutate({ bulletinId: bulletin.id, eleveId: eleve.id })}
+                            disabled={publier.isPending}
+                            className="text-xs font-medium text-blue-600 hover:underline disabled:opacity-50"
+                          >
+                            Publier
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                    {detailOuvert && bulletin?.detail_matieres && (
+                      <tr className="border-b border-slate-100 bg-slate-50 last:border-0">
+                        <td colSpan={5} className="px-4 py-2">
+                          <ul className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-slate-600">
+                            {Object.entries(bulletin.detail_matieres).map(([matiereId, moyenne]) => (
+                              <li key={matiereId}>
+                                <span className="text-slate-500">{nomMatiere(matiereId)} :</span>{' '}
+                                <span className="font-medium text-slate-800">{moyenne.toFixed(2)}</span>
+                              </li>
+                            ))}
+                            {Object.keys(bulletin.detail_matieres).length === 0 && (
+                              <li className="text-slate-400">Aucune note saisie sur cette période.</li>
+                            )}
+                          </ul>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
                 )
               })}
             </tbody>
