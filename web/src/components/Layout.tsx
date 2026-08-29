@@ -6,6 +6,7 @@ const LIENS = [
   { to: '/classes', label: 'Classes' },
   { to: '/eleves', label: 'Élèves' },
   { to: '/bulletins', label: 'Bulletins' },
+  { to: '/finances', label: 'Finances' },
 ]
 
 export function Layout() {

@@ -68,6 +68,31 @@ export interface Bulletin {
   statut: 'brouillon' | 'valide' | 'publie'
 }
 
+export interface FraisScolarite {
+  id: number
+  niveau: string
+  annee_scolaire_id: number
+  montant_total: string
+}
+
+export interface Echeance {
+  id: number
+  eleve_id: number
+  libelle: string
+  montant_du: string
+  date_echeance: string
+  statut: 'paye' | 'partiel' | 'impaye'
+}
+
+export interface Paiement {
+  id: number
+  echeance_id: number
+  montant: string
+  mode: 'especes' | 'cheque'
+  reference_recu: string
+  date_paiement: string
+}
+
 export interface Eleve {
   id: number
   matricule: string

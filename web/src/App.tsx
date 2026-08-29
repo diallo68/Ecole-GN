@@ -7,6 +7,7 @@ import { AnneesScolairesPage } from './pages/AnneesScolairesPage'
 import { ClassesPage } from './pages/ClassesPage'
 import { ElevesPage } from './pages/ElevesPage'
 import { BulletinsPage } from './pages/BulletinsPage'
+import { FinancesPage } from './pages/FinancesPage'
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
             <Route path="/classes" element={<ClassesPage />} />
             <Route path="/eleves" element={<ElevesPage />} />
             <Route path="/bulletins" element={<BulletinsPage />} />
+            <Route path="/finances" element={<FinancesPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
