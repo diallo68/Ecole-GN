@@ -62,6 +62,19 @@ class SyncService extends ChangeNotifier {
         synchroniser();
       }
     });
+
+    // onConnectivityChanged ne notifie que sur un CHANGEMENT d'état — un
+    // appareil déjà connecté au lancement de l'app (le cas le plus
+    // fréquent) ne déclenche jamais cet événement. Sans ce vérificateur
+    // initial, une écriture restée en file après une fermeture forcée de
+    // l'app n'était rejouée qu'au prochain changement de connectivité ou
+    // à la prochaine écriture — potentiellement bien plus tard que le
+    // réseau ne le permettait déjà.
+    Connectivity().checkConnectivity().then((resultats) {
+      if (!resultats.contains(ConnectivityResult.none)) {
+        synchroniser();
+      }
+    });
   }
 
   @override
@@ -133,6 +146,25 @@ class SyncService extends ChangeNotifier {
       synchronisationEnCours = false;
       await _rafraichirCompteurs();
     }
+  }
+
+  /// Écritures rejetées par le serveur (statut 'erreur') — pour l'écran qui
+  /// laisse l'enseignant les consulter et, si besoin, les ignorer
+  /// définitivement. Sans ce point de sortie, une écriture rejetée restait
+  /// en file pour toujours : "Réessayer" ne fait que rejouer la même
+  /// synchronisation, qui échouera à nouveau pour la même raison (ex. une
+  /// période clôturée entre-temps — le rejet est définitif, pas transitoire).
+  Future<List<EcritureEnAttente>> ecrituresEnErreur() async {
+    final toutes = await base.lister();
+    return toutes.where((e) => e.statut == 'erreur').toList();
+  }
+
+  /// Retire définitivement une écriture rejetée de la file, sans tenter de
+  /// la synchroniser. Choix explicite de l'enseignant après avoir lu le
+  /// message d'erreur — jamais automatique (voir ecrituresEnErreur).
+  Future<void> ignorer(String syncUuid) async {
+    await base.supprimer(syncUuid);
+    await _rafraichirCompteurs();
   }
 
   Future<void> _rafraichirCompteurs() async {

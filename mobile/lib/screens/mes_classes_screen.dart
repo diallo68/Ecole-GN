@@ -6,6 +6,7 @@ import '../auth/auth_service.dart';
 import '../models/models.dart';
 import '../offline/sync_service.dart';
 import 'appel_screen.dart';
+import 'file_erreurs_screen.dart';
 import 'matieres_screen.dart';
 
 class MesClassesScreen extends StatefulWidget {
@@ -120,7 +121,22 @@ class _BandeauSynchronisation extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(message, style: TextStyle(color: couleurTexte)),
+            child: sync.enErreur > 0
+                ? InkWell(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const FileErreursScreen(),
+                      ),
+                    ),
+                    child: Text(
+                      '$message Voir le détail.',
+                      style: TextStyle(
+                        color: couleurTexte,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  )
+                : Text(message, style: TextStyle(color: couleurTexte)),
           ),
           if (!sync.synchronisationEnCours)
             TextButton(

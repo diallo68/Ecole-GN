@@ -21,19 +21,19 @@ flutter run
 
 - `lib/api/api_client.dart` — client HTTP minimal (paquet `http`, pas dio), pose `Authorization` et `X-Etablissement-Id`. Token et établissement courant en `flutter_secure_storage`.
 - `lib/auth/auth_service.dart` — `ChangeNotifier`, miroir de `web/src/auth/AuthContext.tsx`.
-- `lib/screens/` — Connexion, Mes classes (`?enseignant_id=`), Appel, Matières → Évaluations → Notes.
+- `lib/screens/` — Connexion, Mes classes (`?enseignant_id=`), Appel, Matières → Évaluations → Notes, Écritures en erreur.
 
 ## Mode hors-ligne
 
-`AppelScreen` et `NotesScreen` écrivent **toujours** dans une file locale (`lib/offline/`, SQLite via `sqflite`) avant tout appel réseau — la validation réussit immédiatement, avec ou sans réseau. `SyncService` tente ensuite une synchronisation (`POST /sync/batch`) : immédiatement après l'écriture si le réseau répond, automatiquement à la reconnexion (`connectivity_plus`), ou manuellement via le bandeau affiché sur l'écran Mes classes tant qu'il reste des écritures en attente ou en erreur.
+`AppelScreen` et `NotesScreen` écrivent **toujours** dans une file locale (`lib/offline/`, SQLite via `sqflite`) avant tout appel réseau — la validation réussit immédiatement, avec ou sans réseau. `SyncService` tente ensuite une synchronisation (`POST /sync/batch`) : immédiatement après l'écriture si le réseau répond, au lancement de l'app si le réseau est déjà là (`Connectivity().checkConnectivity()`, en plus de l'écoute des changements — un appareil déjà connecté au démarrage ne déclenche jamais `onConnectivityChanged`), ou manuellement via le bandeau affiché sur l'écran Mes classes tant qu'il reste des écritures en attente ou en erreur.
 
 La création d'une évaluation elle-même (métadonnée : type, libellé, période) reste un appel réseau direct, pas mis en file — seule la saisie des notes qui s'y rattache passe par la file, au même titre que l'appel.
 
-Ce que ce mécanisme ne fait PAS encore : rejouer la file au tout premier lancement de l'app avant que l'enseignant n'ouvre une classe (elle ne se déclenche qu'après une écriture ou un changement de connectivité) ; purger les écritures en erreur trop anciennes.
+Une écriture rejetée par le serveur (période clôturée, autorisation retirée entre-temps…) ne se resynchronisera jamais toute seule — "Réessayer" rejouerait indéfiniment le même échec. Le bandeau d'erreur ouvre `FileErreursScreen`, qui liste chaque écriture rejetée avec son message et permet de l'ignorer (suppression définitive, confirmée) après l'avoir lue — jamais de purge automatique ou silencieuse : l'enseignant doit voir le message avant que l'écriture ne disparaisse.
 
 ## Vérifié / non vérifié
 
-Vérifié : `flutter analyze` (propre), `flutter test` (14 tests — dont l'interprétation des réponses `/sync/batch`, un vrai aller-retour SQLite via `sqflite_common_ffi`, et le parsing des modèles Notes/Évaluations), `flutter build web` (compilation réelle), et le parcours complet Matières → créer une évaluation → saisir des notes → `/sync/batch` → relecture rejoué contre un vrai serveur Laravel + Postgres local (pas seulement écrit, exécuté avec curl en suivant exactement les appels que fait chaque écran).
+Vérifié : `flutter analyze` (propre), `flutter test` (14 tests — dont l'interprétation des réponses `/sync/batch`, un vrai aller-retour SQLite via `sqflite_common_ffi`, et le parsing des modèles Notes/Évaluations), `flutter build web` (compilation réelle), et le parcours complet Matières → créer une évaluation → saisir des notes → `/sync/batch` → relecture rejoué contre un vrai serveur Laravel + Postgres local (pas seulement écrit, exécuté avec curl en suivant exactement les appels que fait chaque écran). `ecrituresEnErreur()`/`ignorer()` (SyncService) et `FileErreursScreen` reposent uniquement sur des méthodes `BaseLocale` déjà couvertes par `base_locale_test.dart` (`marquerEnErreur`, `supprimer`, `lister`) — pas de test dédié en plus : construire un vrai `SyncService` en test exigerait `connectivity_plus`, qui exige un binding de plateforme réel comme `flutter_secure_storage`/`sqflite` (voir plus haut) et n'a pas de variante `_ffi` équivalente ; risque de reproduire le blocage `pumpAndSettle` déjà rencontré et évité ailleurs dans ce dossier plutôt qu'un gain de couverture réel sur une simple lecture-filtrée + suppression.
 
 Deux vrais bugs trouvés en rejouant ce parcours contre l'API réelle (pas en relisant le code) :
 - La factory SQLite injectable ne l'était pas vraiment — `_ouvrir()` passait par une fonction globale qui ignorait l'injection, donc les tests auraient silencieusement utilisé le vrai plugin de plateforme (et échoué) sans le détecter. Corrigé.
