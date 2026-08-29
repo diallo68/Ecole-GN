@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# Dependencies (à activer une fois le code démarré)
+node_modules/
+vendor/
+
+# Environnement / secrets
+.env
+.env.*
+!.env.example
+
+# Build
+dist/
+build/
+*.log
