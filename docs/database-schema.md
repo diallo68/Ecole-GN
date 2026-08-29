@@ -492,6 +492,10 @@ Vérifier manuellement en `psql` (comme ci-dessus) ne suffit pas : deux bugs ne 
 
 Voir [`backend/app/Http/Middleware/ResolveEtablissementContext.php`](../backend/app/Http/Middleware/ResolveEtablissementContext.php) pour l'ordre exact dans lequel les trois variables de session (`app.current_utilisateur_id`, `app.is_super_admin`, `app.current_etablissement_id`) sont posées — cet ordre n'est pas arbitraire, l'inverser réintroduit le bug 024.
 
+### Quatrième piège, trouvé en écrivant les tests automatisés
+
+`set_config(nom, valeur, is_local=false)` persiste pour toute la **session** Postgres, pas seulement la transaction courante. Le middleware ne posait `app.current_etablissement_id` que lorsqu'un établissement était résolu — un super-admin sans établissement (ex. deux requêtes successives, la première avec contexte, la seconde sans) héritait silencieusement de la valeur laissée par la requête précédente sur la même connexion. Sans conséquence sur PHP-FPM/`artisan serve` classiques (connexion neuve à chaque requête, rien à hériter) — mais un pool de connexions (PgBouncer en mode session/transaction) ou Laravel Octane réutilise la session Postgres entre requêtes, où ce bug redeviendrait une vraie fuite entre tenants. Corrigé : la variable est désormais **toujours** repositionnée, y compris à vide, jamais laissée intacte. Trouvé par `TenantIsolationTest`, qui réutilise délibérément une connexion entre requêtes simulées — exactement le scénario qu'un `psql` manuel ou un test isolé ne reproduit pas.
+
 ---
 
 ## 6. Hors périmètre de ce schéma

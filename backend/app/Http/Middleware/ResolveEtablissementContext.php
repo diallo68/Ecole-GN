@@ -48,8 +48,18 @@ class ResolveEtablissementContext
             // (023) couvre `etablissements` pour ce cas précis. Toute autre
             // table exige toujours un etablissement_id explicite, même pour
             // un super-admin — voir 023_super_admin_rls_bypass.sql.
+            // Toujours posé, y compris à vide : un super-admin sans
+            // etablissement_id résolu ne doit PAS hériter silencieusement de
+            // la valeur laissée par une requête précédente sur la même
+            // connexion. Sans danger sur PHP-FPM/artisan serve (connexion
+            // neuve par requête, donc rien à écraser) — mais un pool de
+            // connexions ou Octane réutilise la session Postgres entre
+            // requêtes, où set_config(..., is_local=false) persiste au-delà
+            // d'une transaction. Bug trouvé en testant (TenantIsolationTest),
+            // pas en production, précisément parce que les tests réutilisent
+            // une connexion entre requêtes simulées comme le ferait Octane.
+            $this->poserVariableSession('app.current_etablissement_id', (string) ($etablissementId ?? ''));
             if ($etablissementId !== null) {
-                $this->poserVariableSession('app.current_etablissement_id', (string) $etablissementId);
                 $request->attributes->set('etablissement_id', $etablissementId);
             }
 

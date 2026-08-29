@@ -23,8 +23,27 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
+        <!--
+            PostgreSQL, pas SQLite : l'architecture entière (RLS, set_config,
+            gen_random_uuid, migrations en SQL brut Postgres) est spécifique
+            à Postgres — voir db/README.md et docs/database-schema.md §5.
+            SQLite ne supporte pas la Row-Level Security ; y faire tourner
+            les tests laisserait le mécanisme d'isolation multi-tenant, qui a
+            déjà produit 3 bugs réels, complètement hors de portée des tests.
+        -->
+        <env name="DB_CONNECTION" value="pgsql"/>
+        <env name="DB_HOST" value="127.0.0.1"/>
+        <env name="DB_PORT" value="5432"/>
+        <env name="DB_DATABASE" value="ecole_gn_test"/>
+        <env name="DB_USERNAME" value="app_ecole_gn"/>
+        <env name="DB_PASSWORD" value="test-password"/>
+        <!-- Rôle propriétaire pour les migrations de test (jamais
+             app_ecole_gn — voir db/README.md). Valeur de dev local ;
+             un environnement CI la remplace en exportant un vrai
+             DB_MIGRATE_USERNAME avant `phpunit`, qui prend le dessus
+             sur ces valeurs par défaut sans "force". -->
+        <env name="DB_MIGRATE_USERNAME" value="mohamedbenhussein"/>
+        <env name="DB_MIGRATE_PASSWORD" value=""/>
         <env name="DB_URL" value=""/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
