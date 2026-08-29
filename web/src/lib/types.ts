@@ -1,0 +1,53 @@
+// Types alignés sur docs/openapi.yaml — pas de génération automatique pour
+// l'instant (le contrat évolue vite), donc gardés délibérément minimaux :
+// juste les champs que cette app consomme réellement.
+
+export type Role = 'admin_etablissement' | 'enseignant' | 'personnel_administratif' | 'parent'
+
+export interface Utilisateur {
+  id: number
+  nom: string
+  prenom: string
+  telephone: string
+  email: string | null
+  langue_preferee: string
+  est_super_admin: boolean
+  statut: 'actif' | 'suspendu'
+}
+
+export interface Rattachement {
+  id: number
+  role: Role
+  statut: string
+  etablissement: Etablissement
+}
+
+export interface Etablissement {
+  id: number
+  nom: string
+  cycle: 'primaire' | 'college' | 'lycee' | 'mixte'
+  adresse: string | null
+  ville: string | null
+  region: string | null
+  statut: 'actif' | 'inactif'
+}
+
+export interface Eleve {
+  id: number
+  matricule: string
+  nom: string
+  prenom: string
+  date_naissance: string | null
+  sexe: 'M' | 'F' | null
+  statut: 'actif' | 'inactif' | 'diplome'
+}
+
+export interface Pagination {
+  page: number
+  per_page: number
+  total: number
+}
+
+export interface ApiErrorBody {
+  error: { code: string; message: string; details?: unknown }
+}
