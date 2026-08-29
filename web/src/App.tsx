@@ -10,6 +10,7 @@ import { BulletinsPage } from './pages/BulletinsPage'
 import { FinancesPage } from './pages/FinancesPage'
 import { UtilisateursPage } from './pages/UtilisateursPage'
 import { EmploiDuTempsPage } from './pages/EmploiDuTempsPage'
+import { AnnoncesPage } from './pages/AnnoncesPage'
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="/finances" element={<FinancesPage />} />
             <Route path="/comptes" element={<UtilisateursPage />} />
             <Route path="/emploi-du-temps" element={<EmploiDuTempsPage />} />
+            <Route path="/annonces" element={<AnnoncesPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

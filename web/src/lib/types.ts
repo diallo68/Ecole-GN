@@ -121,6 +121,15 @@ export interface CreneauEmploiDuTemps {
   conflits?: CreneauEmploiDuTemps[]
 }
 
+export interface Annonce {
+  id: number
+  titre: string
+  contenu: string
+  cible_type: 'etablissement' | 'classe'
+  cible_id: number | null
+  publiee_le: string
+}
+
 export interface Eleve {
   id: number
   matricule: string

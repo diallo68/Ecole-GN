@@ -9,6 +9,7 @@ const LIENS = [
   { to: '/emploi-du-temps', label: 'Emploi du temps' },
   { to: '/bulletins', label: 'Bulletins' },
   { to: '/finances', label: 'Finances' },
+  { to: '/annonces', label: 'Annonces' },
 ]
 
 export function Layout() {
