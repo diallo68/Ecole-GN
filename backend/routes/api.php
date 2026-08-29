@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BulletinController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\EleveController;
+use App\Http\Controllers\EmploiDuTempsController;
 use App\Http\Controllers\EtablissementController;
 use App\Http\Controllers\EtablissementUtilisateurController;
 use App\Http\Controllers\EvaluationController;
@@ -72,8 +73,11 @@ Route::prefix('v1')->group(function () {
         Route::post('/classes/{id}/presences/appel', [PresenceController::class, 'appel']);
         Route::get('/classes/{id}/presences', [PresenceController::class, 'pourClasse']);
         Route::get('/eleves/{id}/presences', [PresenceController::class, 'pourEleve']);
+
+        Route::get('/classes/{id}/emploi-du-temps', [EmploiDuTempsController::class, 'index']);
+        Route::post('/classes/{id}/emploi-du-temps', [EmploiDuTempsController::class, 'store']);
     });
 
     // TODO Phase 1 — voir docs/api-contract.md pour l'index complet :
-    // Emploi du temps, Finances, Communication, Synchronisation.
+    // Finances, Communication, Synchronisation.
 });

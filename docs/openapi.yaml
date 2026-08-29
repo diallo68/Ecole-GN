@@ -432,15 +432,21 @@ paths:
             schema: { $ref: '#/components/schemas/CreneauEmploiDuTempsEcriture' }
       responses:
         '201':
-          description: Créé
+          description: >
+            Créé. La détection de conflit est best-effort et non bloquante
+            (docs/mvp-scope.md §2) : un chevauchement d'horaire pour le même
+            enseignant ou la même salle n'empêche pas la création, il est
+            simplement signalé dans `conflits`.
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/CreneauEmploiDuTemps' }
-        '409':
-          description: Conflit d'horaire détecté (non bloquant, avertissement renvoyé)
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/Erreur' }
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/CreneauEmploiDuTemps' }
+                  - type: object
+                    properties:
+                      conflits:
+                        type: array
+                        items: { $ref: '#/components/schemas/CreneauEmploiDuTemps' }
 
   # ---------- Élèves ----------
   /etablissements/{etablissementId}/eleves:
