@@ -68,6 +68,7 @@ Le schéma de base de données est posé ; le contrat d'API est ce qui débloque
 | POST | `/echeances/{id}/paiements` | Enregistrer un encaissement manuel | personnel_administratif |
 | GET | `/paiements/{id}/recu` | Reçu PDF | personnel_administratif, parent |
 | GET, POST | `/etablissements/{id}/annonces` | Consulter / publier une annonce | admin_etablissement (post), tous (get) |
+| GET | `/etablissements/{id}/statistiques` | Tableau de bord (effectifs, absentéisme, réussite, recouvrement) | admin_etablissement |
 | POST | `/sync/batch` | Synchroniser un lot d'écritures hors-ligne (notes, présences) | enseignant |
 
 La spécification complète — schémas de requête/réponse, codes d'erreur, exemples — est dans [`openapi.yaml`](./openapi.yaml).

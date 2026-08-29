@@ -49,12 +49,12 @@ Permettre à un établissement pilote de faire tourner **un trimestre complet** 
 | 4.7 | Annonces générales (direction → parents) | ✅ Complet |
 | 4.7 | Messagerie bidirectionnelle riche enseignant ↔ parent | ❌ Reporté (V1.1) — un fil d'annonces suffit pour valider le besoin |
 | 4.8 | Classes virtuelles | ❌ **Hors MVP** — n'était pas placée sur une phase précise dans le planning d'origine ; nécessite l'intégration Jitsi et n'est pas ce qui valide le concept auprès des écoles pilotes |
-| 4.9 | Statistiques direction | ❌ Non implémenté — voir note ci-dessous |
+| 4.9 | Statistiques direction | ✅ Version minimale : effectifs, taux d'absentéisme, taux de réussite par classe, taux de recouvrement financier. Export Excel/PDF avancé → V1.1 |
 | Volet B (section 5) | Soutien scolaire (cours, quiz, tutorat) | ❌ Hors MVP — Phase 3 dédiée |
 
 > **Note (30 août 2026)** — ce tableau déclarait à tort « Complet » sur plusieurs lignes qui ne l'étaient pas : écart trouvé en confrontant le document à l'API réelle, pas une régression (ces fonctionnalités n'ont jamais été construites — le document, écrit en tout début de session avant l'essentiel de l'implémentation, n'avait jamais été recorrigé). Statut réel, ligne par ligne :
 > - **Notification parent SMS/push (4.5)** et **bulletin/reçu PDF (4.4, 4.6)** : gaps délibérés et documentés dans le code (`PresenceController`, `AnnonceController`, `BulletinController`, `PaiementController`) — écrire une ligne en base sans jamais réussir à la délivrer serait pire que l'absence explicite actuelle. La notification exige le choix d'une passerelle SMS/push (compte, coûts, portée sur les réseaux guinéens) — une décision produit, pas seulement technique, qui reste à trancher avant de construire quoi que ce soit dessus. Le PDF exige un gabarit officiel guinéen dont nous ne disposons pas.
-> - **Statistiques direction (4.9)** : jamais construit, aucune trace dans le code ni le contrat — pas un gap délibéré, un oubli pur et simple à planifier.
+> - **Statistiques direction (4.9)** : trou réel comblé le 30 août 2026 (`GET /etablissements/{id}/statistiques`) — n'existait pas du tout avant, ni dans le code ni dans le contrat.
 > - **Transferts entre classes (4.2)** : trou réel comblé le 30 août 2026 (`PATCH /inscriptions/{id}`) — `POST /eleves/{id}/inscriptions` ne permettait pas de changer la classe d'une inscription existante (contrainte UNIQUE eleve_id/annee_scolaire_id), aucune route ne le permettait avant.
 > - **Import CSV élèves/utilisateurs (4.1)** : trou réel comblé le 30 août 2026 (`POST .../eleves/import`, `POST .../utilisateurs/import`) — documenté dans openapi.yaml depuis le début, jamais implémenté avant cette date.
 >

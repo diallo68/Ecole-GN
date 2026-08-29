@@ -12,6 +12,7 @@ import { FinancesPage } from './pages/FinancesPage'
 import { UtilisateursPage } from './pages/UtilisateursPage'
 import { EmploiDuTempsPage } from './pages/EmploiDuTempsPage'
 import { AnnoncesPage } from './pages/AnnoncesPage'
+import { StatistiquesPage } from './pages/StatistiquesPage'
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
             <Route path="/comptes" element={<UtilisateursPage />} />
             <Route path="/emploi-du-temps" element={<EmploiDuTempsPage />} />
             <Route path="/annonces" element={<AnnoncesPage />} />
+            <Route path="/statistiques" element={<StatistiquesPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

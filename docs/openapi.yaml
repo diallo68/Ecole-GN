@@ -31,6 +31,7 @@ tags:
   - name: Présences
   - name: Finances
   - name: Communication
+  - name: Statistiques
   - name: Synchronisation
 
 paths:
@@ -1062,6 +1063,51 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Annonce' }
+
+  # ---------- Statistiques ----------
+  /etablissements/{etablissementId}/statistiques:
+    parameters:
+      - $ref: '#/components/parameters/EtablissementIdPath'
+    get:
+      tags: [Statistiques]
+      summary: Tableau de bord direction (cahier des charges §4.9)
+      description: >-
+        Jamais construit avant le 30 août 2026 malgré mvp-scope.md qui le
+        déclarait « Complet » — voir la note ajoutée dans ce document.
+        Définitions retenues, documentées dans StatistiqueController :
+        absentéisme = part des présences marquées 'absent' (retard et
+        absence excusée exclus) ; réussite = sur la période la plus
+        récente de l'année, part des bulletins à moyenne >= 10/20 parmi
+        ceux qui ont une moyenne ; recouvrement = paiements / échéances
+        dues sur l'année. Une classe sans donnée sur un axe renvoie null,
+        pas 0 — un taux à 0% affirmerait un échec qui n'a pas été mesuré.
+      parameters:
+        - name: annee_scolaire_id
+          in: query
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  annee_scolaire_id: { type: integer }
+                  effectif_total: { type: integer }
+                  taux_recouvrement: { type: number, nullable: true }
+                  par_classe:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        classe_id: { type: integer }
+                        libelle: { type: string }
+                        niveau: { type: string }
+                        effectif: { type: integer }
+                        taux_absenteisme: { type: number, nullable: true }
+                        taux_reussite: { type: number, nullable: true }
 
   # ---------- Synchronisation hors-ligne ----------
   /sync/batch:

@@ -11,6 +11,7 @@ const LIENS = [
   { to: '/bulletins', label: 'Bulletins' },
   { to: '/finances', label: 'Finances' },
   { to: '/annonces', label: 'Annonces' },
+  { to: '/statistiques', label: 'Statistiques' },
 ]
 
 export function Layout() {

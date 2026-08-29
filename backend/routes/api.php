@@ -16,6 +16,7 @@ use App\Http\Controllers\MatiereController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\PeriodeEvaluationController;
 use App\Http\Controllers\PresenceController;
+use App\Http\Controllers\StatistiqueController;
 use App\Http\Controllers\SyncController;
 use Illuminate\Support\Facades\Route;
 
@@ -100,6 +101,8 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/etablissements/{etablissementId}/annonces', [AnnonceController::class, 'index']);
         Route::post('/etablissements/{etablissementId}/annonces', [AnnonceController::class, 'store']);
+
+        Route::get('/etablissements/{etablissementId}/statistiques', [StatistiqueController::class, 'index']);
 
         Route::post('/sync/batch', [SyncController::class, 'batch']);
     });
