@@ -448,16 +448,40 @@ erDiagram
 
 ## 5. Isolation multi-tenant (RLS)
 
-Exemple de politique appliquée à chaque table portant `etablissement_id` :
+> Ce schéma a été implémenté en migrations SQL réelles et exécuté contre PostgreSQL 16 pour vérifier l'isolation (pas seulement documentée) — voir [`db/`](../db/). Deux points ci-dessous ont été corrigés par rapport à une première version de ce document, à l'usage.
+
+Toutes les tables ne portent pas `etablissement_id` directement. Deux cas :
+
+**Tables avec la colonne directe** (`etablissements`, `etablissement_utilisateurs`, `annees_scolaires`, `classes`, `matieres`, `eleves`, `periodes_evaluation`, `frais_scolarite`, `annonces`) — policy simple :
 
 ```sql
 ALTER TABLE eleves ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY tenant_isolation ON eleves
-  USING (etablissement_id = current_setting('app.current_etablissement_id')::bigint);
+  USING (etablissement_id = current_etablissement_id());
 ```
 
-L'API pose `SET app.current_etablissement_id = '<id>'` au début de chaque transaction, une fois le token JWT vérifié et l'établissement résolu. La table `utilisateurs`, globale, n'a pas de politique RLS ; c'est `etablissement_utilisateurs` qui porte l'isolation pour les rattachements et les rôles.
+**Tables sans la colonne**, scopées via la table parente qui la porte (`classe_matiere_enseignant`, `inscriptions`, `emplois_du_temps`, `evaluations`, `notes`, `bulletins`, `presences`, `echeances`, `paiements`) — policy par `EXISTS`, y compris sur deux niveaux de jointure pour `paiements` :
+
+```sql
+ALTER TABLE paiements ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY tenant_isolation ON paiements
+  USING (EXISTS (
+    SELECT 1 FROM echeances ec
+    JOIN eleves e ON e.id = ec.eleve_id
+    WHERE ec.id = paiements.echeance_id
+      AND e.etablissement_id = current_etablissement_id()
+  ));
+```
+
+L'API pose `SET app.current_etablissement_id = '<id>'` au début de chaque transaction, une fois le token JWT vérifié et l'établissement résolu. Sans cette variable posée, les tables scopées renvoient 0 ligne (échec fermé silencieux, pas d'erreur) — l'API doit donc la poser systématiquement, jamais l'omettre par erreur sur un chemin de code.
+
+`utilisateurs` (globale), `parent_eleve` et `notifications` n'ont volontairement **pas** de policy par établissement : un parent est lié à des enfants de plusieurs établissements et une boîte de notifications lui appartient, pas à une école. Leur accès est filtré en application, pas en RLS — voir le détail dans [`db/migrations/022_rls_policies.sql`](../db/migrations/022_rls_policies.sql).
+
+### ⚠️ Piège vérifié : le rôle propriétaire échappe à ses propres policies
+
+Postgres exempte par défaut le **propriétaire** d'une table de ses propres politiques RLS. En testant avec le rôle ayant fait tourner les migrations, la RLS ne filtrait **rien du tout** — silencieusement, sans erreur. La correction : l'API doit se connecter avec un rôle applicatif dédié, distinct du propriétaire et non superuser (`db/setup_app_role.sql`). Vérifié après correction : le même jeu de données est correctement filtré par établissement.
 
 ---
 
