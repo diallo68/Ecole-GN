@@ -109,6 +109,18 @@ export interface ClasseMatiereEnseignant {
   enseignant: Utilisateur
 }
 
+export interface CreneauEmploiDuTemps {
+  id: number
+  classe_id: number
+  matiere_id: number
+  enseignant_id: number
+  jour_semaine: number
+  heure_debut: string
+  heure_fin: string
+  salle: string | null
+  conflits?: CreneauEmploiDuTemps[]
+}
+
 export interface Eleve {
   id: number
   matricule: string
