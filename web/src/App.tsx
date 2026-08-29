@@ -6,6 +6,7 @@ import { LoginPage } from './pages/LoginPage'
 import { AnneesScolairesPage } from './pages/AnneesScolairesPage'
 import { ClassesPage } from './pages/ClassesPage'
 import { ElevesPage } from './pages/ElevesPage'
+import { NotesPage } from './pages/NotesPage'
 import { BulletinsPage } from './pages/BulletinsPage'
 import { FinancesPage } from './pages/FinancesPage'
 import { UtilisateursPage } from './pages/UtilisateursPage'
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="/annees-scolaires" element={<AnneesScolairesPage />} />
             <Route path="/classes" element={<ClassesPage />} />
             <Route path="/eleves" element={<ElevesPage />} />
+            <Route path="/notes" element={<NotesPage />} />
             <Route path="/bulletins" element={<BulletinsPage />} />
             <Route path="/finances" element={<FinancesPage />} />
             <Route path="/comptes" element={<UtilisateursPage />} />

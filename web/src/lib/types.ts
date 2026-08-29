@@ -109,6 +109,26 @@ export interface ClasseMatiereEnseignant {
   enseignant: Utilisateur
 }
 
+export interface Evaluation {
+  id: number
+  type: 'devoir' | 'composition' | 'interrogation'
+  libelle: string
+  coefficient: string
+  date_evaluation: string
+  periode_id: number
+}
+
+export interface Note {
+  id?: number
+  eleve_id: number
+  // Le cast Eloquent `decimal:2` sérialise en chaîne côté API ("15.50"),
+  // pas en nombre JSON (même piège que côté mobile, voir mobile/README.md)
+  // — accepter les deux formes en lecture, toujours écrire un nombre.
+  valeur: string | number | null
+  appreciation: string | null
+  statut_sync?: 'synced' | 'pending'
+}
+
 export interface CreneauEmploiDuTemps {
   id: number
   classe_id: number

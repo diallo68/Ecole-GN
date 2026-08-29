@@ -7,6 +7,7 @@ const LIENS = [
   { to: '/eleves', label: 'Élèves' },
   { to: '/comptes', label: 'Comptes' },
   { to: '/emploi-du-temps', label: 'Emploi du temps' },
+  { to: '/notes', label: 'Notes' },
   { to: '/bulletins', label: 'Bulletins' },
   { to: '/finances', label: 'Finances' },
   { to: '/annonces', label: 'Annonces' },
