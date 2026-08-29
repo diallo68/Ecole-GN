@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnneeScolaireController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BulletinController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\EtablissementController;
@@ -62,9 +63,12 @@ Route::prefix('v1')->group(function () {
         Route::post('/classes/{classeId}/matieres/{matiereId}/evaluations', [EvaluationController::class, 'store']);
         Route::get('/evaluations/{id}/notes', [EvaluationController::class, 'notesIndex']);
         Route::put('/evaluations/{id}/notes', [EvaluationController::class, 'notesStore']);
+
+        Route::post('/periodes/{periodeId}/bulletins/generer', [BulletinController::class, 'generer']);
+        Route::get('/eleves/{id}/bulletins', [BulletinController::class, 'pourEleve']);
+        Route::post('/bulletins/{id}/valider', [BulletinController::class, 'valider']);
     });
 
     // TODO Phase 1 — voir docs/api-contract.md pour l'index complet :
-    // Emploi du temps, Bulletins, Présences, Finances, Communication,
-    // Synchronisation.
+    // Emploi du temps, Présences, Finances, Communication, Synchronisation.
 });

@@ -692,14 +692,19 @@ paths:
                 classe_id: { type: integer }
       responses:
         '202':
-          description: Génération lancée (traitement en tâche de fond, un bulletin par élève)
+          description: >
+            Génération lancée (traitement en tâche de fond, un bulletin par
+            élève). Un bulletin déjà validé ou publié n'est jamais
+            recalculé ni republié par cet appel — voir
+            nb_ignores_deja_publies.
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   tache_id: { type: string }
-                  nb_bulletins: { type: integer }
+                  nb_bulletins: { type: integer, description: "Bulletins créés ou mis à jour (statut brouillon)" }
+                  nb_ignores_deja_publies: { type: integer, description: "Bulletins déjà validés/publiés, volontairement non touchés" }
 
   /eleves/{id}/bulletins:
     parameters:
