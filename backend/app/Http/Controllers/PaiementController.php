@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Echeance;
 use App\Models\Paiement;
+use App\Models\ParentEleve;
 use Illuminate\Http\Request;
 
 /**
@@ -44,9 +45,20 @@ class PaiementController extends Controller
         return response()->json($paiement, 201);
     }
 
+    /**
+     * Faille trouvée le 30 août 2026 dans le même passage que les autres
+     * pourEleve()/notesIndex()/pourClasse() (voir leurs commentaires) :
+     * aucune vérification ici alors qu'api-contract.md réserve cet
+     * endpoint à "personnel_administratif, parent" — actuellement peu
+     * dangereux (pdf_recu_url reste toujours null en MVP), mais deviendrait
+     * une vraie fuite le jour où la génération de reçu serait implémentée.
+     * Corrigé maintenant plutôt que d'attendre que le PDF existe pour que
+     * la faille devienne visible.
+     */
     public function recu(Request $request, int $id)
     {
-        $paiement = Paiement::findOrFail($id);
+        $paiement = Paiement::with('echeance.eleve')->findOrFail($id);
+        $this->autoriserFinancesOuParent($request, $paiement->echeance->eleve_id);
 
         return response()->json(['pdf_url' => $paiement->pdf_recu_url]);
     }
@@ -86,5 +98,23 @@ class PaiementController extends Controller
             403,
             'Réservé à la direction ou au personnel administratif.'
         );
+    }
+
+    /** Même principe que EcheanceController::autoriserConsultation. */
+    private function autoriserFinancesOuParent(Request $request, int $eleveId): void
+    {
+        $superAdmin = $request->user()->est_super_admin;
+        $role = $request->attributes->get('role_etablissement');
+        $gestionnaire = in_array($role, ['admin_etablissement', 'personnel_administratif'], true);
+
+        if ($superAdmin || $gestionnaire) {
+            return;
+        }
+
+        $estParent = ParentEleve::where('utilisateur_id', $request->user()->id)
+            ->where('eleve_id', $eleveId)
+            ->exists();
+
+        abort_unless($estParent, 403, "Vous n'avez pas accès à ce reçu.");
     }
 }

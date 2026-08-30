@@ -41,6 +41,12 @@ Numérotés dans l'ordre de dépendance des clés étrangères — à exécuter 
 
 Les deux bugs n'apparaissent qu'en interrogeant les tables *via l'application* (donc sous le rôle `app_ecole_gn`, avec l'enchaînement réel des requêtes) — un test `psql` manuel qui pose la bonne variable à la main avant de lire ne les révèle pas. Voir `backend/app/Http/Middleware/ResolveEtablissementContext.php` pour l'ordre exact dans lequel les variables de session sont posées.
 
+## ⚠️ La RLS scope à l'établissement, pas à l'élève — ne pas s'y fier seule pour les données sensibles
+
+Faille trouvée le 30 août 2026, en préparant un écran mobile parent. `notes`, `bulletins`, `presences` et `echeances` ont une policy `tenant_isolation` par `EXISTS` qui vérifie seulement que l'élève (ou la classe) appartient à l'**établissement courant** (voir plus haut, « Tables sans etablissement_id direct »). C'est le bon niveau pour l'isolation multi-tenant — mais c'est *le mauvais niveau* pour les endpoints qui doivent restreindre l'accès à une seule famille ou à un seul enseignant à l'intérieur d'un même établissement. Plusieurs contrôleurs (`BulletinController::pourEleve`, `PresenceController::pourEleve`/`pourClasse`, `EvaluationController::notesIndex`, `EleveController::parents`/`index`, `PaiementController::recu`) s'appuyaient sur la RLS comme seule protection et n'avaient AUCUNE vérification applicative — alors qu'`api-contract.md` documentait déjà des rôles plus restreints (`parent`, `enseignant affecté`) pour chacun. N'importe quel utilisateur rattaché à l'établissement (un autre parent, un enseignant d'une autre classe) pouvait donc lire les bulletins, l'historique de présence ou les notes de classe entière de N'IMPORTE QUEL élève de l'établissement, pas seulement les siens.
+
+Corrigé (`AccesInterFamilleTest.php` verrouille chaque cas avec un scénario à deux familles). La règle à retenir pour tout nouvel endpoint scopé « élève » ou « classe » : la RLS garantit l'étanchéité *entre établissements*, jamais l'étanchéité *à l'intérieur* d'un établissement — cette dernière reste entièrement à la charge du contrôleur.
+
 ## Base de test — PostgreSQL, pas SQLite
 
 `backend/phpunit.xml` fait tourner les tests contre une vraie base PostgreSQL (`ecole_gn_test`), jamais SQLite : SQLite ne supporte pas la Row-Level Security, et cette RLS a déjà produit 3 bugs réels rien que dans ce dossier. La faire tourner sous SQLite en test l'aurait laissée complètement hors de portée de toute suite automatisée.

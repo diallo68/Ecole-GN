@@ -22,8 +22,19 @@ use Illuminate\Support\Str;
  */
 class EleveController extends Controller
 {
+    /**
+     * Faille trouvée le 30 août 2026 dans le même passage que les autres
+     * (voir les commentaires sur pourEleve()/notesIndex()/pourClasse()
+     * dans les autres contrôleurs) : aucune vérification ici alors
+     * qu'api-contract.md réserve cet endpoint à "admin_etablissement,
+     * personnel_administratif" — n'importe quel utilisateur rattaché à
+     * l'établissement (un enseignant, un parent) pouvait lister TOUS les
+     * élèves de l'établissement, pas seulement ceux de sa propre classe
+     * (déjà servis, à raison, sans restriction par GET /classes/{id}/eleves).
+     */
     public function index(Request $request, int $etablissementId)
     {
+        $this->autoriserAdmin($request);
         $query = Eleve::where('etablissement_id', $etablissementId);
 
         if ($request->filled('q')) {
@@ -251,8 +262,19 @@ class EleveController extends Controller
         return response()->json($inscription);
     }
 
+    /**
+     * Faille trouvée le 30 août 2026, dans le même passage que
+     * BulletinController/PresenceController::pourEleve (voir leurs
+     * commentaires) : aucune vérification ici alors qu'api-contract.md
+     * réserve cet endpoint à admin_etablissement/personnel_administratif —
+     * n'importe quel utilisateur rattaché à l'établissement pouvait lire
+     * les noms ET numéros de téléphone des parents de n'importe quel
+     * élève. lierParent() (POST, plus bas) appelait déjà autoriserAdmin() ;
+     * seule cette lecture avait été oubliée.
+     */
     public function parents(Request $request, int $id)
     {
+        $this->autoriserAdmin($request);
         $eleve = Eleve::findOrFail($id);
 
         return response()->json(

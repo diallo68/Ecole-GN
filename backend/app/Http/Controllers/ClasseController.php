@@ -98,6 +98,7 @@ class ClasseController extends Controller
      */
     public function inscriptions(Request $request, int $id)
     {
+        $this->autoriserAdmin($request);
         $classe = Classe::findOrFail($id);
 
         return response()->json(

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bulletin;
 use App\Models\Eleve;
+use App\Models\ParentEleve;
 use App\Support\CalculBulletin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -77,6 +78,7 @@ class BulletinController extends Controller
     public function pourEleve(Request $request, int $id)
     {
         $eleve = Eleve::findOrFail($id);
+        $this->autoriserAdminOuParent($request, $eleve);
 
         return response()->json(
             Bulletin::where('eleve_id', $eleve->id)
@@ -106,5 +108,32 @@ class BulletinController extends Controller
         $admin = $request->attributes->get('role_etablissement') === 'admin_etablissement';
 
         abort_unless($superAdmin || $admin, 403, "Réservé à l'administrateur de l'établissement.");
+    }
+
+    /**
+     * Faille trouvée le 30 août 2026, en préparant un écran mobile parent :
+     * pourEleve() n'avait AUCUNE vérification — la RLS scope 'bulletins' à
+     * l'établissement, pas à l'élève (022_rls_policies.sql), donc n'importe
+     * quel utilisateur rattaché à l'établissement (un autre parent, un
+     * enseignant qui ne suit pas cet élève) pouvait lire les bulletins de
+     * N'IMPORTE QUEL élève de l'école en devinant son id — alors même
+     * qu'api-contract.md documentait déjà "admin_etablissement, parent"
+     * comme rôles autorisés. Le contrat était juste, l'implémentation ne
+     * le respectait pas.
+     */
+    private function autoriserAdminOuParent(Request $request, Eleve $eleve): void
+    {
+        $superAdmin = $request->user()->est_super_admin;
+        $admin = $request->attributes->get('role_etablissement') === 'admin_etablissement';
+
+        if ($superAdmin || $admin) {
+            return;
+        }
+
+        $estParent = ParentEleve::where('utilisateur_id', $request->user()->id)
+            ->where('eleve_id', $eleve->id)
+            ->exists();
+
+        abort_unless($estParent, 403, "Vous n'avez pas accès aux bulletins de cet élève.");
     }
 }

@@ -62,9 +62,21 @@ class EvaluationController extends Controller
         return response()->json($evaluation, 201);
     }
 
+    /**
+     * Faille trouvée le 30 août 2026 dans le même passage que
+     * BulletinController/PresenceController::pourEleve (voir leurs
+     * commentaires) : aucune vérification ici alors qu'api-contract.md
+     * réserve cet endpoint à "enseignant, admin_etablissement" — n'importe
+     * quel utilisateur rattaché à l'établissement (y compris un parent)
+     * pouvait lire les notes de TOUTE une classe pour une évaluation en
+     * devinant son id, pas seulement celles de son propre enfant.
+     * notesStore() (PUT, plus bas) vérifiait déjà via
+     * autoriserEnseignantOuAdmin() ; seule cette lecture avait été oubliée.
+     */
     public function notesIndex(Request $request, int $id)
     {
-        $evaluation = Evaluation::findOrFail($id);
+        $evaluation = Evaluation::with('classeMatiereEnseignant')->findOrFail($id);
+        $this->autoriserEnseignantOuAdmin($request, $evaluation->classeMatiereEnseignant);
 
         return response()->json($evaluation->notes()->get());
     }
