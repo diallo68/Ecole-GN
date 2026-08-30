@@ -585,7 +585,8 @@ paths:
         moyen de découvrir ses propres enfants. Scopé à l'établissement
         courant (X-Etablissement-Id) comme tout le reste de l'API ; un
         parent avec des enfants dans plusieurs établissements doit
-        changer d'établissement courant pour voir les autres.
+        changer d'établissement courant pour voir les autres. Chaque
+        élève porte en plus le champ `classe` (voir Eleve).
       responses:
         '200':
           description: OK
@@ -1422,6 +1423,12 @@ components:
         sexe: { type: string, enum: [M, F], nullable: true }
         photo_url: { type: string, format: uri, nullable: true }
         statut: { type: string, enum: [actif, inactif, diplome] }
+        # Présent uniquement sur GET /mes-enfants : l'inscription 'inscrit'
+        # la plus récente de l'élève (utile à l'app mobile parent pour
+        # afficher l'emploi du temps, qui a besoin de classe_id).
+        classe:
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/Classe' }]
 
     EleveEcriture:
       type: object
@@ -1478,6 +1485,13 @@ components:
         heure_debut: { type: string, example: "08:00" }
         heure_fin: { type: string, example: "09:00" }
         salle: { type: string, nullable: true }
+        # Présents uniquement sur GET /classes/{id}/emploi-du-temps (même
+        # convention que ClasseMatiereEnseignant.matiere/enseignant) :
+        # l'app mobile (enseignant/parent) n'a pas accès à
+        # GET /etablissements/{id}/utilisateurs (réservé à
+        # l'administration) pour résoudre enseignant_id elle-même.
+        matiere: { $ref: '#/components/schemas/Matiere' }
+        enseignant: { $ref: '#/components/schemas/Utilisateur' }
 
     CreneauEmploiDuTempsEcriture:
       type: object

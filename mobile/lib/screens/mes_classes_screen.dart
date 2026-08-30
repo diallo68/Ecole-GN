@@ -5,7 +5,9 @@ import '../api/api_client.dart';
 import '../auth/auth_service.dart';
 import '../models/models.dart';
 import '../offline/sync_service.dart';
+import 'annonces_screen.dart';
 import 'appel_screen.dart';
+import 'emploi_du_temps_screen.dart';
 import 'file_erreurs_screen.dart';
 import 'matieres_screen.dart';
 
@@ -48,6 +50,21 @@ class _MesClassesScreenState extends State<MesClassesScreen> {
       appBar: AppBar(
         title: const Text('Mes classes'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.campaign_outlined),
+            tooltip: 'Annonces',
+            onPressed: () async {
+              final classes = await _classes;
+              if (!context.mounted) return;
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => AnnoncesScreen(
+                    mesClasseIds: classes.map((c) => c.id).toSet(),
+                  ),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => context.read<AuthService>().deconnecter(),
@@ -181,6 +198,21 @@ class _ListeClasses extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => MatieresScreen(classe: classe),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.calendar_month_outlined),
+              title: const Text('Emploi du temps'),
+              onTap: () {
+                Navigator.of(contexteFeuille).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => EmploiDuTempsScreen(
+                      classeId: classe.id,
+                      titre: classe.libelle,
+                    ),
                   ),
                 );
               },

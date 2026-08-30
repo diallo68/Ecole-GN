@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../api/api_client.dart';
 import '../models/models.dart';
+import 'emploi_du_temps_screen.dart';
 
 /// Consultation lecture seule pour un parent : bulletins et présences de
 /// son enfant. Parcours critique n°5 du MVP (docs/mvp-scope.md) —
@@ -58,6 +59,24 @@ class _EnfantDetailScreenState extends State<EnfantDetailScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.eleve.nom} ${widget.eleve.prenom}'),
+        actions: [
+          // La classe n'est connue que si l'enfant a une inscription
+          // active (voir EleveController::mesEnfants) — pas d'action si
+          // elle est nulle plutôt qu'un écran vide déroutant.
+          if (widget.eleve.classe != null)
+            IconButton(
+              icon: const Icon(Icons.calendar_month_outlined),
+              tooltip: 'Emploi du temps',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => EmploiDuTempsScreen(
+                    classeId: widget.eleve.classe!.id,
+                    titre: widget.eleve.classe!.libelle,
+                  ),
+                ),
+              ),
+            ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: const [

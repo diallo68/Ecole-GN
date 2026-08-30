@@ -36,7 +36,29 @@ class EleveController extends Controller
     {
         $eleveIds = ParentEleve::where('utilisateur_id', $request->user()->id)->pluck('eleve_id');
 
-        return response()->json(Eleve::whereIn('id', $eleveIds)->orderBy('nom')->get());
+        // `classe` (l'inscription active la plus récente) ajoutée pour
+        // l'app mobile : sans elle, l'écran "Détail enfant" n'avait aucun
+        // moyen de retrouver la classe de l'enfant pour afficher son
+        // emploi du temps (GET /classes/{id}/emploi-du-temps a besoin de
+        // classe_id). Un élève transféré en cours d'année (voir
+        // PATCH /inscriptions/{id}) a plusieurs inscriptions 'inscrit'
+        // possibles sur des années différentes — la plus récente par
+        // date_inscription est prise comme "classe actuelle".
+        $eleves = Eleve::whereIn('id', $eleveIds)
+            ->with(['inscriptions' => fn ($q) => $q->where('statut', 'inscrit')
+                ->with('classe')
+                ->orderByDesc('date_inscription'),
+            ])
+            ->orderBy('nom')
+            ->get();
+
+        return response()->json($eleves->map(function (Eleve $eleve) {
+            $donnees = $eleve->toArray();
+            $donnees['classe'] = $eleve->inscriptions->first()?->classe;
+            unset($donnees['inscriptions']);
+
+            return $donnees;
+        }));
     }
 
     /**

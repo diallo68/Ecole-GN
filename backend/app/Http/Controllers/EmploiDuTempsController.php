@@ -19,8 +19,16 @@ class EmploiDuTempsController extends Controller
     {
         $classe = Classe::findOrFail($id);
 
+        // ->with('matiere', 'enseignant') : sans ça, l'app mobile
+        // (enseignant/parent) n'a aucun moyen d'afficher un nom lisible —
+        // GET /etablissements/{id}/utilisateurs (qui résoudrait
+        // enseignant_id côté web) est réservé à l'administration, pas
+        // accessible à un parent ni à un enseignant. Même convention que
+        // ClasseMatiereEnseignant/Inscription : champs présents
+        // uniquement sur cette lecture.
         return response()->json(
             CreneauEmploiDuTemps::where('classe_id', $classe->id)
+                ->with('matiere', 'enseignant')
                 ->orderBy('jour_semaine')
                 ->orderBy('heure_debut')
                 ->get()

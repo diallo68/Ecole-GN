@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../api/api_client.dart';
 import '../auth/auth_service.dart';
 import '../models/models.dart';
+import 'annonces_screen.dart';
 import 'enfant_detail_screen.dart';
 
 /// Écran d'accueil pour un compte parent — pendant de MesClassesScreen côté
@@ -39,6 +40,23 @@ class _MesEnfantsScreenState extends State<MesEnfantsScreen> {
       appBar: AppBar(
         title: const Text('Mes enfants'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.campaign_outlined),
+            tooltip: 'Annonces',
+            onPressed: () async {
+              final enfants = await _enfants;
+              if (!context.mounted) return;
+              final classeIds = enfants
+                  .map((e) => e.classe?.id)
+                  .whereType<int>()
+                  .toSet();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => AnnoncesScreen(mesClasseIds: classeIds),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => context.read<AuthService>().deconnecter(),

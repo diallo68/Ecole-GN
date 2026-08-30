@@ -44,4 +44,50 @@ void main() {
       },
     );
   });
+
+  group('Creneau.fromJson', () {
+    test('tronque les secondes renvoyées par le cast Postgres time', () {
+      // Le cast Postgres `time` sérialise avec les secondes
+      // ("08:00:00"), pas au format "HH:MM" que promet l'exemple
+      // d'openapi.yaml — déjà contourné côté web (EmploiDuTempsPage.tsx,
+      // .slice(0, 5)).
+      final creneau = Creneau.fromJson({
+        'id': 1,
+        'jour_semaine': 1,
+        'heure_debut': '08:00:00',
+        'heure_fin': '09:00:00',
+        'salle': null,
+        'matiere': {'nom': 'Mathématiques'},
+        'enseignant': {'nom': 'Barry', 'prenom': 'Ibrahima'},
+      });
+
+      expect(creneau.heureDebut, '08:00');
+      expect(creneau.heureFin, '09:00');
+      expect(creneau.matiereNom, 'Mathématiques');
+      expect(creneau.enseignantNom, 'Barry');
+    });
+  });
+
+  group('Eleve.fromJson', () {
+    test('classe absente (endpoint autre que /mes-enfants) reste null', () {
+      final eleve = Eleve.fromJson({
+        'id': 1,
+        'matricule': 'EL-00001',
+        'nom': 'Diallo',
+        'prenom': 'Aissatou',
+      });
+      expect(eleve.classe, isNull);
+    });
+
+    test('classe présente (GET /mes-enfants) est parsée', () {
+      final eleve = Eleve.fromJson({
+        'id': 1,
+        'matricule': 'EL-00001',
+        'nom': 'Diallo',
+        'prenom': 'Aissatou',
+        'classe': {'id': 5, 'niveau': 'CM2', 'libelle': 'CM2 A'},
+      });
+      expect(eleve.classe?.libelle, 'CM2 A');
+    });
+  });
 }

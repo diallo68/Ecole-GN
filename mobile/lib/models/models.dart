@@ -74,12 +74,16 @@ class Eleve {
   final String matricule;
   final String nom;
   final String prenom;
+  // Présent uniquement sur GET /mes-enfants (classe actuelle de l'enfant) —
+  // absent partout ailleurs (GET /classes/{id}/eleves, etc.).
+  final Classe? classe;
 
   Eleve({
     required this.id,
     required this.matricule,
     required this.nom,
     required this.prenom,
+    this.classe,
   });
 
   factory Eleve.fromJson(Map<String, dynamic> json) => Eleve(
@@ -87,6 +91,9 @@ class Eleve {
     matricule: json['matricule'] as String,
     nom: json['nom'] as String,
     prenom: json['prenom'] as String,
+    classe: json['classe'] == null
+        ? null
+        : Classe.fromJson(json['classe'] as Map<String, dynamic>),
   );
 }
 
@@ -258,5 +265,79 @@ class Note {
       final String s => num.tryParse(s),
       _ => null,
     },
+  );
+}
+
+/// Un créneau tel que renvoyé par GET /classes/{id}/emploi-du-temps —
+/// matiere/enseignant imbriqués (voir EmploiDuTempsController::index) :
+/// l'app mobile n'a pas accès à la liste des utilisateurs (réservée à
+/// l'administration) pour résoudre enseignant_id elle-même.
+class Creneau {
+  final int id;
+  final int jourSemaine; // 1 (lundi) à 7 (dimanche)
+  final String heureDebut;
+  final String heureFin;
+  final String? salle;
+  final String matiereNom;
+  final String enseignantNom;
+  final String enseignantPrenom;
+
+  Creneau({
+    required this.id,
+    required this.jourSemaine,
+    required this.heureDebut,
+    required this.heureFin,
+    this.salle,
+    required this.matiereNom,
+    required this.enseignantNom,
+    required this.enseignantPrenom,
+  });
+
+  factory Creneau.fromJson(Map<String, dynamic> json) => Creneau(
+    id: json['id'] as int,
+    jourSemaine: json['jour_semaine'] as int,
+    // Le cast Postgres `time` sérialise avec les secondes ("08:00:00"),
+    // pas au format "HH:MM" que promet l'exemple d'openapi.yaml — déjà
+    // contourné côté web (EmploiDuTempsPage.tsx, .slice(0, 5)) avec le
+    // même correctif ; vérifié en HTTP réel avant d'écrire cet écran,
+    // pas découvert après coup.
+    heureDebut: (json['heure_debut'] as String).substring(0, 5),
+    heureFin: (json['heure_fin'] as String).substring(0, 5),
+    salle: json['salle'] as String?,
+    matiereNom:
+        (json['matiere'] as Map<String, dynamic>?)?['nom'] as String? ?? '—',
+    enseignantNom:
+        (json['enseignant'] as Map<String, dynamic>?)?['nom'] as String? ?? '',
+    enseignantPrenom:
+        (json['enseignant'] as Map<String, dynamic>?)?['prenom'] as String? ??
+        '',
+  );
+}
+
+/// Une annonce telle que renvoyée par GET /etablissements/{id}/annonces.
+class Annonce {
+  final int id;
+  final String titre;
+  final String contenu;
+  final String cibleType; // 'etablissement' | 'classe'
+  final int? cibleId;
+  final String publieeLe;
+
+  Annonce({
+    required this.id,
+    required this.titre,
+    required this.contenu,
+    required this.cibleType,
+    this.cibleId,
+    required this.publieeLe,
+  });
+
+  factory Annonce.fromJson(Map<String, dynamic> json) => Annonce(
+    id: json['id'] as int,
+    titre: json['titre'] as String,
+    contenu: json['contenu'] as String,
+    cibleType: json['cible_type'] as String,
+    cibleId: json['cible_id'] as int?,
+    publieeLe: (json['publiee_le'] as String).split('T').first,
   );
 }
