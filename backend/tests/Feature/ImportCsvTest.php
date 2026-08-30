@@ -90,6 +90,29 @@ class ImportCsvTest extends TestCase
             ->assertJson(['lignes_recues' => 2, 'nb_crees' => 2, 'nb_erreurs' => 0]);
     }
 
+    public function test_import_eleves_colonnes_optionnelles_presentes_mais_vides(): void
+    {
+        // Complète test_..._sans_les_colonnes_optionnelles ci-dessus :
+        // ici les colonnes existent dans l'en-tête mais sont vides pour
+        // chaque ligne (cas réel : un tableur exporté avec toutes les
+        // colonnes même quand rien n'y est saisi) — même bug que celui
+        // trouvé sur l'import utilisateurs (cellule vide -> '' et non
+        // null, voir LecteurCsv::lignes), ici sans contrainte UNIQUE pour
+        // le déclencher directement mais qui aurait fait échouer le cast
+        // `date` de date_naissance sur une chaîne vide.
+        [$etablissementId, $admin] = $this->creerEtablissementEtAdmin();
+
+        $csv = "nom,prenom,matricule,date_naissance,sexe\n"
+            ."Toure,Fatoumata,,,\n"
+            ."Kaba,Sekou,,,\n";
+        $fichier = UploadedFile::fake()->createWithContent('eleves.csv', $csv);
+
+        $this->actingAs($admin, 'sanctum')
+            ->post("/api/v1/etablissements/{$etablissementId}/eleves/import", ['fichier' => $fichier])
+            ->assertStatus(202)
+            ->assertJson(['lignes_recues' => 2, 'nb_crees' => 2, 'nb_erreurs' => 0]);
+    }
+
     public function test_import_eleves_matricule_deja_utilise_rejette_la_ligne_sans_casser_les_autres(): void
     {
         [$etablissementId, $admin] = $this->creerEtablissementEtAdmin();
@@ -109,6 +132,32 @@ class ImportCsvTest extends TestCase
             ->assertStatus(202);
 
         $reponse->assertJson(['nb_crees' => 1, 'nb_erreurs' => 1]);
+    }
+
+    public function test_import_utilisateurs_deux_lignes_avec_email_vide_ne_se_percutent_pas(): void
+    {
+        // Bug réel trouvé en import réel (pas en écrivant le test au
+        // départ) : une cellule CSV vide devenait '' et non null — sans
+        // conséquence pour une colonne quelconque, mais utilisateurs.email
+        // porte une contrainte UNIQUE nullable : Postgres autorise
+        // plusieurs NULL, jamais plusieurs ''. Deux lignes avec la colonne
+        // email présente mais vide (pas absente — colonne présente
+        // distingue ce cas de test_import_utilisateurs_reutilise... plus
+        // bas, dont le CSV n'a même pas de colonne email) se percutaient
+        // donc l'une l'autre.
+        [$etablissementId, $admin] = $this->creerEtablissementEtAdmin();
+
+        $tel1 = $this->faker->unique()->numerify('+2246########');
+        $tel2 = $this->faker->unique()->numerify('+2246########');
+        $csv = "nom,prenom,telephone,email,role\n"
+            ."Un,Test,{$tel1},,enseignant\n"
+            ."Deux,Test,{$tel2},,personnel_administratif\n";
+        $fichier = UploadedFile::fake()->createWithContent('utilisateurs.csv', $csv);
+
+        $this->actingAs($admin, 'sanctum')
+            ->post("/api/v1/etablissements/{$etablissementId}/utilisateurs/import", ['fichier' => $fichier])
+            ->assertStatus(202)
+            ->assertJson(['nb_crees' => 2, 'nb_erreurs' => 0]);
     }
 
     public function test_import_utilisateurs_reutilise_un_compte_existant_par_telephone(): void

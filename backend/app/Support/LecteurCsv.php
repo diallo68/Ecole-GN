@@ -19,8 +19,8 @@ use Illuminate\Http\UploadedFile;
 class LecteurCsv
 {
     /**
-     * @return array<int, array<string, string>> une ligne par élément,
-     *                                           clé = en-tête de colonne (première ligne du fichier)
+     * @return array<int, array<string, string|null>> une ligne par élément,
+     *                                                clé = en-tête de colonne (première ligne du fichier)
      */
     public static function lignes(UploadedFile $fichier): array
     {
@@ -50,7 +50,21 @@ class LecteurCsv
             // sur une ligne mal formée — chaque ligne reste indépendante
             // (même principe que SyncController::batch).
             $valeurs = array_pad($brute, count($entetes), '');
-            $lignes[] = array_combine($entetes, array_slice($valeurs, 0, count($entetes)));
+            $valeurs = array_slice($valeurs, 0, count($entetes));
+
+            // Cellule vide -> null, pas '' : sinon une colonne optionnelle
+            // avec contrainte UNIQUE nullable (ex. utilisateurs.email) fait
+            // percuter la DEUXIÈME ligne qui la laisse vide, alors que
+            // Postgres autorise plusieurs NULL sans problème — '' n'est
+            // pas NULL. Le middleware ConvertEmptyStringsToNull de Laravel
+            // ne s'applique qu'aux entrées de $request, jamais à un
+            // tableau construit à la main comme celui-ci. Trouvé en
+            // import réel (deux lignes email vide dans le même fichier),
+            // pas en écrivant le test (qui n'avait jamais essayé deux
+            // lignes avec le même champ optionnel vide).
+            $valeurs = array_map(fn ($v) => $v === '' ? null : $v, $valeurs);
+
+            $lignes[] = array_combine($entetes, $valeurs);
         }
 
         fclose($poignee);
