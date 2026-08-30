@@ -17,7 +17,7 @@ Permettre à un établissement pilote de faire tourner **un trimestre complet** 
 | Administrateur établissement (direction) | ✅ Oui | Accès complet web |
 | Personnel administratif (secrétariat) | ✅ Oui | Inscriptions, encaissements manuels |
 | Enseignant | ✅ Oui | Mobile en priorité : notes, appel |
-| Parent | ✅ Oui | Mobile : consultation + notifications |
+| Parent | ✅ Oui | Mobile : consultation (bulletins publiés, présences) ; notifications reportées, voir note §2 |
 | Super-admin plateforme | ✅ Oui, minimal | Juste assez pour créer les établissements pilotes — pas d'onboarding self-service (Phase 5) |
 | Élève (accès autonome) | ❌ Non | Le compte parent suffit pour valider le concept ; reporté en V1.1 |
 | Répétiteur / tuteur | ❌ Non | Appartient au Volet B (Soutien scolaire), Phase 3 |

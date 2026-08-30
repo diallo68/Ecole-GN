@@ -47,6 +47,7 @@ Le schéma de base de données est posé ; le contrat d'API est ce qui débloque
 | GET, POST | `/classes/{id}/emploi-du-temps` | Consulter / créer un créneau | admin_etablissement, enseignant, parent |
 | GET, POST | `/etablissements/{id}/eleves` | Lister / créer un élève | admin_etablissement, personnel_administratif |
 | POST | `/etablissements/{id}/eleves/import` | Import en masse (CSV) | admin_etablissement |
+| GET | `/mes-enfants` | Élèves liés au compte parent connecté | parent |
 | GET | `/eleves/{id}` | Dossier élève | admin_etablissement, enseignant, parent |
 | POST | `/eleves/{id}/inscriptions` | Inscrire l'élève dans une classe | admin_etablissement |
 | PATCH | `/inscriptions/{id}` | Transférer l'élève vers une autre classe (même année) | admin_etablissement |

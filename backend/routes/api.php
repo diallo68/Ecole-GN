@@ -65,6 +65,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/etablissements/{etablissementId}/eleves', [EleveController::class, 'index']);
         Route::post('/etablissements/{etablissementId}/eleves', [EleveController::class, 'store']);
         Route::post('/etablissements/{etablissementId}/eleves/import', [EleveController::class, 'import']);
+        Route::get('/mes-enfants', [EleveController::class, 'mesEnfants']);
         Route::get('/eleves/{id}', [EleveController::class, 'show']);
         Route::post('/eleves/{id}/inscriptions', [EleveController::class, 'inscrire']);
         Route::patch('/inscriptions/{id}', [EleveController::class, 'transferer']);

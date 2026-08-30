@@ -575,6 +575,26 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/ResultatImport' }
 
+  /mes-enfants:
+    get:
+      tags: [Élèves]
+      summary: Élèves liés au compte parent connecté
+      description: >-
+        Manquait jusqu'ici : GET /eleves/{id}/parents (l'élève vers ses
+        parents) existait, l'inverse non — un compte parent n'avait aucun
+        moyen de découvrir ses propres enfants. Scopé à l'établissement
+        courant (X-Etablissement-Id) comme tout le reste de l'API ; un
+        parent avec des enfants dans plusieurs établissements doit
+        changer d'établissement courant pour voir les autres.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Eleve' }
+
   /eleves/{id}:
     parameters:
       - $ref: '#/components/parameters/IdPath'
@@ -866,6 +886,11 @@ paths:
     get:
       tags: [Bulletins]
       summary: Historique des bulletins de l'élève
+      description: >-
+        Réservé à admin_etablissement (tous statuts) ou au parent de cet
+        élève (statut 'publie' uniquement — un brouillon peut encore
+        changer avant validation par la direction, voir la note sur
+        POST /periodes/{id}/bulletins/generer).
       responses:
         '200':
           description: OK

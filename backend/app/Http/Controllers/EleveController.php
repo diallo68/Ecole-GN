@@ -17,11 +17,28 @@ use Illuminate\Support\Str;
 
 /**
  * Correspond à /etablissements/{etablissementId}/eleves, /eleves/{id},
- * /eleves/{id}/inscriptions et /etablissements/{etablissementId}/eleves/import
- * dans docs/openapi.yaml.
+ * /eleves/{id}/inscriptions, /etablissements/{etablissementId}/eleves/import
+ * et /mes-enfants dans docs/openapi.yaml.
  */
 class EleveController extends Controller
 {
+    /**
+     * Manquait jusqu'ici : aucun moyen pour un compte parent de découvrir
+     * SES enfants — seul l'inverse existait (GET /eleves/{id}/parents).
+     * Sans lui, un écran mobile parent ne pouvait même pas démarrer.
+     * Aucune vérification au-delà de "c'est le rattachement de
+     * l'utilisateur courant" n'est nécessaire ici (même principe que
+     * 024_own_rattachement_rls_bypass.sql : consulter ses propres liens
+     * ne fuite rien qui ne lui appartienne déjà) — la RLS sur `eleves`
+     * limite de toute façon à l'établissement courant (X-Etablissement-Id).
+     */
+    public function mesEnfants(Request $request)
+    {
+        $eleveIds = ParentEleve::where('utilisateur_id', $request->user()->id)->pluck('eleve_id');
+
+        return response()->json(Eleve::whereIn('id', $eleveIds)->orderBy('nom')->get());
+    }
+
     /**
      * Faille trouvée le 30 août 2026 dans le même passage que les autres
      * (voir les commentaires sur pourEleve()/notesIndex()/pourClasse()

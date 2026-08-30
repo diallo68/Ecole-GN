@@ -78,13 +78,22 @@ class BulletinController extends Controller
     public function pourEleve(Request $request, int $id)
     {
         $eleve = Eleve::findOrFail($id);
-        $this->autoriserAdminOuParent($request, $eleve);
+        $estAdmin = $this->autoriserAdminOuParent($request, $eleve);
+
+        $query = Bulletin::where('eleve_id', $eleve->id)->with('periode');
+
+        // Un parent ne voit que les bulletins publiés — un 'brouillon'
+        // peut encore changer (une note corrigée après coup) avant que la
+        // direction ne le valide, voir le commentaire sur generer() plus
+        // haut : "une famille a pu déjà le voir" est précisément ce que ce
+        // filtre évite pour un brouillon. L'admin, qui doit les réviser
+        // avant publication, voit tous les statuts.
+        if (! $estAdmin) {
+            $query->where('statut', 'publie');
+        }
 
         return response()->json(
-            Bulletin::where('eleve_id', $eleve->id)
-                ->with('periode')
-                ->orderByDesc('genere_le')
-                ->get()
+            $query->orderByDesc('genere_le')->get()
         );
     }
 
@@ -121,13 +130,14 @@ class BulletinController extends Controller
      * comme rôles autorisés. Le contrat était juste, l'implémentation ne
      * le respectait pas.
      */
-    private function autoriserAdminOuParent(Request $request, Eleve $eleve): void
+    /** @return bool true si admin/super-admin — pourEleve() s'en sert pour filtrer les brouillons. */
+    private function autoriserAdminOuParent(Request $request, Eleve $eleve): bool
     {
         $superAdmin = $request->user()->est_super_admin;
         $admin = $request->attributes->get('role_etablissement') === 'admin_etablissement';
 
         if ($superAdmin || $admin) {
-            return;
+            return true;
         }
 
         $estParent = ParentEleve::where('utilisateur_id', $request->user()->id)
@@ -135,5 +145,7 @@ class BulletinController extends Controller
             ->exists();
 
         abort_unless($estParent, 403, "Vous n'avez pas accès aux bulletins de cet élève.");
+
+        return false;
     }
 }

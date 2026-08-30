@@ -1,6 +1,8 @@
-# Mobile — app enseignant
+# Mobile — app enseignant & parent
 
 Flutter, contre l'API décrite dans [`../docs/openapi.yaml`](../docs/openapi.yaml). Voir `../docs/architecture-technique.md` §02 pour le choix de stack (Flutter plutôt que React Native — performance sur Android bas de gamme, support hors-ligne natif).
+
+Un compte direction/personnel administratif se connecte mais atterrit sur un écran de repli ("utilisez le portail web") — cette app cible enseignant (`lib/screens/mes_classes_screen.dart`) et parent (`lib/screens/mes_enfants_screen.dart`), le back-office reste sur `../web`. L'écran d'accueil est choisi par `AuthService.roleCourant` (`lib/main.dart`).
 
 ## Démarrer en local
 
@@ -21,7 +23,7 @@ flutter run
 
 - `lib/api/api_client.dart` — client HTTP minimal (paquet `http`, pas dio), pose `Authorization` et `X-Etablissement-Id`. Token et établissement courant en `flutter_secure_storage`.
 - `lib/auth/auth_service.dart` — `ChangeNotifier`, miroir de `web/src/auth/AuthContext.tsx`.
-- `lib/screens/` — Connexion, Mes classes (`?enseignant_id=`), Appel, Matières → Évaluations → Notes, Écritures en erreur.
+- `lib/screens/` — Connexion ; côté enseignant : Mes classes (`?enseignant_id=`), Appel, Matières → Évaluations → Notes, Écritures en erreur ; côté parent : Mes enfants (`GET /mes-enfants`), Détail enfant (bulletins + présences, lecture seule).
 
 ## Mode hors-ligne
 
@@ -31,9 +33,15 @@ La création d'une évaluation elle-même (métadonnée : type, libellé, pério
 
 Une écriture rejetée par le serveur (période clôturée, autorisation retirée entre-temps…) ne se resynchronisera jamais toute seule — "Réessayer" rejouerait indéfiniment le même échec. Le bandeau d'erreur ouvre `FileErreursScreen`, qui liste chaque écriture rejetée avec son message et permet de l'ignorer (suppression définitive, confirmée) après l'avoir lue — jamais de purge automatique ou silencieuse : l'enseignant doit voir le message avant que l'écriture ne disparaisse.
 
+## Côté parent
+
+`mes_enfants_screen.dart` liste les élèves liés au compte connecté (`GET /mes-enfants`, ajouté le 30 août 2026 — jusque-là seul l'inverse élève→parents existait). `enfant_detail_screen.dart` affiche, en lecture seule, les bulletins et l'historique de présence de l'enfant sélectionné.
+
+Cet écran a directement mené à trouver une vraie faille de sécurité : plusieurs endpoints élève (`bulletins`, `presences`, notes de classe, coordonnées des parents) n'avaient aucune vérification au-delà de la RLS établissement, qui ne scope pas à l'élève — n'importe quel utilisateur rattaché pouvait lire les données de n'importe quel élève de l'école. Corrigé côté backend avant de construire l'écran dessus (voir `db/README.md`, `AccesInterFamilleTest.php`). Un parent ne voit par ailleurs que les bulletins déjà **publiés** — un brouillon peut encore changer avant validation par la direction.
+
 ## Vérifié / non vérifié
 
-Vérifié : `flutter analyze` (propre), `flutter test` (14 tests — dont l'interprétation des réponses `/sync/batch`, un vrai aller-retour SQLite via `sqflite_common_ffi`, et le parsing des modèles Notes/Évaluations), `flutter build web` (compilation réelle), et le parcours complet Matières → créer une évaluation → saisir des notes → `/sync/batch` → relecture rejoué contre un vrai serveur Laravel + Postgres local (pas seulement écrit, exécuté avec curl en suivant exactement les appels que fait chaque écran). `ecrituresEnErreur()`/`ignorer()` (SyncService) et `FileErreursScreen` reposent uniquement sur des méthodes `BaseLocale` déjà couvertes par `base_locale_test.dart` (`marquerEnErreur`, `supprimer`, `lister`) — pas de test dédié en plus : construire un vrai `SyncService` en test exigerait `connectivity_plus`, qui exige un binding de plateforme réel comme `flutter_secure_storage`/`sqflite` (voir plus haut) et n'a pas de variante `_ffi` équivalente ; risque de reproduire le blocage `pumpAndSettle` déjà rencontré et évité ailleurs dans ce dossier plutôt qu'un gain de couverture réel sur une simple lecture-filtrée + suppression.
+Vérifié : `flutter analyze` (propre), `flutter test` (16 tests — dont l'interprétation des réponses `/sync/batch`, un vrai aller-retour SQLite via `sqflite_common_ffi`, le parsing des modèles Notes/Évaluations/Bulletins/Présences, et `AuthService.roleCourant`), `flutter build web` (compilation réelle), et deux parcours complets rejoués contre un vrai serveur Laravel + Postgres local avec curl, en suivant exactement les appels que fait chaque écran (pas seulement écrits, exécutés) : Matières → créer une évaluation → saisir des notes → `/sync/batch` → relecture ; et connexion parent → `/mes-enfants` → bulletins/présences de l'enfant, y compris un contrôle négatif (un parent tiers, non lié, reçoit 403 sur les quatre endpoints les plus sensibles) et la vérification que le filtre brouillon fonctionne réellement (bulletin non publié invisible au parent, visible à l'admin). `ecrituresEnErreur()`/`ignorer()` (SyncService) et `FileErreursScreen` reposent uniquement sur des méthodes `BaseLocale` déjà couvertes par `base_locale_test.dart` (`marquerEnErreur`, `supprimer`, `lister`) — pas de test dédié en plus : construire un vrai `SyncService` en test exigerait `connectivity_plus`, qui exige un binding de plateforme réel comme `flutter_secure_storage`/`sqflite` (voir plus haut) et n'a pas de variante `_ffi` équivalente ; risque de reproduire le blocage `pumpAndSettle` déjà rencontré et évité ailleurs dans ce dossier plutôt qu'un gain de couverture réel sur une simple lecture-filtrée + suppression.
 
 Deux vrais bugs trouvés en rejouant ce parcours contre l'API réelle (pas en relisant le code) :
 - La factory SQLite injectable ne l'était pas vraiment — `_ouvrir()` passait par une fonction globale qui ignorait l'injection, donc les tests auraient silencieusement utilisé le vrai plugin de plateforme (et échoué) sans le détecter. Corrigé.

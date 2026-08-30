@@ -168,6 +168,23 @@ class AccesInterFamilleTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_bulletin_brouillon_invisible_au_parent_mais_visible_a_ladmin(): void
+    {
+        $s = $this->creerScenario();
+        // creerScenario() génère un bulletin pour eleveA mais ne le publie
+        // jamais — il reste au statut par défaut 'brouillon'.
+
+        $this->actingAs($s['admin'], 'sanctum')
+            ->getJson("/api/v1/eleves/{$s['eleveAId']}/bulletins")
+            ->assertOk()
+            ->assertJsonCount(1);
+
+        $this->actingAs($s['parentA'], 'sanctum')
+            ->getJson("/api/v1/eleves/{$s['eleveAId']}/bulletins")
+            ->assertOk()
+            ->assertJsonCount(0);
+    }
+
     public function test_presences_dun_eleve_invisibles_au_parent_dun_autre_eleve(): void
     {
         $s = $this->creerScenario();
@@ -242,6 +259,19 @@ class AccesInterFamilleTest extends TestCase
         $this->actingAs($s['parentB'], 'sanctum')
             ->getJson("/api/v1/paiements/{$s['paiementAId']}/recu")
             ->assertForbidden();
+    }
+
+    public function test_mes_enfants_ne_renvoie_que_les_liens_du_parent_connecte(): void
+    {
+        $s = $this->creerScenario();
+
+        $reponseA = $this->actingAs($s['parentA'], 'sanctum')->getJson('/api/v1/mes-enfants')->assertOk();
+        $reponseA->assertJsonCount(1);
+        $this->assertEquals($s['eleveAId'], $reponseA->json('0.id'));
+
+        $reponseB = $this->actingAs($s['parentB'], 'sanctum')->getJson('/api/v1/mes-enfants')->assertOk();
+        $reponseB->assertJsonCount(1);
+        $this->assertEquals($s['eleveBId'], $reponseB->json('0.id'));
     }
 
     public function test_inscriptions_dune_classe_invisibles_a_un_enseignant(): void

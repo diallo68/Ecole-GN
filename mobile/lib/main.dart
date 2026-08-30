@@ -8,6 +8,7 @@ import 'offline/base_locale.dart';
 import 'offline/sync_service.dart';
 import 'screens/login_screen.dart';
 import 'screens/mes_classes_screen.dart';
+import 'screens/mes_enfants_screen.dart';
 
 void main() {
   runApp(const EcoleGnApp());
@@ -52,8 +53,37 @@ class _Racine extends StatelessWidget {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return auth.utilisateur == null
-        ? const LoginScreen()
-        : const MesClassesScreen();
+    if (auth.utilisateur == null) {
+      return const LoginScreen();
+    }
+
+    // L'app mobile est pensée enseignant/parent (voir
+    // architecture-technique.md §02) — un compte direction/personnel
+    // administratif est censé utiliser le web, pas cet écran d'accueil.
+    return switch (auth.roleCourant) {
+      'parent' => const MesEnfantsScreen(),
+      'enseignant' => const MesClassesScreen(),
+      _ => Scaffold(
+        appBar: AppBar(
+          title: const Text('Plateforme scolaire'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () => auth.deconnecter(),
+            ),
+          ],
+        ),
+        body: const Center(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text(
+              "Ce compte n'a pas d'écran mobile dédié (direction/personnel "
+              'administratif) — utilisez le portail web.',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    };
   }
 }

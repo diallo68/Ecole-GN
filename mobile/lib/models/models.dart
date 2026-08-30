@@ -185,6 +185,60 @@ class Evaluation {
   );
 }
 
+/// Un bulletin tel que renvoyé par GET /eleves/{id}/bulletins — la période
+/// est imbriquée (voir BulletinController::pourEleve, ->with('periode')).
+class BulletinEleve {
+  final int id;
+  final String periodeLibelle;
+  final num? moyenneGenerale;
+  final int? rang;
+  final int? effectifClasse;
+  final String statut;
+
+  BulletinEleve({
+    required this.id,
+    required this.periodeLibelle,
+    this.moyenneGenerale,
+    this.rang,
+    this.effectifClasse,
+    required this.statut,
+  });
+
+  factory BulletinEleve.fromJson(Map<String, dynamic> json) => BulletinEleve(
+    id: json['id'] as int,
+    periodeLibelle:
+        (json['periode'] as Map<String, dynamic>?)?['libelle'] as String? ??
+        '—',
+    // Même piège decimal:2 → chaîne que Note.valeur (voir plus bas).
+    moyenneGenerale: switch (json['moyenne_generale']) {
+      null => null,
+      final num v => v,
+      final String s => num.tryParse(s),
+      _ => null,
+    },
+    rang: json['rang'] as int?,
+    effectifClasse: json['effectif_classe'] as int?,
+    statut: json['statut'] as String,
+  );
+}
+
+/// Une présence telle que renvoyée par GET /eleves/{id}/presences.
+class PresenceEleve {
+  final int id;
+  final String date;
+  final StatutPresence statut;
+
+  PresenceEleve({required this.id, required this.date, required this.statut});
+
+  factory PresenceEleve.fromJson(Map<String, dynamic> json) => PresenceEleve(
+    id: json['id'] as int,
+    // Même écart de contrat que Evaluation.dateEvaluation (voir plus haut) :
+    // l'API sérialise en ISO 8601 complet, pas au format `date`.
+    date: (json['date'] as String).split('T').first,
+    statut: StatutPresenceJson.depuisApi(json['statut'] as String),
+  );
+}
+
 class Note {
   final int eleveId;
   final num? valeur;

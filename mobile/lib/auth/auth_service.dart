@@ -60,6 +60,18 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Rôle du rattachement à l'établissement courant — détermine quel
+  /// écran d'accueil afficher (Mes classes pour un enseignant, Mes
+  /// enfants pour un parent). Null si aucun établissement n'est
+  /// sélectionné, ou si le rattachement n'existe plus dans la liste.
+  String? get roleCourant => rattachements
+      .cast<Rattachement?>()
+      .firstWhere(
+        (r) => r?.etablissement.id == etablissementCourantId,
+        orElse: () => null,
+      )
+      ?.role;
+
   void choisirEtablissement(int id) {
     api.setEtablissementCourant(id);
     etablissementCourantId = id;
