@@ -14,10 +14,28 @@ const LIENS = [
   { to: '/statistiques', label: 'Statistiques' },
 ]
 
+// Ce back-office cible la direction et le personnel administratif (voir
+// web/README.md) — enseignant et parent ont leurs propres écrans sur
+// l'app mobile (miroir de la logique dans mobile/lib/main.dart,
+// AuthService.roleCourant). Un compte enseignant/parent PEUT se
+// connecter ici (rien ne l'en empêche côté API), mais voyait jusqu'ici
+// le menu complet de la direction sans y avoir droit — chaque clic
+// échouant ensuite en 403 côté serveur. Trouvé en repassant les mains
+// de l'utilisateur sur un compte parent de démonstration.
+const ROLES_BACK_OFFICE = ['admin_etablissement', 'personnel_administratif']
+
 export function Layout() {
-  const { utilisateur, rattachements, etablissementCourantId, choisirEtablissement, deconnecte } = useAuth()
+  const { utilisateur, rattachements, etablissementCourantId, roleCourant, choisirEtablissement, deconnecte } =
+    useAuth()
 
   const etablissementCourant = rattachements.find((r) => r.etablissement.id === etablissementCourantId)?.etablissement
+  // null : aucun établissement encore résolu (multi-rattachement pas
+  // choisi) — ne pas bloquer prématurément, seul un rôle enseignant/
+  // parent CONFIRMÉ ferme l'accès.
+  const accesAutorise =
+    utilisateur?.est_super_admin ||
+    roleCourant === null ||
+    ROLES_BACK_OFFICE.includes(roleCourant)
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -30,19 +48,21 @@ export function Layout() {
                 <span className="ml-2 text-sm text-slate-500">— {etablissementCourant.nom}</span>
               )}
             </div>
-            <nav className="flex gap-4">
-              {LIENS.map((lien) => (
-                <NavLink
-                  key={lien.to}
-                  to={lien.to}
-                  className={({ isActive }) =>
-                    `text-sm ${isActive ? 'font-medium text-blue-700' : 'text-slate-600 hover:text-slate-900'}`
-                  }
-                >
-                  {lien.label}
-                </NavLink>
-              ))}
-            </nav>
+            {accesAutorise && (
+              <nav className="flex gap-4">
+                {LIENS.map((lien) => (
+                  <NavLink
+                    key={lien.to}
+                    to={lien.to}
+                    className={({ isActive }) =>
+                      `text-sm ${isActive ? 'font-medium text-blue-700' : 'text-slate-600 hover:text-slate-900'}`
+                    }
+                  >
+                    {lien.label}
+                  </NavLink>
+                ))}
+              </nav>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
@@ -73,7 +93,20 @@ export function Layout() {
       </header>
 
       <main className="mx-auto max-w-5xl px-4 py-6">
-        <Outlet />
+        {accesAutorise ? (
+          <Outlet />
+        ) : (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-6 text-amber-900">
+            <p className="font-medium">Ce compte n'est pas prévu pour ce portail.</p>
+            <p className="mt-1 text-sm">
+              Le back-office web est réservé à la direction et au personnel administratif. En tant qu'{' '}
+              {roleCourant === 'parent' ? 'parent' : 'enseignant'}, utilisez l'application mobile pour consulter{' '}
+              {roleCourant === 'parent'
+                ? "les bulletins et présences de vos enfants, l'emploi du temps et les annonces."
+                : "vos classes, faire l'appel, saisir des notes, consulter l'emploi du temps et les annonces."}
+            </p>
+          </div>
+        )}
       </main>
     </div>
   )

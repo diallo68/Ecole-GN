@@ -6,6 +6,9 @@ interface AuthState {
   utilisateur: Utilisateur | null
   rattachements: Rattachement[]
   etablissementCourantId: number | null
+  /** Rôle du rattachement à l'établissement courant — miroir de
+   * AuthService.roleCourant côté mobile (lib/auth/auth_service.dart). */
+  roleCourant: string | null
   chargement: boolean
   connecte: (identifiant: string, motDePasse: string) => Promise<void>
   deconnecte: () => Promise<void>
@@ -68,9 +71,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setEtablissementCourantId(id)
   }
 
+  const roleCourant = rattachements.find((r) => r.etablissement.id === etablissementCourantId)?.role ?? null
+
   return (
     <AuthContext.Provider
-      value={{ utilisateur, rattachements, etablissementCourantId, chargement, connecte, deconnecte, choisirEtablissement }}
+      value={{
+        utilisateur,
+        rattachements,
+        etablissementCourantId,
+        roleCourant,
+        chargement,
+        connecte,
+        deconnecte,
+        choisirEtablissement,
+      }}
     >
       {children}
     </AuthContext.Provider>
