@@ -88,6 +88,23 @@ class ClasseController extends Controller
         );
     }
 
+    /**
+     * Distinct de eleves() : celui-ci renvoie les Inscription (avec leur
+     * propre id), pas les Eleve — c'est l'id d'inscription, pas l'id
+     * d'élève, qu'attend PATCH /inscriptions/{id} pour un transfert. Ajouté
+     * pour l'écran de transfert de classe (docs/mvp-scope.md §4.2) : sans
+     * lui, l'UI n'avait aucun moyen de retrouver l'id d'inscription à
+     * transférer sans le deviner.
+     */
+    public function inscriptions(Request $request, int $id)
+    {
+        $classe = Classe::findOrFail($id);
+
+        return response()->json(
+            $classe->inscriptions()->where('statut', 'inscrit')->with('eleve')->get()
+        );
+    }
+
     public function matieres(Request $request, int $id)
     {
         $classe = Classe::findOrFail($id);

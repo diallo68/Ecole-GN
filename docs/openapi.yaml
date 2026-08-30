@@ -364,6 +364,25 @@ paths:
                 type: array
                 items: { $ref: '#/components/schemas/Eleve' }
 
+  /classes/{id}/inscriptions:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      tags: [Classes]
+      summary: Inscriptions actives de la classe, avec l'élève
+      description: >-
+        Distinct de GET /classes/{id}/eleves : renvoie l'Inscription (avec
+        son propre id), pas l'Eleve — c'est l'id d'inscription, pas l'id
+        d'élève, qu'attend PATCH /inscriptions/{id} pour un transfert.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Inscription' }
+
   # ---------- Matières ----------
   /etablissements/{etablissementId}/matieres:
     parameters:
@@ -1398,6 +1417,10 @@ components:
         annee_scolaire_id: { type: integer }
         date_inscription: { type: string, format: date }
         statut: { type: string, enum: [inscrit, abandonne] }
+        # Présent uniquement sur GET /classes/{id}/inscriptions (même
+        # convention que ClasseMatiereEnseignant.matiere/enseignant) :
+        # évite un aller-retour de plus pour afficher le nom de l'élève.
+        eleve: { $ref: '#/components/schemas/Eleve' }
 
     ParentEleve:
       type: object

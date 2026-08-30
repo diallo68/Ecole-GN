@@ -170,6 +170,17 @@ export interface ResultatImport {
   erreurs: { ligne: number; message: string }[]
 }
 
+export interface Inscription {
+  id: number
+  eleve_id: number
+  classe_id: number
+  annee_scolaire_id: number
+  date_inscription: string
+  statut: 'inscrit' | 'abandonne'
+  /** Présent uniquement sur GET /classes/{id}/inscriptions. */
+  eleve?: Eleve
+}
+
 export interface Pagination {
   page: number
   per_page: number

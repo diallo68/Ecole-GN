@@ -72,6 +72,48 @@ class TransfertClasseTest extends TestCase
         $this->assertCount(1, $elevesClasseB);
     }
 
+    public function test_liste_les_inscriptions_dune_classe_avec_lelevet_pas_les_abandonnees(): void
+    {
+        $superAdmin = Utilisateur::factory()->superAdmin()->create(['telephone' => $this->faker->unique()->numerify('+2246########')]);
+
+        $etablissementId = $this->actingAs($superAdmin, 'sanctum')
+            ->postJson('/api/v1/etablissements', ['nom' => 'École Inscriptions', 'cycle' => 'primaire'])
+            ->assertCreated()->json('id');
+
+        $telAdmin = $this->faker->unique()->numerify('+2246########');
+        $this->actingAs($superAdmin, 'sanctum')
+            ->postJson("/api/v1/etablissements/{$etablissementId}/utilisateurs", [
+                'nom' => 'Diallo', 'prenom' => 'Admin', 'telephone' => $telAdmin, 'role' => 'admin_etablissement',
+            ])->assertCreated();
+        $admin = Utilisateur::where('telephone', $telAdmin)->firstOrFail();
+
+        $anneeId = $this->actingAs($admin, 'sanctum')
+            ->postJson("/api/v1/etablissements/{$etablissementId}/annees-scolaires", [
+                'libelle' => '2026-2027', 'date_debut' => '2026-10-01', 'date_fin' => '2027-07-15',
+            ])->assertCreated()->json('id');
+
+        $classeId = $this->actingAs($admin, 'sanctum')
+            ->postJson("/api/v1/etablissements/{$etablissementId}/classes", [
+                'niveau' => 'CM2', 'libelle' => 'CM2 A', 'annee_scolaire_id' => $anneeId,
+            ])->assertCreated()->json('id');
+
+        $eleveId = $this->actingAs($admin, 'sanctum')
+            ->postJson("/api/v1/etablissements/{$etablissementId}/eleves", ['nom' => 'Bah', 'prenom' => 'Mariam'])
+            ->assertCreated()->json('id');
+        $this->actingAs($admin, 'sanctum')
+            ->postJson("/api/v1/eleves/{$eleveId}/inscriptions", ['classe_id' => $classeId, 'annee_scolaire_id' => $anneeId])
+            ->assertCreated();
+
+        $reponse = $this->actingAs($admin, 'sanctum')
+            ->getJson("/api/v1/classes/{$classeId}/inscriptions")
+            ->assertOk();
+
+        $reponse->assertJsonCount(1);
+        $this->assertEquals($eleveId, $reponse->json('0.eleve_id'));
+        $this->assertEquals('Bah', $reponse->json('0.eleve.nom'));
+        $this->assertEquals('inscrit', $reponse->json('0.statut'));
+    }
+
     public function test_transfert_refuse_une_classe_dune_autre_annee_scolaire(): void
     {
         $superAdmin = Utilisateur::factory()->superAdmin()->create(['telephone' => $this->faker->unique()->numerify('+2246########')]);
