@@ -74,7 +74,7 @@ function UserMenu({ prenom, nom, isAdmin, onLogout }: { prenom: string; nom?: st
           {isAdmin && (
             <Link href="/admin" onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-ink/70 hover:bg-sand transition-colors">
-              <LayoutDashboard size={15} /> Back-office
+              <LayoutDashboard size={15} /> Mon profil
             </Link>
           )}
           <button onClick={() => { setOpen(false); onLogout(); }}
