@@ -44,18 +44,18 @@ export default function RepetiteurClassesPage() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div className="bg-white rounded-xl border border-slate-200 p-4 h-fit">
+      <div className="bg-white rounded-xl border border-ink/10 p-4 h-fit">
         <h2 className="font-bold mb-3">Planifier une classe virtuelle</h2>
         <div className="space-y-2">
-          <input placeholder="Titre (ex: Révisions Bac blanc)" value={titre} onChange={e => setTitre(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
-          <select value={matiere} onChange={e => setMatiere(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+          <input placeholder="Titre (ex: Révisions Bac blanc)" value={titre} onChange={e => setTitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
+          <select value={matiere} onChange={e => setMatiere(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm">
             {MATIERES.map(m => <option key={m} value={m}>{m}</option>)}
           </select>
-          <select value={niveau} onChange={e => setNiveau(e.target.value as Niveau)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+          <select value={niveau} onChange={e => setNiveau(e.target.value as Niveau)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm">
             {NIVEAUX.map(n => <option key={n} value={n}>{n}</option>)}
           </select>
-          <input type="datetime-local" value={dateHeure} onChange={e => setDateHeure(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
-          <button onClick={planifier} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 text-sm font-semibold hover:bg-blue-700 disabled:opacity-50">
+          <input type="datetime-local" value={dateHeure} onChange={e => setDateHeure(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
+          <button onClick={planifier} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 text-sm font-semibold hover:bg-brand-dark disabled:opacity-50">
             {loading ? 'Création...' : 'Planifier (lien visio généré auto.)'}
           </button>
         </div>
@@ -64,11 +64,11 @@ export default function RepetiteurClassesPage() {
       <div className="md:col-span-2 space-y-3">
         <h2 className="font-bold">Mes classes virtuelles</h2>
         {classes.length === 0 ? (
-          <p className="text-slate-500 text-sm">Aucune classe planifiée.</p>
+          <p className="text-ink/60 text-sm">Aucune classe planifiée.</p>
         ) : classes.map(c => (
-          <div key={c._id} className="bg-white rounded-xl border border-slate-200 p-4">
+          <div key={c._id} className="bg-white rounded-xl border border-ink/10 p-4">
             <p className="font-semibold">{c.titre}</p>
-            <p className="text-sm text-slate-500">{c.matiere} · {c.niveau} · {new Date(c.dateHeure).toLocaleString('fr-FR')}</p>
+            <p className="text-sm text-ink/60">{c.matiere} · {c.niveau} · {new Date(c.dateHeure).toLocaleString('fr-FR')}</p>
             <a href={c.lienVisio} target="_blank" rel="noreferrer" className="text-sm text-brand font-semibold">Lien de la salle →</a>
           </div>
         ))}

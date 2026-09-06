@@ -6,6 +6,10 @@ import { useAuthStore } from '@/store/authStore';
 import { Colors } from '@/lib/constants';
 import type { Reservation } from '@/types';
 
+const ROLE_LABELS: Record<string, string> = {
+  eleve: 'élève', parent: 'parent', repetiteur: 'enseignant', admin: 'admin',
+};
+
 export default function CompteScreen() {
   const router = useRouter();
   const { user, isLoggedIn, logout } = useAuthStore();
@@ -37,7 +41,7 @@ export default function CompteScreen() {
       ListHeaderComponent={
         <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 20, fontWeight: '900', color: Colors.ink }}>Bonjour {user.prenom} 👋</Text>
-          <Text style={{ color: Colors.inkMuted, marginBottom: 12 }}>Espace {user.role}</Text>
+          <Text style={{ color: Colors.inkMuted, marginBottom: 12 }}>Espace {ROLE_LABELS[user.role] || user.role}</Text>
           {user.role === 'repetiteur' && !user.repetiteur?.valide && (
             <View style={{ backgroundColor: '#fffbeb', borderWidth: 1, borderColor: Colors.warning, borderRadius: 10, padding: 10, marginBottom: 10 }}>
               <Text style={{ fontSize: 12, color: Colors.warning }}>Profil en attente de validation par l'équipe Gandal.</Text>

@@ -82,38 +82,38 @@ export default function RepetiteurContenuPage() {
       <div className="flex gap-2 mb-6">
         {TYPES.map(t => (
           <button key={t.value} onClick={() => setType(t.value)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold ${type === t.value ? 'bg-brand text-white' : 'bg-white border border-slate-300'}`}>
+            className={`px-4 py-2 rounded-lg text-sm font-semibold ${type === t.value ? 'bg-brand text-white' : 'bg-white border border-ink/15'}`}>
             {t.label}
           </button>
         ))}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-1 bg-white rounded-xl border border-slate-200 p-4 h-fit">
+        <div className="md:col-span-1 bg-white rounded-xl border border-ink/10 p-4 h-fit">
           <h2 className="font-bold mb-3">Publier {type === 'video' ? 'une vidéo' : type === 'support' ? 'un support' : 'un exercice'}</h2>
           <div className="space-y-2">
-            <input placeholder="Titre" value={titre} onChange={e => setTitre(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
-            <select value={matiere} onChange={e => setMatiere(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+            <input placeholder="Titre" value={titre} onChange={e => setTitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
+            <select value={matiere} onChange={e => setMatiere(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm">
               {MATIERES.map(m => <option key={m} value={m}>{m}</option>)}
             </select>
-            <select value={niveau} onChange={e => setNiveau(e.target.value as Niveau)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+            <select value={niveau} onChange={e => setNiveau(e.target.value as Niveau)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm">
               {NIVEAUX.map(n => <option key={n} value={n}>{n}</option>)}
             </select>
-            <input placeholder="Chapitre (optionnel)" value={chapitre} onChange={e => setChapitre(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+            <input placeholder="Chapitre (optionnel)" value={chapitre} onChange={e => setChapitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
 
             {type !== 'exercice' && (
               <input placeholder={type === 'video' ? 'URL de la vidéo (Cloudinary)' : 'URL du fichier (PDF)'} value={url} onChange={e => setUrl(e.target.value)}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+                className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
             )}
             {type === 'exercice' && (
               <>
-                <textarea placeholder="Énoncé" value={enonce} onChange={e => setEnonce(e.target.value)} rows={3} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
-                <textarea placeholder="Correction (optionnelle)" value={correction} onChange={e => setCorrection(e.target.value)} rows={2} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
-                <input placeholder="Pièce jointe (optionnelle, URL)" value={url} onChange={e => setUrl(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+                <textarea placeholder="Énoncé" value={enonce} onChange={e => setEnonce(e.target.value)} rows={3} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
+                <textarea placeholder="Correction (optionnelle)" value={correction} onChange={e => setCorrection(e.target.value)} rows={2} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
+                <input placeholder="Pièce jointe (optionnelle, URL)" value={url} onChange={e => setUrl(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
               </>
             )}
 
-            <button onClick={publier} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 text-sm font-semibold hover:bg-blue-700 disabled:opacity-50">
+            <button onClick={publier} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 text-sm font-semibold hover:bg-brand-dark disabled:opacity-50">
               {loading ? 'Publication...' : 'Publier'}
             </button>
           </div>
@@ -121,13 +121,13 @@ export default function RepetiteurContenuPage() {
 
         <div className="md:col-span-2 space-y-3">
           {items.length === 0 ? (
-            <p className="text-slate-500 text-sm">Rien de publié pour l'instant dans cette catégorie.</p>
+            <p className="text-ink/60 text-sm">Rien de publié pour l'instant dans cette catégorie.</p>
           ) : items.map(item => (
-            <div key={item._id} className="bg-white rounded-xl border border-slate-200 p-4 flex items-start justify-between">
+            <div key={item._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-start justify-between">
               <div>
                 <p className="font-semibold">{item.titre}</p>
-                <p className="text-sm text-slate-500">{item.matiere} · {item.niveau}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
-                {item.enonce && <p className="text-sm text-slate-600 mt-1">{item.enonce}</p>}
+                <p className="text-sm text-ink/60">{item.matiere} · {item.niveau}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
+                {item.enonce && <p className="text-sm text-ink/70 mt-1">{item.enonce}</p>}
               </div>
               <button onClick={() => supprimer(item._id)} className="text-red-500 text-sm hover:underline shrink-0 ml-3">Supprimer</button>
             </div>

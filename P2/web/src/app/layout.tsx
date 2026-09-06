@@ -5,15 +5,15 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Gandal — Soutien scolaire en Guinée',
-  description: 'Trouve un répétiteur, réserve un cours, teste-toi avec nos quiz — Gandal, connaissance pour tous.',
+  description: 'Trouve un enseignant, réserve un cours, teste-toi avec nos quiz — Gandal, connaissance pour tous.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body>
+      <body className="bg-sand">
         <Navbar />
-        <main className="max-w-5xl mx-auto px-4 py-6">{children}</main>
+        <main className="max-w-5xl mx-auto px-4 py-8">{children}</main>
         <Toaster position="top-center" />
       </body>
     </html>

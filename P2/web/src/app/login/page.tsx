@@ -29,14 +29,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-sm mx-auto bg-white rounded-xl border border-slate-200 p-6">
+    <div className="max-w-sm mx-auto bg-white rounded-xl border border-ink/10 p-6">
       <h1 className="text-xl font-bold mb-4">Connexion</h1>
       <form onSubmit={handleSubmit} className="space-y-3">
         <input type="email" required placeholder="Email" value={email} onChange={e => setEmail(e.target.value)}
-          className="w-full border border-slate-300 rounded-lg px-3 py-2" />
+          className="w-full border border-ink/15 rounded-lg px-3 py-2" />
         <input type="password" required placeholder="Mot de passe" value={password} onChange={e => setPassword(e.target.value)}
-          className="w-full border border-slate-300 rounded-lg px-3 py-2" />
-        <button type="submit" disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-blue-700 disabled:opacity-50">
+          className="w-full border border-ink/15 rounded-lg px-3 py-2" />
+        <button type="submit" disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
           {loading ? 'Connexion...' : 'Se connecter'}
         </button>
       </form>

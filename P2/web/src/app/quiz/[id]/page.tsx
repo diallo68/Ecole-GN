@@ -37,12 +37,12 @@ export default function QuizPlayPage() {
     }
   };
 
-  if (!quiz) return <p className="text-slate-500">Chargement...</p>;
+  if (!quiz) return <p className="text-ink/60">Chargement...</p>;
 
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-1">{quiz.titre}</h1>
-      <p className="text-slate-500 mb-6">{quiz.matiere} · {quiz.niveau}</p>
+      <p className="text-ink/60 mb-6">{quiz.matiere} · {quiz.niveau}</p>
 
       {result && (
         <div className="bg-brand/10 border border-brand rounded-xl p-4 mb-6 text-center">
@@ -52,18 +52,18 @@ export default function QuizPlayPage() {
 
       <div className="space-y-6">
         {quiz.questions.map((q, i) => (
-          <div key={i} className="bg-white rounded-xl border border-slate-200 p-4">
+          <div key={i} className="bg-white rounded-xl border border-ink/10 p-4">
             <p className="font-semibold mb-2">{i + 1}. {q.question}</p>
             <div className="space-y-2">
               {q.choix.map((c, ci) => {
                 const isSelected = reponses[i] === ci;
                 const correction = result?.correction[i];
                 const isCorrectAnswer = correction && correction.reponseCorrecte === ci;
-                let style = 'border-slate-300';
+                let style = 'border-ink/15';
                 if (result) {
                   if (isCorrectAnswer) style = 'border-green-500 bg-green-50';
                   else if (isSelected && !correction?.correct) style = 'border-red-500 bg-red-50';
-                } else if (isSelected) style = 'border-brand bg-blue-50';
+                } else if (isSelected) style = 'border-brand bg-brand-light';
 
                 return (
                   <button key={ci} disabled={!!result} onClick={() => choisir(i, ci)}
@@ -74,14 +74,14 @@ export default function QuizPlayPage() {
               })}
             </div>
             {result?.correction[i]?.explication && (
-              <p className="text-xs text-slate-500 mt-2 italic">{result.correction[i].explication}</p>
+              <p className="text-xs text-ink/60 mt-2 italic">{result.correction[i].explication}</p>
             )}
           </div>
         ))}
       </div>
 
       {!result && (
-        <button onClick={soumettre} disabled={loading} className="mt-6 w-full bg-brand text-white rounded-lg py-2.5 font-semibold hover:bg-blue-700 disabled:opacity-50">
+        <button onClick={soumettre} disabled={loading} className="mt-6 w-full bg-brand text-white rounded-lg py-2.5 font-semibold hover:bg-brand-dark disabled:opacity-50">
           {loading ? 'Correction...' : 'Valider mes réponses'}
         </button>
       )}

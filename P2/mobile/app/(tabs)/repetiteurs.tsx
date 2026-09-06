@@ -54,7 +54,7 @@ export default function RepetiteursScreen() {
           data={repetiteurs}
           keyExtractor={item => item._id}
           contentContainerStyle={{ padding: 12, gap: 10 }}
-          ListEmptyComponent={<Text style={{ textAlign: 'center', color: Colors.inkMuted, marginTop: 20 }}>Aucun répétiteur ne correspond.</Text>}
+          ListEmptyComponent={<Text style={{ textAlign: 'center', color: Colors.inkMuted, marginTop: 20 }}>Aucun enseignant ne correspond.</Text>}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => router.push(`/repetiteur/${item._id}`)}
               style={{ backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 14, padding: 14 }}>

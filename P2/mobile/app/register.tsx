@@ -9,6 +9,8 @@ import type { Role, Niveau } from '@/types';
 
 type Step = 'infos' | 'otp';
 
+const ROLE_LABELS: Record<Role, string> = { eleve: 'Élève', parent: 'Parent', repetiteur: 'Enseignant', admin: 'Admin' };
+
 export default function RegisterScreen() {
   const router = useRouter();
   const { login } = useAuthStore();
@@ -70,7 +72,7 @@ export default function RegisterScreen() {
             {(['eleve', 'parent', 'repetiteur'] as Role[]).map(r => (
               <TouchableOpacity key={r} onPress={() => setRole(r)}
                 style={{ flex: 1, borderRadius: 10, padding: 10, alignItems: 'center', backgroundColor: role === r ? Colors.brand : Colors.white, borderWidth: 1, borderColor: role === r ? Colors.brand : Colors.surfaceBorder }}>
-                <Text style={{ color: role === r ? Colors.white : Colors.ink, fontSize: 12, fontWeight: '700', textTransform: 'capitalize' }}>{r}</Text>
+                <Text style={{ color: role === r ? Colors.white : Colors.ink, fontSize: 12, fontWeight: '700' }}>{ROLE_LABELS[r]}</Text>
               </TouchableOpacity>
             ))}
           </View>

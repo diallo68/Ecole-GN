@@ -17,8 +17,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div>
-      <div className="flex gap-3 mb-6 border-b border-slate-200 pb-3">
-        <Link href="/admin/repetiteurs" className="text-sm font-semibold hover:text-brand">Modération répétiteurs</Link>
+      <div className="flex gap-3 mb-6 border-b border-ink/10 pb-3">
+        <Link href="/admin/repetiteurs" className="text-sm font-semibold hover:text-brand">Modération enseignants</Link>
         <Link href="/admin/quiz" className="text-sm font-semibold hover:text-brand">Quiz</Link>
       </div>
       {children}

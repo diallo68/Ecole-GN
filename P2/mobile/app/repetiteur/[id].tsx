@@ -22,7 +22,7 @@ export default function RepetiteurDetailScreen() {
     repetiteurApi.getById(id).then(d => {
       setRepetiteur(d.repetiteur);
       setMatiere(d.repetiteur.repetiteur.matieres?.[0] || '');
-    }).catch(() => Toast.show({ type: 'error', text1: 'Répétiteur introuvable' }));
+    }).catch(() => Toast.show({ type: 'error', text1: 'Enseignant introuvable' }));
   }, [id]);
 
   const reserver = async () => {

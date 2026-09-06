@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  background: #f8fafc;
-  color: #0f172a;
+  background: #fbf7ee;
+  color: #14201b;
 }

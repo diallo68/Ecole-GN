@@ -64,8 +64,8 @@ export default function RepetiteurProfilPage() {
   if (!user || user.role !== 'repetiteur') return null;
 
   return (
-    <div className="max-w-xl mx-auto bg-white rounded-xl border border-slate-200 p-6">
-      <h1 className="text-xl font-bold mb-4">Mon profil répétiteur</h1>
+    <div className="max-w-xl mx-auto bg-white rounded-xl border border-ink/10 p-6">
+      <h1 className="text-xl font-bold mb-4">Mon profil enseignant</h1>
 
       {!user.repetiteur?.valide && (
         <div className="bg-amber-50 border border-amber-300 text-amber-800 rounded-lg px-4 py-3 mb-4 text-sm">
@@ -77,7 +77,7 @@ export default function RepetiteurProfilPage() {
         <div>
           <label className="block text-sm font-semibold mb-1">Présentation</label>
           <textarea value={bio} onChange={e => setBio(e.target.value)} rows={4} maxLength={1000}
-            className="w-full border border-slate-300 rounded-lg px-3 py-2" placeholder="Présente-toi à tes futurs élèves..." />
+            className="w-full border border-ink/15 rounded-lg px-3 py-2" placeholder="Présente-toi à tes futurs élèves..." />
         </div>
 
         <div>
@@ -85,7 +85,7 @@ export default function RepetiteurProfilPage() {
           <div className="flex flex-wrap gap-2">
             {MATIERES.map(m => (
               <button key={m} type="button" onClick={() => toggle(matieres, m, setMatieres)}
-                className={`text-sm px-3 py-1.5 rounded-full border ${matieres.includes(m) ? 'bg-brand text-white border-brand' : 'border-slate-300'}`}>
+                className={`text-sm px-3 py-1.5 rounded-full border ${matieres.includes(m) ? 'bg-brand text-white border-brand' : 'border-ink/15'}`}>
                 {m}
               </button>
             ))}
@@ -97,7 +97,7 @@ export default function RepetiteurProfilPage() {
           <div className="flex flex-wrap gap-2">
             {NIVEAUX.map(n => (
               <button key={n} type="button" onClick={() => toggle(niveaux, n, setNiveaux)}
-                className={`text-sm px-3 py-1.5 rounded-full border capitalize ${niveaux.includes(n) ? 'bg-brand text-white border-brand' : 'border-slate-300'}`}>
+                className={`text-sm px-3 py-1.5 rounded-full border capitalize ${niveaux.includes(n) ? 'bg-brand text-white border-brand' : 'border-ink/15'}`}>
                 {n}
               </button>
             ))}
@@ -107,7 +107,7 @@ export default function RepetiteurProfilPage() {
         <div>
           <label className="block text-sm font-semibold mb-1">Tarif horaire (GNF)</label>
           <input type="number" value={tarifHoraire} onChange={e => setTarifHoraire(e.target.value)}
-            className="w-full border border-slate-300 rounded-lg px-3 py-2" placeholder="Ex: 50000" />
+            className="w-full border border-ink/15 rounded-lg px-3 py-2" placeholder="Ex: 50000" />
         </div>
 
         <label className="flex items-center gap-2 text-sm">
@@ -115,7 +115,7 @@ export default function RepetiteurProfilPage() {
           Disponible pour de nouvelles réservations
         </label>
 
-        <button onClick={save} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-blue-700 disabled:opacity-50">
+        <button onClick={save} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
           {loading ? 'Enregistrement...' : 'Enregistrer'}
         </button>
       </div>

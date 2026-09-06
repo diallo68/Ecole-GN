@@ -31,7 +31,7 @@ export default function HomeScreen() {
       <View style={{ flexDirection: 'row', gap: 10, marginBottom: 24 }}>
         <TouchableOpacity onPress={() => router.push('/(tabs)/repetiteurs')}
           style={{ flex: 1, backgroundColor: Colors.brand, borderRadius: 14, padding: 14, alignItems: 'center' }}>
-          <Text style={{ color: Colors.white, fontWeight: '800' }}>Trouver un répétiteur</Text>
+          <Text style={{ color: Colors.white, fontWeight: '800' }}>Trouver un enseignant</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.push('/(tabs)/quiz')}
           style={{ flex: 1, backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 14, padding: 14, alignItems: 'center' }}>
@@ -39,9 +39,9 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      <Text style={{ fontSize: 16, fontWeight: '800', color: Colors.ink, marginBottom: 10 }}>Répétiteurs disponibles</Text>
+      <Text style={{ fontSize: 16, fontWeight: '800', color: Colors.ink, marginBottom: 10 }}>Enseignants disponibles</Text>
       {repetiteurs.length === 0 ? (
-        <Text style={{ color: Colors.inkMuted, fontSize: 13, marginBottom: 20 }}>Aucun répétiteur disponible.</Text>
+        <Text style={{ color: Colors.inkMuted, fontSize: 13, marginBottom: 20 }}>Aucun enseignant disponible.</Text>
       ) : repetiteurs.map(r => (
         <TouchableOpacity key={r._id} onPress={() => router.push(`/repetiteur/${r._id}`)}
           style={{ backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 14, padding: 14, marginBottom: 10 }}>
