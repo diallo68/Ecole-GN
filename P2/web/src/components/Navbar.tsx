@@ -1,7 +1,8 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, ChevronDown, LayoutDashboard, LogOut } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 
 export default function Navbar() {
@@ -21,15 +22,8 @@ export default function Navbar() {
           <Link href="/repetiteurs" className="hover:text-ink transition-colors">Enseignants</Link>
           <Link href="/quiz" className="hover:text-ink transition-colors">Quiz</Link>
           <Link href="/#avis" className="hover:text-ink transition-colors">Avis</Link>
-          {isLoggedIn() ? (
-            <>
-              {user?.role === 'admin' ? (
-                <Link href="/admin" className="hover:text-ink transition-colors">Back-office</Link>
-              ) : (
-                <Link href="/dashboard" className="hover:text-ink transition-colors">Mon espace</Link>
-              )}
-              <button onClick={logout} className="text-ink/50 hover:text-flag transition-colors">Déconnexion</button>
-            </>
+          {isLoggedIn() && user ? (
+            <UserMenu prenom={user.prenom} nom={user.nom} isAdmin={user.role === 'admin'} onLogout={logout} />
           ) : (
             <>
               <Link href="/login" className="hover:text-ink transition-colors">Connexion</Link>
@@ -39,5 +33,56 @@ export default function Navbar() {
         </nav>
       </div>
     </header>
+  );
+}
+
+function UserMenu({ prenom, nom, isAdmin, onLogout }: { prenom: string; nom?: string; isAdmin: boolean; onLogout: () => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onClickOutside);
+    return () => document.removeEventListener('mousedown', onClickOutside);
+  }, []);
+
+  const initiales = `${prenom?.[0] || ''}${nom?.[0] || ''}`.toUpperCase();
+
+  return (
+    <div className="relative" ref={ref}>
+      <button onClick={() => setOpen(o => !o)} className="flex items-center gap-2 hover:text-ink transition-colors">
+        <span className="w-7 h-7 rounded-full bg-brand text-white text-xs font-bold grid place-items-center shrink-0">
+          {initiales || <BookOpen size={12} />}
+        </span>
+        <span className="hidden sm:inline">{prenom}</span>
+        <ChevronDown size={14} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl border border-ink/10 shadow-lg py-1.5 z-30">
+          <div className="px-3.5 py-2 border-b border-ink/5">
+            <p className="font-semibold text-ink text-sm truncate">{prenom} {nom}</p>
+          </div>
+          {!isAdmin && (
+            <Link href="/dashboard" onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-ink/70 hover:bg-sand transition-colors">
+              <LayoutDashboard size={15} /> Mon espace
+            </Link>
+          )}
+          {isAdmin && (
+            <Link href="/admin" onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-ink/70 hover:bg-sand transition-colors">
+              <LayoutDashboard size={15} /> Back-office
+            </Link>
+          )}
+          <button onClick={() => { setOpen(false); onLogout(); }}
+            className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-flag hover:bg-flag/5 transition-colors">
+            <LogOut size={15} /> Déconnexion
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
