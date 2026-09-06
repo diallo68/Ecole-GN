@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { reservationApi } from '@/lib/api';
-import type { Reservation, Repetiteur } from '@/types';
+import type { Reservation } from '@/types';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -24,10 +25,19 @@ export default function DashboardPage() {
       <h1 className="text-2xl font-bold mb-1">Bonjour {user.prenom} 👋</h1>
       <p className="text-slate-500 mb-6 capitalize">Espace {user.role}</p>
 
-      {user.role === 'repetiteur' && !user.repetiteur?.valide && (
-        <div className="bg-amber-50 border border-amber-300 text-amber-800 rounded-lg px-4 py-3 mb-6 text-sm">
-          Ton profil répétiteur est en attente de validation par l'équipe Gandal avant d'apparaître dans les recherches.
-        </div>
+      {user.role === 'repetiteur' && (
+        <>
+          {!user.repetiteur?.valide && (
+            <div className="bg-amber-50 border border-amber-300 text-amber-800 rounded-lg px-4 py-3 mb-6 text-sm">
+              Ton profil répétiteur est en attente de validation par l'équipe Gandal avant d'apparaître dans les recherches.
+            </div>
+          )}
+          <div className="flex flex-wrap gap-3 mb-6">
+            <Link href="/dashboard/repetiteur/profil" className="bg-white border border-slate-300 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-slate-50">Mon profil</Link>
+            <Link href="/dashboard/repetiteur/contenu" className="bg-white border border-slate-300 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-slate-50">Mon contenu pédagogique</Link>
+            <Link href="/dashboard/repetiteur/classes" className="bg-white border border-slate-300 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-slate-50">Classes virtuelles</Link>
+          </div>
+        </>
       )}
 
       <h2 className="font-bold mb-3">{user.role === 'repetiteur' ? 'Mon agenda' : 'Mes réservations'}</h2>

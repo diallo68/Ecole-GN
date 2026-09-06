@@ -36,11 +36,11 @@ Un seul modèle `User` avec un champ `role` : `eleve`, `parent`, `repetiteur`, `
 | Domaine | Base | Détail |
 |---|---|---|
 | Auth | `/api/auth` | `send-code`, `register`, `login`, `me` |
-| Répétiteurs | `/api/repetiteurs` | recherche publique, profil, modération admin |
+| Répétiteurs | `/api/repetiteurs` | recherche publique, profil, `admin/all` (liste filtrable par statut) + `:id/moderate` |
 | Réservations | `/api/reservations` | création, agenda répétiteur, mes réservations |
 | Contenu | `/api/content` | vidéos/supports/exercices, publiés par répétiteur |
 | Classes virtuelles | `/api/classes-virtuelles` | planification, lien meet.jit.si auto-généré |
-| Quiz | `/api/quiz` | liste, passage, correction, création admin |
+| Quiz | `/api/quiz` | liste/passage/correction (public) + `admin/all`, `admin/:id`, `admin/:id/publish`, suppression (admin) |
 | Messagerie | `/api/messaging` | conversations + messages |
 | Avis | `/api/reviews` | notation d'un répétiteur après session |
 

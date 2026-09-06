@@ -17,6 +17,7 @@ export default function Navbar() {
           {isLoggedIn() ? (
             <>
               <Link href="/dashboard" className="hover:text-brand">Mon espace</Link>
+              {user?.role === 'admin' && <Link href="/admin" className="hover:text-brand">Back-office</Link>}
               <button onClick={logout} className="text-slate-500 hover:text-red-600">Déconnexion</button>
             </>
           ) : (

@@ -16,20 +16,28 @@ Nécessite le [backend Gandal](../backend) démarré (`npm run dev` dans `P2/bac
 
 ```
 src/
-  app/            Pages (App Router) : accueil, login, register (OTP par email),
-                   repetiteurs (liste + fiche + réservation), quiz (liste + passage),
-                   dashboard (agenda répétiteur / mes réservations élève-parent)
-  components/     Navbar
-  lib/api.ts      Client HTTP vers le backend (auth, répétiteurs, réservations, quiz, contenu)
-  store/          Zustand — session utilisateur (persistée en localStorage)
-  types/          Types partagés (miroir des modèles backend)
+  app/
+    (public)        accueil, login, register (OTP par email), repetiteurs (liste + fiche
+                     + réservation), quiz (liste + passage + correction)
+    dashboard/       agenda répétiteur ou réservations élève-parent
+    dashboard/repetiteur/
+                     profil, contenu (vidéos/supports/exercices), classes (classes virtuelles)
+    admin/           back-office : modération répétiteurs, gestion des quiz (créer/publier/
+                     dépublier/supprimer) — accès restreint au rôle admin
+  components/        Navbar (liens contextuels selon rôle)
+  lib/api.ts         Client HTTP vers le backend (auth, répétiteurs, réservations, quiz,
+                     contenu, classes virtuelles — versions publiques et admin)
+  store/             Zustand — session utilisateur (persistée en localStorage)
+  types/             Types partagés (miroir des modèles backend)
 ```
 
 ## État du scaffold
 
 Flux d'authentification complet (email + OTP), recherche/fiche répétiteur avec réservation,
-quiz jouables avec correction. **Pas encore fait** : espace répétiteur pour publier
-vidéos/supports/exercices et planifier des classes virtuelles, messagerie, avis, back-office
-admin (modération, création de quiz), paiement.
+quiz jouables avec correction, espace répétiteur (profil, contenu pédagogique, classes
+virtuelles), back-office admin (modération répétiteurs, création/publication de quiz).
 
-Build vérifié (`npm run build`) — toutes les pages compilent.
+**Pas encore fait** : messagerie, avis, upload de fichiers (les URLs de vidéos/supports sont
+saisies manuellement pour l'instant, pas d'intégration Cloudinary côté formulaire), paiement.
+
+Build vérifié (`npm run build`) — 16 pages compilent sans erreur TypeScript.

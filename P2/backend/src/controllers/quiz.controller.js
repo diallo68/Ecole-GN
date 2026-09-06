@@ -61,6 +61,50 @@ const quizController = {
       res.status(500).json({ error: 'Erreur serveur' });
     }
   },
+
+  // ── Admin : liste de tous les quiz (publiés + brouillons) ───────────
+  async adminList(req, res) {
+    try {
+      const quizzes = await Quiz.find().sort({ createdAt: -1 });
+      res.json({ quizzes });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
+  // ── Admin : détail complet d'un quiz (avec réponses, pour relecture) ─
+  async adminGetById(req, res) {
+    try {
+      const quiz = await Quiz.findById(req.params.id);
+      if (!quiz) return res.status(404).json({ error: 'Quiz introuvable' });
+      res.json({ quiz });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
+  // ── Admin : publier/dépublier un quiz après relecture ───────────────
+  async togglePublish(req, res) {
+    try {
+      const { publie } = req.body;
+      const quiz = await Quiz.findByIdAndUpdate(req.params.id, { publie: !!publie, creePar: req.user.id }, { new: true });
+      if (!quiz) return res.status(404).json({ error: 'Quiz introuvable' });
+      res.json({ success: true, quiz });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
+  // ── Admin : supprimer un quiz ────────────────────────────────────────
+  async remove(req, res) {
+    try {
+      const quiz = await Quiz.findByIdAndDelete(req.params.id);
+      if (!quiz) return res.status(404).json({ error: 'Quiz introuvable' });
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
 };
 
 module.exports = quizController;

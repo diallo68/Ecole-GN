@@ -36,8 +36,42 @@ export interface Repetiteur {
   _id: string;
   prenom: string;
   nom: string;
+  email?: string; // présent seulement sur les listes admin
   city?: string;
+  createdAt?: string;
   repetiteur: RepetiteurProfile;
+}
+
+export interface ContentItem {
+  _id: string;
+  repetiteurId: string;
+  titre: string;
+  matiere: string;
+  niveau: Niveau;
+  chapitre?: string;
+  createdAt: string;
+  // vidéo
+  url?: string;
+  description?: string;
+  // support
+  fichierUrl?: string;
+  type?: 'pdf' | 'image' | 'autre';
+  // exercice
+  enonce?: string;
+  correction?: string;
+}
+
+export interface ClasseVirtuelle {
+  _id: string;
+  repetiteurId: string;
+  eleveIds: string[];
+  titre: string;
+  matiere: string;
+  niveau: Niveau;
+  dateHeure: string;
+  dureeMinutes: number;
+  lienVisio: string;
+  statut: 'planifiee' | 'en_cours' | 'terminee' | 'annulee';
 }
 
 export interface Reservation {
@@ -70,6 +104,18 @@ export interface QuizQuestion {
 
 export interface QuizDetail extends QuizSummary {
   questions: QuizQuestion[];
+}
+
+export interface QuizQuestionFull extends QuizQuestion {
+  reponseCorrecte: number;
+  explication?: string;
+}
+
+// Vue admin : inclut les réponses correctes et le statut de publication
+export interface QuizFull extends QuizSummary {
+  questions: QuizQuestionFull[];
+  publie: boolean;
+  createdAt: string;
 }
 
 export interface QuizCorrection {

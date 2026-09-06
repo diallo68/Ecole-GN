@@ -58,6 +58,23 @@ const repetiteurController = {
     }
   },
 
+  // ── Admin : liste de tous les répétiteurs (validés + en attente) ────
+  async adminList(req, res) {
+    try {
+      const { statut } = req.query; // 'en_attente' | 'valide' | undefined (tous)
+      const filter = { role: 'repetiteur' };
+      if (statut === 'en_attente') filter['repetiteur.valide'] = false;
+      if (statut === 'valide') filter['repetiteur.valide'] = true;
+      const repetiteurs = await User.find(filter)
+        .select('prenom nom email city repetiteur createdAt')
+        .sort({ createdAt: -1 })
+        .lean();
+      res.json({ repetiteurs });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
   // ── Admin : valider/refuser un profil répétiteur avant mise en ligne ─
   async moderate(req, res) {
     try {
