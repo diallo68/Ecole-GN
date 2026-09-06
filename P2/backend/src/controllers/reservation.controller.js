@@ -1,0 +1,72 @@
+const crypto = require('crypto');
+const Reservation = require('../models/reservation.model');
+const User = require('../models/user.model');
+
+// Génère un identifiant de salle Jitsi unique et peu devinable.
+function generateJitsiRoom() {
+  return `gandal-${crypto.randomBytes(8).toString('hex')}`;
+}
+
+const reservationController = {
+  // ── Élève/parent réserve une session avec un répétiteur ─────────────
+  async create(req, res) {
+    try {
+      const { repetiteurId, matiere, niveau, mode, dateHeure, dureeMinutes, adresse } = req.body;
+      const repetiteur = await User.findOne({ _id: repetiteurId, role: 'repetiteur', 'repetiteur.valide': true });
+      if (!repetiteur) return res.status(404).json({ error: 'Répétiteur introuvable ou non disponible' });
+
+      const reservation = await Reservation.create({
+        eleveId: req.user.role === 'eleve' ? req.user.id : req.body.eleveId,
+        parentId: req.user.role === 'parent' ? req.user.id : undefined,
+        repetiteurId, matiere, niveau, mode, dateHeure, dureeMinutes,
+        adresse: mode === 'presentiel' ? adresse : undefined,
+        lienVisio: mode === 'en_ligne' ? `https://meet.jit.si/${generateJitsiRoom()}` : undefined,
+        prix: repetiteur.repetiteur?.tarifHoraire,
+      });
+      res.status(201).json({ success: true, reservation });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
+  // ── Mes réservations (élève/parent) ─────────────────────────────────
+  async mine(req, res) {
+    try {
+      const filter = req.user.role === 'parent' ? { parentId: req.user.id } : { eleveId: req.user.id };
+      const reservations = await Reservation.find(filter).populate('repetiteurId', 'prenom nom repetiteur').sort({ dateHeure: -1 });
+      res.json({ reservations });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
+  // ── Agenda du répétiteur connecté ────────────────────────────────────
+  async myAgenda(req, res) {
+    try {
+      const reservations = await Reservation.find({ repetiteurId: req.user.id })
+        .populate('eleveId', 'prenom nom')
+        .sort({ dateHeure: 1 });
+      res.json({ reservations });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
+  // ── Changement de statut (confirmer / terminer / annuler) ───────────
+  async updateStatus(req, res) {
+    try {
+      const { statut } = req.body;
+      const reservation = await Reservation.findById(req.params.id);
+      if (!reservation) return res.status(404).json({ error: 'Réservation introuvable' });
+      const isOwner = [String(reservation.repetiteurId), String(reservation.eleveId), String(reservation.parentId)].includes(req.user.id);
+      if (!isOwner) return res.status(403).json({ error: 'Accès refusé' });
+      reservation.statut = statut;
+      await reservation.save();
+      res.json({ success: true, reservation });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+};
+
+module.exports = reservationController;
