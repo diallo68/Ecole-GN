@@ -5,17 +5,17 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          DEFAULT: '#0A7B4B', // vert Gandal (inspiré du drapeau guinéen)
-          dark: '#065f39',
-          light: '#e6f5ee',
+          DEFAULT: '#135A3D', // vert Gandal (validé via maquette AIDesigner)
+          dark: '#0D402B',
+          light: '#F0F7F4',
         },
         accent: '#F5B700', // jaune
         flag: '#CE1126', // rouge — touches ponctuelles uniquement
-        sand: '#FBF7EE', // fond chaleureux
-        ink: '#14201B', // texte principal
+        sand: '#FBF9F6', // fond chaleureux
+        ink: '#1C1917', // texte principal
       },
       fontFamily: {
-        sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Outfit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
     },
   },
