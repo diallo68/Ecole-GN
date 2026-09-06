@@ -20,6 +20,7 @@ export default function QuizPlayScreen() {
   const [result, setResult] = useState<{ score: number; total: number; correction: QuizCorrection[] } | null>(null);
   const [loading, setLoading] = useState(false);
   const [essaiEpuise, setEssaiEpuise] = useState<boolean | null>(null); // null = vérification en cours
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -100,39 +101,85 @@ export default function QuizPlayScreen() {
         </View>
       )}
 
-      {quiz.questions.map((q, i) => (
-        <View key={i} style={{ backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 14, padding: 14, marginBottom: 12 }}>
-          <Text style={{ fontWeight: '700', color: Colors.ink, marginBottom: 8 }}>{i + 1}. {q.question}</Text>
-          {q.choix.map((c, ci) => {
-            const isSelected = reponses[i] === ci;
-            const correction = result?.correction[i];
-            const isCorrectAnswer = correction && correction.reponseCorrecte === ci;
-            let borderColor = Colors.surfaceBorder;
-            let bg = Colors.white;
-            if (result) {
-              if (isCorrectAnswer) { borderColor = Colors.success; bg = '#f0fdf4'; }
-              else if (isSelected && !correction?.correct) { borderColor = Colors.danger; bg = '#fef2f2'; }
-            } else if (isSelected) { borderColor = Colors.brand; bg = Colors.brandLight; }
+      {result ? (
+        // ── Révision : toutes les questions avec correction ──────────────
+        quiz.questions.map((q, i) => (
+          <QuestionCard key={i} q={q} index={i} selected={reponses[i]} correction={result.correction[i]} onSelect={() => {}} disabled />
+        ))
+      ) : (
+        // ── Une question à la fois ────────────────────────────────────────
+        <>
+          <View style={{ marginBottom: 16 }}>
+            <View style={{ height: 5, borderRadius: 3, backgroundColor: Colors.surfaceBg, overflow: 'hidden', marginBottom: 6 }}>
+              <View style={{ height: '100%', borderRadius: 3, backgroundColor: Colors.brand, width: `${((currentIndex + 1) / quiz.questions.length) * 100}%` }} />
+            </View>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: Colors.inkSubtle }}>Question {currentIndex + 1} sur {quiz.questions.length}</Text>
+          </View>
 
-            return (
-              <TouchableOpacity key={ci} onPress={() => choisir(i, ci)}
-                style={{ borderWidth: 1.5, borderColor, backgroundColor: bg, borderRadius: 10, padding: 10, marginBottom: 6 }}>
-                <Text style={{ fontSize: 13, color: Colors.ink }}>{c}</Text>
+          <QuestionCard
+            q={quiz.questions[currentIndex]}
+            index={currentIndex}
+            selected={reponses[currentIndex]}
+            onSelect={ci => choisir(currentIndex, ci)}
+          />
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 }}>
+            <TouchableOpacity onPress={() => setCurrentIndex(i => Math.max(0, i - 1))} disabled={currentIndex === 0}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 6, opacity: currentIndex === 0 ? 0.3 : 1 }}>
+              <Ionicons name="arrow-back" size={16} color={Colors.inkMuted} />
+              <Text style={{ fontSize: 13, fontWeight: '700', color: Colors.inkMuted }}>Précédent</Text>
+            </TouchableOpacity>
+
+            {currentIndex < quiz.questions.length - 1 ? (
+              <TouchableOpacity onPress={() => setCurrentIndex(i => i + 1)} disabled={reponses[currentIndex] === null}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.brand, borderRadius: 20, paddingVertical: 10, paddingHorizontal: 20, opacity: reponses[currentIndex] === null ? 0.4 : 1 }}>
+                <Text style={{ color: Colors.white, fontWeight: '800', fontSize: 13 }}>Suivant</Text>
+                <Ionicons name="arrow-forward" size={16} color={Colors.white} />
               </TouchableOpacity>
-            );
-          })}
-          {result?.correction[i]?.explication && (
-            <Text style={{ fontSize: 11, color: Colors.inkMuted, fontStyle: 'italic', marginTop: 4 }}>{result.correction[i].explication}</Text>
-          )}
-        </View>
-      ))}
-
-      {!result && (
-        <TouchableOpacity onPress={soumettre} disabled={loading}
-          style={{ backgroundColor: Colors.brand, borderRadius: 14, padding: 14, alignItems: 'center', opacity: loading ? 0.6 : 1 }}>
-          <Text style={{ color: Colors.white, fontWeight: '800' }}>{loading ? 'Correction...' : 'Valider mes réponses'}</Text>
-        </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={soumettre} disabled={loading || reponses[currentIndex] === null}
+                style={{ backgroundColor: Colors.brand, borderRadius: 20, paddingVertical: 10, paddingHorizontal: 20, opacity: (loading || reponses[currentIndex] === null) ? 0.4 : 1 }}>
+                <Text style={{ color: Colors.white, fontWeight: '800', fontSize: 13 }}>{loading ? 'Correction...' : 'Valider'}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </>
       )}
     </ScrollView>
+  );
+}
+
+function QuestionCard({ q, index, selected, correction, onSelect, disabled }: {
+  q: { question: string; choix: string[] };
+  index: number;
+  selected: number | null;
+  correction?: QuizCorrection;
+  onSelect: (choixIndex: number) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <View style={{ backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 14, padding: 14, marginBottom: 12 }}>
+      <Text style={{ fontWeight: '700', color: Colors.ink, marginBottom: 8 }}>{index + 1}. {q.question}</Text>
+      {q.choix.map((c, ci) => {
+        const isSelected = selected === ci;
+        const isCorrectAnswer = correction && correction.reponseCorrecte === ci;
+        let borderColor = Colors.surfaceBorder;
+        let bg = Colors.white;
+        if (correction) {
+          if (isCorrectAnswer) { borderColor = Colors.success; bg = '#f0fdf4'; }
+          else if (isSelected && !correction.correct) { borderColor = Colors.danger; bg = '#fef2f2'; }
+        } else if (isSelected) { borderColor = Colors.brand; bg = Colors.brandLight; }
+
+        return (
+          <TouchableOpacity key={ci} disabled={disabled} onPress={() => onSelect(ci)}
+            style={{ borderWidth: 1.5, borderColor, backgroundColor: bg, borderRadius: 10, padding: 10, marginBottom: 6 }}>
+            <Text style={{ fontSize: 13, color: Colors.ink }}>{c}</Text>
+          </TouchableOpacity>
+        );
+      })}
+      {correction?.explication && (
+        <Text style={{ fontSize: 11, color: Colors.inkMuted, fontStyle: 'italic', marginTop: 4 }}>{correction.explication}</Text>
+      )}
+    </View>
   );
 }

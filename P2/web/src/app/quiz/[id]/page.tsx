@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { Lock, Sparkles } from 'lucide-react';
+import { Lock, Sparkles, ArrowLeft, ArrowRight } from 'lucide-react';
 import { quizApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import type { QuizDetail, QuizCorrection } from '@/types';
@@ -19,6 +19,7 @@ export default function QuizPlayPage() {
   const [result, setResult] = useState<{ score: number; total: number; correction: QuizCorrection[] } | null>(null);
   const [loading, setLoading] = useState(false);
   const [essaiEpuise, setEssaiEpuise] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     // Un visiteur non inscrit n'a droit qu'à un seul quiz d'essai (côté client) —
@@ -92,40 +93,85 @@ export default function QuizPlayPage() {
         </div>
       )}
 
-      <div className="space-y-6">
-        {quiz.questions.map((q, i) => (
-          <div key={i} className="bg-white rounded-xl border border-ink/10 p-4">
-            <p className="font-semibold mb-2">{i + 1}. {q.question}</p>
-            <div className="space-y-2">
-              {q.choix.map((c, ci) => {
-                const isSelected = reponses[i] === ci;
-                const correction = result?.correction[i];
-                const isCorrectAnswer = correction && correction.reponseCorrecte === ci;
-                let style = 'border-ink/15';
-                if (result) {
-                  if (isCorrectAnswer) style = 'border-green-500 bg-green-50';
-                  else if (isSelected && !correction?.correct) style = 'border-red-500 bg-red-50';
-                } else if (isSelected) style = 'border-brand bg-brand-light';
-
-                return (
-                  <button key={ci} disabled={!!result} onClick={() => choisir(i, ci)}
-                    className={`w-full text-left border rounded-lg px-3 py-2 text-sm ${style}`}>
-                    {c}
-                  </button>
-                );
-              })}
+      {result ? (
+        // ── Révision : toutes les questions avec correction ──────────────
+        <div className="space-y-6">
+          {quiz.questions.map((q, i) => (
+            <QuestionCard key={i} q={q} index={i} selected={reponses[i]} correction={result.correction[i]} onSelect={() => {}} disabled />
+          ))}
+        </div>
+      ) : (
+        // ── Une question à la fois ────────────────────────────────────────
+        <>
+          <div className="flex flex-col gap-2 mb-6">
+            <div className="h-1.5 rounded-full bg-ink/10 overflow-hidden">
+              <div className="h-full bg-brand rounded-full transition-all duration-300" style={{ width: `${((currentIndex + 1) / quiz.questions.length) * 100}%` }} />
             </div>
-            {result?.correction[i]?.explication && (
-              <p className="text-xs text-ink/60 mt-2 italic">{result.correction[i].explication}</p>
+            <span className="text-xs font-semibold text-ink/40">Question {currentIndex + 1} sur {quiz.questions.length}</span>
+          </div>
+
+          <QuestionCard
+            q={quiz.questions[currentIndex]}
+            index={currentIndex}
+            selected={reponses[currentIndex]}
+            onSelect={ci => choisir(currentIndex, ci)}
+          />
+
+          <div className="flex items-center justify-between mt-6">
+            <button onClick={() => setCurrentIndex(i => Math.max(0, i - 1))} disabled={currentIndex === 0}
+              className="flex items-center gap-1.5 text-sm font-semibold text-ink/60 hover:text-ink disabled:opacity-30">
+              <ArrowLeft size={15} /> Précédent
+            </button>
+
+            {currentIndex < quiz.questions.length - 1 ? (
+              <button onClick={() => setCurrentIndex(i => i + 1)} disabled={reponses[currentIndex] === null}
+                className="flex items-center gap-1.5 bg-brand text-white rounded-full px-6 py-2.5 font-semibold hover:bg-brand-dark disabled:opacity-40">
+                Suivant <ArrowRight size={15} />
+              </button>
+            ) : (
+              <button onClick={soumettre} disabled={loading || reponses[currentIndex] === null}
+                className="bg-brand text-white rounded-full px-6 py-2.5 font-semibold hover:bg-brand-dark disabled:opacity-40">
+                {loading ? 'Correction...' : 'Valider mes réponses'}
+              </button>
             )}
           </div>
-        ))}
-      </div>
+        </>
+      )}
+    </div>
+  );
+}
 
-      {!result && (
-        <button onClick={soumettre} disabled={loading} className="mt-6 w-full bg-brand text-white rounded-lg py-2.5 font-semibold hover:bg-brand-dark disabled:opacity-50">
-          {loading ? 'Correction...' : 'Valider mes réponses'}
-        </button>
+function QuestionCard({ q, index, selected, correction, onSelect, disabled }: {
+  q: { question: string; choix: string[] };
+  index: number;
+  selected: number | null;
+  correction?: QuizCorrection;
+  onSelect: (choixIndex: number) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <div className="bg-white rounded-2xl border border-ink/10 p-5">
+      <p className="font-semibold mb-3">{index + 1}. {q.question}</p>
+      <div className="space-y-2">
+        {q.choix.map((c, ci) => {
+          const isSelected = selected === ci;
+          const isCorrectAnswer = correction && correction.reponseCorrecte === ci;
+          let style = 'border-ink/15 hover:border-ink/30';
+          if (correction) {
+            if (isCorrectAnswer) style = 'border-green-500 bg-green-50';
+            else if (isSelected && !correction.correct) style = 'border-red-500 bg-red-50';
+          } else if (isSelected) style = 'border-brand bg-brand-light';
+
+          return (
+            <button key={ci} disabled={disabled} onClick={() => onSelect(ci)}
+              className={`w-full text-left border rounded-lg px-3 py-2.5 text-sm transition-colors ${style}`}>
+              {c}
+            </button>
+          );
+        })}
+      </div>
+      {correction?.explication && (
+        <p className="text-xs text-ink/60 mt-3 italic">{correction.explication}</p>
       )}
     </div>
   );
