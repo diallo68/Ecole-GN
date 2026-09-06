@@ -6,8 +6,9 @@ import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, Leaf, Landmark,
 import type { LucideIcon } from 'lucide-react';
 import { repetiteurApi, quizApi } from '@/lib/api';
 import AssistantWidget from '@/components/AssistantWidget';
-import { niveauLabel } from '@/lib/constants';
-import type { Repetiteur, QuizSummary } from '@/types';
+import { niveauLabel, CYCLES, niveauxDuCycle } from '@/lib/constants';
+import { useAuthStore } from '@/store/authStore';
+import type { Repetiteur, QuizSummary, Cycle, Niveau } from '@/types';
 
 const MATIERE_ICONS: Record<string, LucideIcon> = {
   'Mathématiques': Sigma,
@@ -19,13 +20,27 @@ const MATIERE_ICONS: Record<string, LucideIcon> = {
 };
 
 export default function HomePage() {
+  const { user } = useAuthStore();
   const [repetiteurs, setRepetiteurs] = useState<Repetiteur[]>([]);
   const [quizzes, setQuizzes] = useState<QuizSummary[]>([]);
+  const [cycle, setCycle] = useState<Cycle | ''>('');
+  const [niveau, setNiveau] = useState<Niveau | ''>('');
 
   useEffect(() => {
     repetiteurApi.list({}).then(d => setRepetiteurs(d.repetiteurs.slice(0, 4))).catch(() => {});
-    quizApi.list({}).then(d => setQuizzes(d.quizzes.slice(0, 6))).catch(() => {});
   }, []);
+
+  // Pré-sélectionne le niveau de l'élève connecté, sans l'imposer (il peut changer).
+  useEffect(() => {
+    if (user?.eleve?.niveau) {
+      const n = niveauxDuCycle('primaire').concat(niveauxDuCycle('college'), niveauxDuCycle('lycee')).find(x => x.value === user.eleve!.niveau);
+      if (n) { setCycle(n.cycle); setNiveau(n.value); }
+    }
+  }, [user]);
+
+  useEffect(() => {
+    quizApi.list({ niveau: niveau || undefined }).then(d => setQuizzes(d.quizzes.slice(0, 6))).catch(() => {});
+  }, [niveau]);
 
   return (
     <>
@@ -120,10 +135,29 @@ export default function HomePage() {
 
       {/* Quiz */}
       <section>
-        <div className="text-center max-w-xl mx-auto mb-8">
+        <div className="text-center max-w-xl mx-auto mb-6">
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Teste-toi — quiz gratuits</h2>
           <p className="text-ink/50 text-sm mt-1">Révise à ton rythme, conçus selon le programme national guinéen.</p>
         </div>
+
+        {/* Filtres niveau : cycle puis classe précise */}
+        <div className="flex flex-col items-center gap-2 mb-8">
+          <div className="flex flex-wrap justify-center gap-2">
+            <FilterChip active={!cycle} onClick={() => { setCycle(''); setNiveau(''); }} label="Tous niveaux" />
+            {CYCLES.map(c => (
+              <FilterChip key={c.value} active={cycle === c.value} onClick={() => { setCycle(c.value); setNiveau(''); }} label={c.label} />
+            ))}
+          </div>
+          {cycle && (
+            <div className="flex flex-wrap justify-center gap-2">
+              <FilterChip active={!niveau} onClick={() => setNiveau('')} label={`Toutes les classes (${CYCLES.find(c => c.value === cycle)?.label})`} small />
+              {niveauxDuCycle(cycle).map(n => (
+                <FilterChip key={n.value} active={niveau === n.value} onClick={() => setNiveau(n.value)} label={n.label} small />
+              ))}
+            </div>
+          )}
+        </div>
+
         {quizzes.length === 0 ? (
           <p className="text-ink/50 text-sm text-center">Aucun quiz publié pour le moment.</p>
         ) : (
@@ -150,6 +184,13 @@ export default function HomePage() {
             })}
           </div>
         )}
+
+        <div className="text-center mt-6">
+          <Link href={cycle ? `/quiz?cycle=${cycle}${niveau ? `&niveau=${niveau}` : ''}` : '/quiz'}
+            className="inline-flex items-center gap-1.5 text-sm text-brand font-semibold hover:text-brand-dark">
+            Voir tous les quiz <ArrowRight size={14} />
+          </Link>
+        </div>
       </section>
 
       {/* Avis — pas encore de vrais avis à afficher, section honnête en attendant */}
@@ -163,5 +204,16 @@ export default function HomePage() {
     </div>
     <AssistantWidget />
     </>
+  );
+}
+
+function FilterChip({ active, onClick, label, small }: { active: boolean; onClick: () => void; label: string; small?: boolean }) {
+  return (
+    <button onClick={onClick}
+      className={`rounded-full font-semibold border transition-colors ${small ? 'px-2.5 py-1 text-[11px]' : 'px-3.5 py-1.5 text-xs'} ${
+        active ? 'bg-brand text-white border-brand' : 'bg-white border-ink/15 text-ink/60 hover:border-brand/40'
+      }`}>
+      {label}
+    </button>
   );
 }

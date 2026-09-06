@@ -450,5 +450,205 @@ add('Enjeux environnementaux et développement durable', 'Géographie', 'termina
   Q('Pourquoi la déforestation en Guinée forestière est-elle préoccupante ?', ['Elle n\'a aucun impact', 'Elle menace la biodiversité et les sols', 'Elle augmente la pluie', 'Elle refroidit le climat local'], 1, 'La déforestation entraîne perte de biodiversité, érosion des sols et dérèglement climatique local.'),
 ]);
 
+// ══════════════════════════ SCIENCES PHYSIQUES (éveil, primaire) ══════════════════════════
+
+add('Solide, liquide et chaud-froid', 'Sciences Physiques', 'cp1', [
+  Q('Une pierre est un objet...', ['Liquide', 'Solide', 'Gazeux', 'Invisible'], 1, 'Une pierre garde toujours sa forme : c\'est un solide.'),
+  Q('L\'eau que l\'on boit est...', ['Solide', 'Liquide', 'Gazeuse', 'Dure'], 1, 'L\'eau qu\'on boit est liquide.'),
+  Q('Que se passe-t-il quand on touche de la glace ?', ['Elle est chaude', 'Elle est froide', 'Elle brûle', 'Elle sent bon'], 1, 'La glace est froide au toucher.'),
+  Q('Une pierre jetée dans l\'eau...', ['Flotte', 'Coule', 'Vole', 'Disparaît'], 1, 'Une pierre est lourde et coule dans l\'eau.'),
+  Q('Un morceau de bois posé sur l\'eau...', ['Coule', 'Flotte', 'Fond', 'Explose'], 1, 'Le bois est léger et flotte sur l\'eau.'),
+]);
+
+add('La lumière, l\'ombre et les aimants', 'Sciences Physiques', 'cp2', [
+  Q('D\'où vient la lumière du jour ?', ['De la lune', 'Du soleil', 'Des étoiles', 'Des nuages'], 1, 'Le soleil est la principale source de lumière le jour.'),
+  Q('Quand tu te mets devant une lampe, tu vois apparaître ton...', ['Reflet', 'Ombre', 'Jumeau', 'Écho'], 1, 'La lumière bloquée par ton corps forme une ombre.'),
+  Q('Un aimant attire surtout...', ['Le bois', 'Le plastique', 'Le fer', 'Le papier'], 2, 'Les aimants attirent les objets en fer ou en métal.'),
+  Q('La nuit, il y a...', ['Beaucoup de soleil', 'Peu ou pas de lumière du soleil', 'Toujours de la pluie', 'Toujours du vent'], 1, 'La nuit, le soleil ne brille pas sur notre partie de la Terre.'),
+  Q('Une ombre change de taille selon...', ['La couleur du ciel', 'La position de la lumière', 'Le bruit', 'Le goût'], 1, 'Selon où se trouve la lumière, l\'ombre est plus grande ou plus petite.'),
+]);
+
+add('Les états de l\'eau et le son', 'Sciences Physiques', 'ce1', [
+  Q('Comment s\'appelle l\'eau à l\'état solide ?', ['La vapeur', 'La glace', 'La pluie', 'La rosée'], 1, 'L\'eau gelée devient de la glace, un solide.'),
+  Q('Quand on fait bouillir de l\'eau, elle se transforme en...', ['Glace', 'Vapeur', 'Pierre', 'Sable'], 1, 'L\'eau chauffée se transforme en vapeur (gaz).'),
+  Q('Le son est produit par...', ['La lumière', 'Une vibration', 'La couleur', 'Le froid'], 1, 'Tout son vient d\'une vibration (corde, voix, tambour...).'),
+  Q('Un tambour fait du bruit quand on le...', ['Regarde', 'Frappe', 'Sent', 'Goûte'], 1, 'Frapper le tambour fait vibrer sa peau, ce qui produit un son.'),
+  Q('Peut-on entendre un son sous l\'eau ?', ['Non, jamais', 'Oui, le son se propage aussi dans l\'eau', 'Seulement la nuit', 'Seulement en hiver'], 1, 'Le son voyage aussi dans l\'eau, un peu différemment que dans l\'air.'),
+]);
+
+add('Mélanges et petite électricité', 'Sciences Physiques', 'ce2', [
+  Q('Si on mélange du sable et de l\'eau, on obtient...', ['Un mélange homogène invisible', 'Un mélange où l\'on voit le sable', 'De l\'huile', 'Du sucre'], 1, 'Le sable ne se dissout pas : on le voit toujours dans l\'eau.'),
+  Q('Pour allumer une ampoule avec une pile, il faut...', ['Rien de plus', 'Un fil qui relie la pile à l\'ampoule', 'De l\'eau', 'Du feu'], 1, 'Un circuit fermé avec des fils permet au courant de circuler.'),
+  Q('Le sel, lui, quand on le mélange à l\'eau...', ['Reste visible comme le sable', 'Se dissout et devient invisible', 'Flotte à la surface', 'Explose'], 1, 'Le sel se dissout dans l\'eau : le mélange devient homogène.'),
+  Q('Une pile sert à...', ['Éclairer directement', 'Fournir de l\'énergie électrique à un circuit', 'Faire du bruit', 'Refroidir l\'air'], 1, 'La pile est la source d\'énergie électrique du circuit.'),
+  Q('Si le fil électrique est coupé, l\'ampoule...', ['Reste allumée', 'S\'éteint', 'Devient plus forte', 'Change de couleur'], 1, 'Un circuit coupé ne laisse plus passer le courant : l\'ampoule s\'éteint.'),
+]);
+
+add('La balance et la météo', 'Sciences Physiques', 'cm1', [
+  Q('Une balance sert à mesurer...', ['La longueur', 'La masse (le poids)', 'La couleur', 'Le temps'], 1, 'La balance mesure la masse d\'un objet.'),
+  Q('Sur une balance à plateaux, l\'objet le plus lourd fait le plateau...', ['Monter', 'Descendre', 'Rester immobile', 'Se casser'], 1, 'Le plateau avec l\'objet le plus lourd descend.'),
+  Q('En saison des pluies, on observe surtout...', ['Beaucoup de vent froid', 'Beaucoup de précipitations', 'De la neige', 'La sécheresse totale'], 1, 'La saison des pluies apporte de nombreuses précipitations.'),
+  Q('Le vent est de l\'air...', ['Immobile', 'En mouvement', 'Solide', 'Invisible et sans effet'], 1, 'Le vent est simplement de l\'air qui se déplace.'),
+  Q('Un levier permet de...', ['Voler', 'Soulever plus facilement une charge', 'Faire de la lumière', 'Produire du son'], 1, 'Le levier facilite le soulèvement d\'objets lourds.'),
+]);
+
+add('Circuits électriques et flottaison', 'Sciences Physiques', 'cm2', [
+  Q('Dans un circuit électrique en série, si on ajoute une pile, la lumière de l\'ampoule...', ['Diminue', 'Augmente', 'Ne change jamais', 'Disparaît'], 1, 'Plus de piles apportent plus d\'énergie, la lumière est plus forte.'),
+  Q('Un objet flotte quand il est...', ['Plus lourd que l\'eau qu\'il déplace', 'Plus léger que l\'eau qu\'il déplace', 'Toujours en métal', 'Toujours en bois'], 1, 'Un objet flotte si son poids est inférieur à la poussée de l\'eau (principe d\'Archimède simplifié).'),
+  Q('Un bateau en métal flotte car...', ['Le métal est toujours léger', 'Sa forme creuse déplace beaucoup d\'eau', 'Il n\'y a pas d\'eau autour', 'Il est attaché à la terre'], 1, 'La forme creuse du bateau déplace un grand volume d\'eau, ce qui le fait flotter.'),
+  Q('Quel matériau conduit bien l\'électricité ?', ['Le bois', 'Le plastique', 'Le métal', 'Le caoutchouc'], 2, 'Le métal est un bon conducteur électrique.'),
+  Q('Pourquoi les fils électriques sont-ils recouverts de plastique ?', ['Pour la couleur', 'Pour isoler et éviter les chocs électriques', 'Pour les rendre plus lourds', 'Pour les rendre visibles la nuit'], 1, 'Le plastique isole et protège des chocs électriques.'),
+]);
+
+// ══════════════════════════ BIOLOGIE (découverte du vivant, primaire) ══════════════════════════
+
+add('Les cinq sens', 'Biologie', 'cp1', [
+  Q('Avec quel organe voit-on ?', ['Le nez', 'Les yeux', 'La bouche', 'Les oreilles'], 1, 'On voit avec les yeux : c\'est la vue.'),
+  Q('Avec quel organe entend-on ?', ['Les yeux', 'La peau', 'Les oreilles', 'La langue'], 2, 'On entend avec les oreilles : c\'est l\'ouïe.'),
+  Q('Avec quel organe sent-on les odeurs ?', ['Le nez', 'La main', 'Le pied', 'L\'oreille'], 0, 'On sent les odeurs avec le nez : c\'est l\'odorat.'),
+  Q('Avec quel organe goûte-t-on les aliments ?', ['La langue', 'L\'oreille', 'Le nez', 'L\'œil'], 0, 'On goûte avec la langue : c\'est le goût.'),
+  Q('Combien de sens possède l\'être humain ?', ['3', '4', '5', '6'], 2, 'L\'être humain a 5 sens : vue, ouïe, odorat, goût, toucher.'),
+]);
+
+add('Le corps humain et l\'hygiène', 'Biologie', 'cp2', [
+  Q('Pourquoi faut-il se laver les mains avant de manger ?', ['Pour jouer', 'Pour enlever les microbes', 'Pour se réchauffer', 'Pour faire plaisir'], 1, 'Se laver les mains élimine les microbes qui peuvent rendre malade.'),
+  Q('Combien de fois par jour faut-il se brosser les dents ?', ['Jamais', 'Une fois par semaine', 'Au moins deux fois par jour', 'Une fois par mois'], 2, 'Il est recommandé de se brosser les dents au moins 2 fois par jour.'),
+  Q('Quelle partie du corps protège le cerveau ?', ['Le crâne', 'Le bras', 'Le pied', 'Le ventre'], 0, 'Le crâne (boîte osseuse) protège le cerveau.'),
+  Q('Combien de doigts a une main ?', ['4', '5', '6', '10'], 1, 'Une main a 5 doigts.'),
+  Q('Pourquoi faut-il bien dormir la nuit ?', ['Pour grandir et se reposer', 'Pour maigrir uniquement', 'Cela ne sert à rien', 'Pour avoir faim'], 0, 'Le sommeil permet au corps de se reposer et de grandir.'),
+]);
+
+add('Les besoins des plantes et des animaux', 'Biologie', 'ce1', [
+  Q('De quoi une plante a-t-elle besoin pour pousser ?', ['D\'eau, de lumière et d\'air', 'De bonbons', 'De musique', 'De rien du tout'], 0, 'Les plantes ont besoin d\'eau, de lumière et d\'air pour vivre.'),
+  Q('La vache est un animal...', ['Sauvage', 'Domestique', 'Aquatique uniquement', 'Volant'], 1, 'La vache est élevée par l\'homme : c\'est un animal domestique.'),
+  Q('Le lion vit surtout...', ['Dans les maisons', 'À l\'état sauvage', 'Dans l\'eau', 'Dans les arbres uniquement'], 1, 'Le lion est un animal sauvage qui vit en liberté.'),
+  Q('Par où une plante absorbe-t-elle l\'eau du sol ?', ['Les feuilles', 'Les racines', 'Les fleurs', 'Les fruits'], 1, 'Les racines puisent l\'eau et les minéraux dans le sol.'),
+  Q('Quel animal donne du lait que boivent les humains ?', ['Le chat', 'La vache', 'Le serpent', 'L\'oiseau'], 1, 'La vache produit le lait que consomment de nombreuses personnes.'),
+]);
+
+add('Le cycle de vie et l\'alimentation', 'Biologie', 'ce2', [
+  Q('D\'où vient une nouvelle plante ?', ['D\'une pierre', 'D\'une graine', 'D\'un nuage', 'D\'un animal'], 1, 'Une graine germe et donne naissance à une nouvelle plante.'),
+  Q('Quel groupe d\'aliments donne de l\'énergie rapide ?', ['Les féculents (riz, pain)', 'L\'eau', 'Les pierres', 'Le sel uniquement'], 0, 'Les féculents comme le riz apportent de l\'énergie.'),
+  Q('Pourquoi faut-il manger des fruits et légumes ?', ['Ils n\'apportent rien', 'Ils apportent des vitamines utiles au corps', 'Ils font grossir uniquement', 'Ils remplacent l\'eau'], 1, 'Fruits et légumes apportent des vitamines essentielles à la santé.'),
+  Q('Quelle est la première étape de la vie d\'une plante à fleurs ?', ['La fleur', 'La graine qui germe', 'Le fruit', 'La chute des feuilles'], 1, 'Tout commence par la germination de la graine.'),
+  Q('Une alimentation équilibrée doit contenir...', ['Seulement du sucre', 'Des aliments variés (féculents, fruits, légumes, protéines)', 'Seulement de la viande', 'Rien le matin'], 1, 'Il faut varier les aliments pour bien nourrir son corps.'),
+]);
+
+add('La respiration et le squelette', 'Biologie', 'cm1', [
+  Q('Avec quel organe respire-t-on ?', ['Le cœur', 'Les poumons', 'L\'estomac', 'Le foie'], 1, 'Les poumons permettent de respirer l\'air.'),
+  Q('Que fait-on en inspirant ?', ['On rejette de l\'air', 'On fait entrer de l\'air dans les poumons', 'On ferme les yeux', 'On avale de la nourriture'], 1, 'Inspirer, c\'est faire entrer l\'air dans les poumons.'),
+  Q('À quoi sert le squelette ?', ['À digérer', 'À soutenir et protéger le corps', 'À voir', 'À sentir les odeurs'], 1, 'Le squelette soutient le corps et protège les organes.'),
+  Q('Quel est l\'os le plus long du corps humain ?', ['Le crâne', 'Le fémur (cuisse)', 'Les côtes', 'La main'], 1, 'Le fémur, os de la cuisse, est le plus long du corps.'),
+  Q('Combien de battements le cœur fait-il environ par minute au repos ?', ['Environ 10', 'Environ 70', 'Environ 500', 'Environ 1000'], 1, 'Le cœur bat environ 60 à 80 fois par minute au repos.'),
+]);
+
+add('Reproduction des plantes et groupes d\'aliments', 'Biologie', 'cm2', [
+  Q('Comment s\'appelle le transport du pollen d\'une fleur à une autre ?', ['La digestion', 'La pollinisation', 'La respiration', 'La transpiration'], 1, 'La pollinisation permet la reproduction des plantes à fleurs.'),
+  Q('Quel insecte participe souvent à la pollinisation des fleurs ?', ['La fourmi', 'L\'abeille', 'Le moustique', 'Le cafard'], 1, 'L\'abeille transporte le pollen de fleur en fleur.'),
+  Q('Les protéines (viande, poisson, œufs) servent surtout à...', ['Construire et réparer le corps', 'Uniquement donner soif', 'Colorer les aliments', 'Rien du tout'], 0, 'Les protéines sont essentielles à la croissance et à la réparation du corps.'),
+  Q('Après la fleur, une plante produit souvent...', ['Un fruit contenant des graines', 'De la pierre', 'Du sable', 'Du métal'], 0, 'Le fruit se développe après la fleur et contient les graines.'),
+  Q('Pourquoi faut-il boire de l\'eau régulièrement ?', ['Pour le plaisir uniquement', 'Le corps en a besoin pour bien fonctionner', 'Cela ne sert à rien', 'Seulement quand on est malade'], 1, 'L\'eau est indispensable au bon fonctionnement du corps.'),
+]);
+
+// ══════════════════════════ HISTOIRE (initiation, primaire) ══════════════════════════
+
+add('Le drapeau et ma famille', 'Histoire', 'cp1', [
+  Q('Combien de couleurs a le drapeau de la Guinée ?', ['2', '3', '4', '5'], 1, 'Le drapeau guinéen a 3 couleurs : rouge, jaune, vert.'),
+  Q('Quelles sont les couleurs du drapeau guinéen ?', ['Bleu, blanc, rouge', 'Rouge, jaune, vert', 'Vert, blanc, noir', 'Noir, jaune, rouge'], 1, 'Le drapeau de la Guinée est rouge, jaune et vert.'),
+  Q('Comment s\'appelle le pays où tu vis ?', ['Le Mali', 'Le Sénégal', 'La Guinée', 'La Côte d\'Ivoire'], 2, 'Ce cours porte sur la Guinée, notre pays.'),
+  Q('Qui sont les membres de ta famille proche ?', ['Uniquement des amis', 'Parents, frères et sœurs', 'Uniquement des voisins', 'Personne'], 1, 'La famille proche comprend parents, frères et sœurs.'),
+  Q('Un village ou un quartier est un endroit où...', ['Personne n\'habite', 'Vivent des familles ensemble', 'Il n\'y a que des animaux', 'On ne fait rien'], 1, 'Un village/quartier rassemble des familles qui y vivent.'),
+]);
+
+add('Les symboles de la Guinée', 'Histoire', 'cp2', [
+  Q('Comment appelle-t-on le chant officiel d\'un pays ?', ['Une comptine', 'L\'hymne national', 'Une berceuse', 'Un conte'], 1, 'L\'hymne national est le chant officiel d\'un pays.'),
+  Q('Où voit-on souvent flotter le drapeau national ?', ['Sur les écoles et bâtiments officiels', 'Nulle part', 'Uniquement à la maison', 'Sous l\'eau'], 0, 'Le drapeau flotte sur les écoles, mairies et bâtiments publics.'),
+  Q('Que représente le drapeau d\'un pays ?', ['Rien de particulier', 'L\'identité et l\'unité du pays', 'Une simple décoration', 'Un jeu'], 1, 'Le drapeau symbolise l\'identité et l\'unité nationale.'),
+  Q('Que fait-on généralement quand l\'hymne national est joué ?', ['On continue de jouer', 'On se lève avec respect', 'On s\'endort', 'On part en courant'], 1, 'Par respect, on se lève pendant l\'hymne national.'),
+  Q('La capitale de la Guinée est...', ['Kankan', 'Labé', 'Conakry', 'Kindia'], 2, 'Conakry est la capitale de la Guinée.'),
+]);
+
+add('La fête de l\'indépendance et la tradition', 'Histoire', 'ce1', [
+  Q('Quelle date célèbre l\'indépendance de la Guinée ?', ['1er janvier', '2 octobre', '14 juillet', '25 décembre'], 1, 'La Guinée célèbre son indépendance le 2 octobre (1958).'),
+  Q('Comment appelle-t-on les personnes qui racontent l\'histoire de génération en génération dans la tradition ouest-africaine ?', ['Les griots', 'Les pêcheurs', 'Les commerçants', 'Les enseignants'], 0, 'Les griots transmettent oralement l\'histoire et les traditions.'),
+  Q('Pourquoi célèbre-t-on l\'indépendance d\'un pays ?', ['Pour se souvenir de sa liberté retrouvée', 'Pour aucune raison', 'Pour changer de pays', 'Pour partir en vacances'], 0, 'On célèbre la liberté et la souveraineté retrouvées.'),
+  Q('Comment appelle-t-on les récits transmis oralement de génération en génération ?', ['Des lois', 'Des contes et légendes', 'Des factures', 'Des cartes'], 1, 'Contes et légendes se transmettent oralement à travers les générations.'),
+  Q('Avant l\'indépendance, la Guinée était...', ['Un pays totalement libre', 'Une colonie française', 'Une île déserte', 'Un royaume isolé'], 1, 'La Guinée était une colonie française avant 1958.'),
+]);
+
+add('Des figures historiques guinéennes', 'Histoire', 'ce2', [
+  Q('Samory Touré est connu pour avoir...', ['Construit des routes', 'Résisté à la colonisation française', 'Inventé l\'écriture', 'Fondé Conakry'], 1, 'Samory Touré a mené une résistance armée contre la conquête française.'),
+  Q('Un héros historique est une personne qui...', ['Ne fait jamais rien', 'A marqué l\'histoire par ses actions courageuses', 'Vit seulement dans les contes', 'N\'a jamais existé'], 1, 'Un héros historique a réellement existé et marqué l\'histoire.'),
+  Q('Pourquoi raconte-t-on l\'histoire des grandes figures du passé ?', ['Pour s\'ennuyer', 'Pour connaître et honorer notre passé', 'Pour effacer l\'histoire', 'Cela ne sert à rien'], 1, 'Connaître le passé aide à comprendre le présent et honorer ceux qui ont marqué l\'histoire.'),
+  Q('Samory Touré a résisté à quelle puissance coloniale ?', ['L\'Angleterre', 'La France', 'Le Portugal', 'L\'Allemagne'], 1, 'Samory Touré a résisté à la colonisation française.'),
+  Q('Comment transmet-on souvent l\'histoire des héros dans les villages ?', ['Par des livres uniquement', 'Par les récits des anciens et des griots', 'On ne la transmet jamais', 'Uniquement à la télévision'], 1, 'Les récits oraux des anciens et des griots transmettent cette histoire.'),
+]);
+
+add('Les grands empires d\'Afrique de l\'Ouest', 'Histoire', 'cm1', [
+  Q('Quel était un grand empire ouest-africain connu pour son commerce de l\'or ?', ['L\'empire du Mali', 'L\'empire romain', 'L\'empire chinois', 'L\'empire russe'], 0, 'L\'empire du Mali était célèbre pour ses richesses en or.'),
+  Q('Qui a fondé l\'empire du Mali ?', ['Samory Touré', 'Soundiata Keïta', 'Sékou Touré', 'Kankou Moussa'], 1, 'Soundiata Keïta est le fondateur de l\'empire du Mali.'),
+  Q('Quelle ville malienne était célèbre pour ses savants et ses bibliothèques ?', ['Conakry', 'Tombouctou', 'Dakar', 'Accra'], 1, 'Tombouctou était un grand centre de savoir en Afrique de l\'Ouest.'),
+  Q('L\'empereur Kankou Moussa est resté célèbre pour...', ['Une guerre perdue', 'Son pèlerinage riche à La Mecque', 'Avoir fui son pays', 'N\'avoir rien fait'], 1, 'Son pèlerinage à La Mecque, très riche en or, l\'a rendu célèbre dans le monde.'),
+  Q('Les grands empires d\'Afrique de l\'Ouest commerçaient surtout...', ['L\'or et le sel', 'Des ordinateurs', 'Des voitures', 'Du pétrole'], 0, 'Le commerce transsaharien portait notamment sur l\'or et le sel.'),
+]);
+
+add('L\'indépendance de la Guinée en 1958', 'Histoire', 'cm2', [
+  Q('En quelle année la Guinée est-elle devenue indépendante ?', ['1948', '1958', '1968', '1978'], 1, 'La Guinée est devenue indépendante en 1958.'),
+  Q('Qui était le premier président de la République de Guinée ?', ['Samory Touré', 'Ahmed Sékou Touré', 'Alpha Condé', 'Lansana Conté'], 1, 'Ahmed Sékou Touré fut le premier président de la Guinée indépendante.'),
+  Q('En 1958, la Guinée a voté "non" à un référendum proposé par la France. Que signifiait ce "non" ?', ['Rester colonie', 'Choisir l\'indépendance immédiate', 'Devenir un autre pays', 'Ne rien changer'], 1, 'Ce vote "non" signifiait le choix de l\'indépendance immédiate plutôt que rester lié à la France.'),
+  Q('Qu\'est-ce que la colonisation ?', ['Un jeu d\'enfant', 'La domination d\'un pays par une puissance étrangère', 'Une fête nationale', 'Un type de commerce libre'], 1, 'La colonisation est la domination politique et économique d\'un territoire par une puissance étrangère.'),
+  Q('Que célèbre-t-on chaque 2 octobre en Guinée ?', ['La fête des récoltes', 'L\'anniversaire de l\'indépendance', 'Le nouvel an', 'La fête de la musique'], 1, 'Le 2 octobre commémore l\'indépendance de la Guinée en 1958.'),
+]);
+
+// ══════════════════════════ GÉOGRAPHIE (initiation, primaire) ══════════════════════════
+
+add('Ma maison et mon village', 'Géographie', 'cp1', [
+  Q('L\'endroit où tu habites avec ta famille s\'appelle...', ['L\'école', 'La maison', 'Le marché', 'La rivière'], 1, 'La maison est le lieu où l\'on vit avec sa famille.'),
+  Q('Un village est généralement plus...', ['Grand qu\'une ville', 'Petit qu\'une grande ville', 'Toujours vide', 'Sous l\'eau'], 1, 'Un village est en général plus petit qu\'une grande ville.'),
+  Q('Quel endroit sert à acheter de la nourriture et des objets ?', ['Le marché', 'L\'hôpital', 'L\'école', 'Le fleuve'], 0, 'Le marché est le lieu où l\'on achète et vend des produits.'),
+  Q('Où va-t-on pour apprendre à lire et à écrire ?', ['Au marché', 'À l\'école', 'À la rivière', 'Au champ uniquement'], 1, 'L\'école est le lieu d\'apprentissage.'),
+  Q('Un fleuve ou une rivière, c\'est...', ['De l\'eau qui coule dans la nature', 'Une route', 'Une maison', 'Un arbre'], 0, 'Un fleuve/rivière est un cours d\'eau naturel.'),
+]);
+
+add('Le jour, la nuit et les directions', 'Géographie', 'cp2', [
+  Q('D\'où se lève le soleil le matin ?', ['De l\'ouest', 'De l\'est', 'Du nord', 'Du sud'], 1, 'Le soleil se lève à l\'est chaque matin.'),
+  Q('Où se couche le soleil le soir ?', ['À l\'est', 'À l\'ouest', 'Au nord', 'Au sud'], 1, 'Le soleil se couche à l\'ouest.'),
+  Q('Combien de points cardinaux principaux existe-t-il ?', ['2', '3', '4', '6'], 2, 'Les 4 points cardinaux sont nord, sud, est, ouest.'),
+  Q('Pendant la nuit, que fait-on généralement ?', ['On travaille aux champs', 'On dort et on se repose', 'On va à l\'école', 'On nage'], 1, 'La nuit est le moment du repos et du sommeil.'),
+  Q('Quel point cardinal est à l\'opposé du nord ?', ['L\'est', 'L\'ouest', 'Le sud', 'Le centre'], 2, 'Le sud est opposé au nord.'),
+]);
+
+add('La carte et les villes de Guinée', 'Géographie', 'ce1', [
+  Q('Une carte sert à...', ['Manger', 'Représenter un territoire vu de haut', 'Écouter de la musique', 'Cuisiner'], 1, 'Une carte représente un territoire de façon schématique, vu du dessus.'),
+  Q('Quelle est la capitale de la Guinée ?', ['Kankan', 'Labé', 'Conakry', 'Nzérékoré'], 2, 'Conakry est la capitale du pays.'),
+  Q('La Guinée est bordée par quel océan ?', ['L\'océan Indien', 'L\'océan Atlantique', 'L\'océan Pacifique', 'La mer Rouge'], 1, 'La Guinée a une façade sur l\'océan Atlantique.'),
+  Q('Sur une carte, le bleu représente souvent...', ['Les montagnes', 'L\'eau (mer, fleuves)', 'Les routes', 'Les villes'], 1, 'Le bleu symbolise généralement les étendues d\'eau sur une carte.'),
+  Q('Citer une grande ville de Guinée en dehors de Conakry :', ['Paris', 'Kankan', 'Dakar', 'Abidjan'], 1, 'Kankan est une grande ville guinéenne, en Haute-Guinée.'),
+]);
+
+add('Les saisons en Guinée', 'Géographie', 'ce2', [
+  Q('Combien de grandes saisons connaît la Guinée ?', ['1', '2', '4', '6'], 1, 'La Guinée connaît principalement 2 saisons : la saison sèche et la saison des pluies.'),
+  Q('Pendant la saison des pluies, il...', ['Ne pleut jamais', 'Pleut beaucoup', 'Neige', 'Fait très froid partout'], 1, 'La saison des pluies se caractérise par d\'importantes précipitations.'),
+  Q('Pendant la saison sèche, le temps est plutôt...', ['Très pluvieux', 'Sec avec peu de pluie', 'Neigeux', 'Glacial'], 1, 'La saison sèche a peu ou pas de précipitations.'),
+  Q('Le climat influence surtout...', ['La couleur des vêtements uniquement', 'Les activités agricoles', 'Le nom des villes', 'La langue parlée'], 1, 'Le climat (saisons) influence fortement les périodes de culture et récolte.'),
+  Q('Quelle activité est fortement liée à la saison des pluies ?', ['Le ski', 'L\'agriculture (semis, culture)', 'La construction de glaciers', 'Rien de particulier'], 1, 'La saison des pluies est essentielle pour l\'agriculture.'),
+]);
+
+add('Les régions naturelles de la Guinée', 'Géographie', 'cm1', [
+  Q('Combien de régions naturelles compte la Guinée ?', ['2', '3', '4', '5'], 2, 'La Guinée compte 4 régions naturelles.'),
+  Q('Quelle région naturelle abrite la capitale Conakry ?', ['La Haute-Guinée', 'La Moyenne-Guinée', 'La Basse-Guinée', 'La Guinée forestière'], 2, 'Conakry se trouve en Basse-Guinée, la région côtière.'),
+  Q('Le Fouta Djalon correspond à quelle région ?', ['La Basse-Guinée', 'La Moyenne-Guinée', 'La Haute-Guinée', 'La Guinée forestière'], 1, 'Le Fouta Djalon, massif montagneux, correspond à la Moyenne-Guinée.'),
+  Q('Quelle région guinéenne est couverte de forêts denses ?', ['La Basse-Guinée', 'La Haute-Guinée', 'La Guinée forestière', 'Le désert'], 2, 'La Guinée forestière, au sud-est, est couverte de forêts denses.'),
+  Q('La Haute-Guinée est plutôt une zone de...', ['Montagnes uniquement', 'Savane', 'Désert de sable', 'Glaciers'], 1, 'La Haute-Guinée est majoritairement une zone de savane.'),
+]);
+
+add('Les fleuves de Guinée', 'Géographie', 'cm2', [
+  Q('Quel grand fleuve d\'Afrique de l\'Ouest prend sa source en Guinée ?', ['Le Nil', 'Le Niger', 'Le Congo', 'Le Zambèze'], 1, 'Le fleuve Niger prend sa source dans le Fouta Djalon, en Guinée.'),
+  Q('Pourquoi appelle-t-on la Guinée le "château d\'eau de l\'Afrique de l\'Ouest" ?', ['Elle produit de l\'eau en bouteille', 'Plusieurs grands fleuves y prennent leur source', 'Elle a beaucoup de piscines', 'Elle est entourée de glaciers'], 1, 'De grands fleuves (Niger, Sénégal, Gambie) prennent leur source en Guinée.'),
+  Q('Quel océan reçoit les eaux des fleuves guinéens côtiers ?', ['L\'océan Indien', 'L\'océan Atlantique', 'L\'océan Pacifique', 'La mer Noire'], 1, 'Les fleuves côtiers guinéens se jettent dans l\'océan Atlantique.'),
+  Q('Un fleuve est important pour les populations car il permet...', ['Rien de particulier', 'L\'agriculture, la pêche et le transport', 'Uniquement les loisirs', 'De bloquer les routes'], 1, 'Les fleuves soutiennent agriculture, pêche et transport des populations riveraines.'),
+  Q('Le fleuve Milo traverse notamment quelle ville guinéenne ?', ['Conakry', 'Kankan', 'Labé', 'Boké'], 1, 'Le Milo, affluent du Niger, traverse la ville de Kankan.'),
+]);
+
 module.exports = quizzes;
 console.log(`Total: ${quizzes.length} quiz préparés (${quizzes.reduce((s, q) => s + q.questions.length, 0)} questions).`);
