@@ -2,6 +2,19 @@ const Quiz = require('../models/quiz.model');
 const QuizAttempt = require('../models/quizAttempt.model');
 
 const quizController = {
+  // ── Historique des quiz passés par l'utilisateur connecté ───────────
+  async mesTentatives(req, res) {
+    try {
+      const tentatives = await QuizAttempt.find({ userId: req.user.id })
+        .populate('quizId', 'titre matiere niveau')
+        .sort({ createdAt: -1 })
+        .limit(20);
+      res.json({ tentatives });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
   // ── Liste des quiz publiés, ouverte à tout utilisateur connecté ─────
   async list(req, res) {
     try {

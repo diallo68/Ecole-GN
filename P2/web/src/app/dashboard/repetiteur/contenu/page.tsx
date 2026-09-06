@@ -3,9 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { contentApi } from '@/lib/api';
+import { ChevronDown } from 'lucide-react';
+import { contentApi, soumissionApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import type { ContentItem, Niveau } from '@/types';
+import FileUploadField from '@/components/FileUploadField';
+import type { ContentItem, Niveau, Soumission } from '@/types';
 
 type ContentType = 'video' | 'support' | 'exercice';
 const TYPES: { value: ContentType; label: string }[] = [
@@ -102,14 +104,15 @@ export default function RepetiteurContenuPage() {
             <input placeholder="Chapitre (optionnel)" value={chapitre} onChange={e => setChapitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
 
             {type !== 'exercice' && (
-              <input placeholder={type === 'video' ? 'URL de la vidéo (Cloudinary)' : 'URL du fichier (PDF)'} value={url} onChange={e => setUrl(e.target.value)}
-                className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
+              <FileUploadField value={url} onChange={setUrl}
+                accept={type === 'video' ? 'video/*' : '.pdf,image/*'}
+                label={type === 'video' ? 'Ajouter la vidéo' : 'Ajouter le support (PDF, image)'} />
             )}
             {type === 'exercice' && (
               <>
                 <textarea placeholder="Énoncé" value={enonce} onChange={e => setEnonce(e.target.value)} rows={3} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
                 <textarea placeholder="Correction (optionnelle)" value={correction} onChange={e => setCorrection(e.target.value)} rows={2} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
-                <input placeholder="Pièce jointe (optionnelle, URL)" value={url} onChange={e => setUrl(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
+                <FileUploadField value={url} onChange={setUrl} accept=".pdf,image/*" label="Ajouter une pièce jointe (optionnel)" />
               </>
             )}
 
@@ -123,17 +126,114 @@ export default function RepetiteurContenuPage() {
           {items.length === 0 ? (
             <p className="text-ink/60 text-sm">Rien de publié pour l'instant dans cette catégorie.</p>
           ) : items.map(item => (
-            <div key={item._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-start justify-between">
-              <div>
-                <p className="font-semibold">{item.titre}</p>
-                <p className="text-sm text-ink/60">{item.matiere} · {item.niveau}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
-                {item.enonce && <p className="text-sm text-ink/70 mt-1">{item.enonce}</p>}
-              </div>
-              <button onClick={() => supprimer(item._id)} className="text-red-500 text-sm hover:underline shrink-0 ml-3">Supprimer</button>
-            </div>
+            type === 'exercice'
+              ? <ExerciceCard key={item._id} item={item} onDelete={() => supprimer(item._id)} />
+              : (
+                <div key={item._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-start justify-between">
+                  <div>
+                    <p className="font-semibold">{item.titre}</p>
+                    <p className="text-sm text-ink/60">{item.matiere} · {item.niveau}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
+                  </div>
+                  <button onClick={() => supprimer(item._id)} className="text-red-500 text-sm hover:underline shrink-0 ml-3">Supprimer</button>
+                </div>
+              )
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+function ExerciceCard({ item, onDelete }: { item: ContentItem; onDelete: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [soumissions, setSoumissions] = useState<Soumission[] | null>(null);
+
+  const charger = () => {
+    soumissionApi.byExercice(item._id).then(d => setSoumissions(d.soumissions)).catch(() => setSoumissions([]));
+  };
+
+  const toggle = () => {
+    if (!open && soumissions === null) charger();
+    setOpen(!open);
+  };
+
+  const rendus = soumissions?.filter(s => s.statut === 'rendu').length ?? null;
+
+  return (
+    <div className="bg-white rounded-xl border border-ink/10 overflow-hidden">
+      <div className="p-4 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-semibold">{item.titre}</p>
+          <p className="text-sm text-ink/60">{item.matiere} · {item.niveau}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
+          {item.enonce && <p className="text-sm text-ink/70 mt-1">{item.enonce}</p>}
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <button onClick={onDelete} className="text-red-500 text-sm hover:underline">Supprimer</button>
+        </div>
+      </div>
+      <button onClick={toggle} className="w-full flex items-center justify-between px-4 py-2.5 border-t border-ink/5 bg-sand/50 text-sm font-semibold text-ink/70 hover:bg-sand">
+        <span>Voir les copies{rendus !== null && rendus > 0 ? ` (${rendus} à corriger)` : soumissions ? ` (${soumissions.length})` : ''}</span>
+        <ChevronDown size={15} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div className="p-4 border-t border-ink/5 space-y-2">
+          {soumissions === null ? (
+            <p className="text-sm text-ink/50">Chargement...</p>
+          ) : soumissions.length === 0 ? (
+            <p className="text-sm text-ink/50">Aucune copie rendue pour l'instant.</p>
+          ) : soumissions.map(s => <CopieRow key={s._id} soumission={s} onCorrigee={charger} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CopieRow({ soumission, onCorrigee }: { soumission: Soumission; onCorrigee: () => void }) {
+  const eleve = typeof soumission.eleveId === 'object' ? soumission.eleveId : null;
+  const [note, setNote] = useState(soumission.note?.toString() || '');
+  const [commentaire, setCommentaire] = useState(soumission.commentaire || '');
+  const [saving, setSaving] = useState(false);
+  const [editing, setEditing] = useState(soumission.statut === 'rendu');
+
+  const corriger = async () => {
+    setSaving(true);
+    try {
+      await soumissionApi.corriger(soumission._id, { note: note ? Number(note) : undefined, commentaire: commentaire || undefined });
+      toast.success('Copie corrigée !');
+      setEditing(false);
+      onCorrigee();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erreur');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="bg-sand rounded-lg p-3 space-y-2">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold text-ink">{eleve ? `${eleve.prenom} ${eleve.nom}` : 'Élève'}</p>
+        <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${soumission.statut === 'corrige' ? 'bg-brand-light text-brand-dark' : 'bg-accent/15 text-[#8a6400]'}`}>
+          {soumission.statut === 'corrige' ? `Corrigé — ${soumission.note ?? '—'}/20` : 'À corriger'}
+        </span>
+      </div>
+      {soumission.reponseTexte && <p className="text-sm text-ink/70 whitespace-pre-wrap">{soumission.reponseTexte}</p>}
+      {soumission.fichierUrl && (
+        <a href={soumission.fichierUrl} target="_blank" rel="noreferrer" className="text-xs font-semibold text-brand hover:underline">Pièce jointe →</a>
+      )}
+      {editing ? (
+        <div className="flex flex-col sm:flex-row gap-2 pt-1">
+          <input type="number" min={0} max={20} placeholder="Note /20" value={note} onChange={e => setNote(e.target.value)}
+            className="w-full sm:w-24 border border-ink/15 rounded-lg px-2.5 py-1.5 text-sm bg-white" />
+          <input placeholder="Commentaire (optionnel)" value={commentaire} onChange={e => setCommentaire(e.target.value)}
+            className="flex-1 border border-ink/15 rounded-lg px-2.5 py-1.5 text-sm bg-white" />
+          <button onClick={corriger} disabled={saving} className="bg-brand text-white rounded-lg px-3 py-1.5 text-xs font-semibold hover:bg-brand-dark disabled:opacity-50 shrink-0">
+            {saving ? '...' : 'Valider'}
+          </button>
+        </div>
+      ) : (
+        <button onClick={() => setEditing(true)} className="text-xs font-semibold text-brand hover:underline">Modifier la note</button>
+      )}
     </div>
   );
 }

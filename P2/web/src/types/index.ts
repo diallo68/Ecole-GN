@@ -44,7 +44,7 @@ export interface Repetiteur {
 
 export interface ContentItem {
   _id: string;
-  repetiteurId: string;
+  repetiteurId: string | { _id: string; prenom: string; nom: string };
   titre: string;
   matiere: string;
   niveau: Niveau;
@@ -122,4 +122,67 @@ export interface QuizCorrection {
   reponseCorrecte: number;
   explication?: string;
   correct: boolean;
+}
+
+export interface ConversationParticipant {
+  _id: string;
+  prenom: string;
+  nom: string;
+  role?: Role;
+  repetiteur?: RepetiteurProfile;
+}
+
+export interface Conversation {
+  _id: string;
+  participants: ConversationParticipant[];
+  lastMessage?: string;
+  lastMessageAt?: string;
+}
+
+export interface Message {
+  _id: string;
+  conversationId: string;
+  senderId: string;
+  text: string;
+  createdAt: string;
+}
+
+export interface QuizAttempt {
+  _id: string;
+  quizId: QuizSummary | null;
+  score: number;
+  total: number;
+  createdAt: string;
+}
+
+export interface Soumission {
+  _id: string;
+  exerciceId: { _id: string; titre: string; matiere: string; niveau: Niveau } | string;
+  eleveId: { _id: string; prenom: string; nom: string } | string;
+  reponseTexte?: string;
+  fichierUrl?: string;
+  statut: 'rendu' | 'corrige';
+  note?: number;
+  commentaire?: string;
+  createdAt: string;
+}
+
+export interface AdminUser {
+  _id: string;
+  prenom: string;
+  nom: string;
+  email: string;
+  city?: string;
+  role: Role;
+  createdAt: string;
+  eleve?: { niveau?: Niveau };
+  repetiteur?: { valide?: boolean; matieres?: string[] };
+}
+
+export interface AdminStats {
+  eleves: number;
+  parents: number;
+  enseignants: { valides: number; enAttente: number };
+  reservations: { enAttente: number; confirmees: number; terminees: number; total: number };
+  quiz: { publies: number; total: number };
 }

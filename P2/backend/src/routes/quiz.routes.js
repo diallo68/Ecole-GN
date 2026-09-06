@@ -4,6 +4,7 @@ const quizController = require('../controllers/quiz.controller');
 const { auth, requireRole } = require('../middlewares/auth.middleware');
 
 router.get('/', auth, quizController.list);
+router.get('/mes-tentatives', auth, quizController.mesTentatives);
 router.get('/admin/all', auth, requireRole('admin'), quizController.adminList);
 router.get('/admin/:id', auth, requireRole('admin'), quizController.adminGetById);
 router.patch('/admin/:id/publish', auth, requireRole('admin'), quizController.togglePublish);

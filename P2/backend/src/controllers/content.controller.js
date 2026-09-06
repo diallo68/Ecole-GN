@@ -22,6 +22,24 @@ function contentController(type) {
       }
     },
 
+    // ── Fil global filtré (matière/niveau) — alimente "Mes cours"/"Mes
+    // exercices" côté élève, tous répétiteurs confondus ─────────────
+    async listAll(req, res) {
+      try {
+        const { matiere, niveau } = req.query;
+        const filter = {};
+        if (matiere) filter.matiere = matiere;
+        if (niveau) filter.niveau = niveau;
+        const items = await Model.find(filter)
+          .populate('repetiteurId', 'prenom nom')
+          .sort({ createdAt: -1 })
+          .limit(100);
+        res.json({ [`${type}s`]: items });
+      } catch (err) {
+        res.status(500).json({ error: 'Erreur serveur' });
+      }
+    },
+
     // ── Liste du contenu d'un répétiteur donné (vu par ses élèves) ──
     async listByRepetiteur(req, res) {
       try {

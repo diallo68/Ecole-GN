@@ -1,20 +1,3 @@
-export const Colors = {
-  brand: '#0A7B4B',
-  brandDark: '#065f39',
-  brandLight: '#e6f5ee',
-  accent: '#F5B700',
-  flag: '#CE1126',
-  ink: '#14201b',
-  inkMuted: '#64748b',
-  inkSubtle: '#94a3b8',
-  surfaceBg: '#fbf7ee',
-  surfaceBorder: '#e2e8f0',
-  white: '#ffffff',
-  success: '#16a34a',
-  warning: '#d97706',
-  danger: '#dc2626',
-};
-
 export const MATIERES = ['Mathématiques', 'Français', 'Sciences Physiques', 'SVT'];
 export const NIVEAUX: Array<{ value: 'primaire' | 'college' | 'lycee'; label: string }> = [
   { value: 'primaire', label: 'Primaire' },
@@ -22,9 +5,8 @@ export const NIVEAUX: Array<{ value: 'primaire' | 'college' | 'lycee'; label: st
   { value: 'lycee', label: 'Lycée' },
 ];
 
-export const GNF = (n: number): string => new Intl.NumberFormat('fr-GN').format(n) + ' GNF';
-
-// Liste des villes/préfectures/communes de Guinée (même référentiel que YouGouYouGou).
+// Liste des villes/préfectures/communes de Guinée (même référentiel que YouGouYouGou,
+// découpage issu du décret présidentiel du 20 août 2026).
 export const ALL_CITIES: string[] = [
   'Beyla', 'Boké', 'Boffa', 'Conakry', 'Coyah', 'Dabola', 'Dalaba',
   'Dialakoro', 'Dinguiraye', 'Doko', 'Dubréka', 'Faranah', 'Forécariah',

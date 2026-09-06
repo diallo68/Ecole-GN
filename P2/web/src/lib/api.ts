@@ -1,4 +1,4 @@
-import type { User, Repetiteur, Reservation, QuizSummary, QuizDetail, QuizCorrection, QuizFull, ContentItem, ClasseVirtuelle } from '@/types';
+import type { User, Repetiteur, Reservation, QuizSummary, QuizDetail, QuizCorrection, QuizFull, ContentItem, ClasseVirtuelle, Conversation, Message, AdminStats, QuizAttempt, AdminUser, Soumission } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
@@ -73,6 +73,7 @@ export const quizApi = {
   // Admin
   create: (body: { titre: string; matiere: string; niveau: string; questions: unknown[] }) =>
     post<{ success: boolean; quiz: QuizFull }>('/quiz', body),
+  mesTentatives: () => get<{ tentatives: QuizAttempt[] }>('/quiz/mes-tentatives'),
   adminList: () => get<{ quizzes: QuizFull[] }>('/quiz/admin/all'),
   adminGetById: (id: string) => get<{ quiz: QuizFull }>(`/quiz/admin/${id}`),
   togglePublish: (id: string, publie: boolean) => patch<{ success: boolean }>(`/quiz/admin/${id}/publish`, { publie }),
@@ -89,6 +90,10 @@ export const contentApi = {
     get<Record<string, ContentItem[]>>(`/content/${type}s/mine`).then(d => d[contentKey(type)]),
   byRepetiteur: (type: ContentType, repetiteurId: string) =>
     get<Record<string, ContentItem[]>>(`/content/${type}s/repetiteur/${repetiteurId}`).then(d => d[contentKey(type)]),
+  listAll: (type: ContentType, params: { matiere?: string; niveau?: string } = {}) => {
+    const qs = new URLSearchParams(params as Record<string, string>).toString();
+    return get<Record<string, ContentItem[]>>(`/content/${type}s${qs ? `?${qs}` : ''}`).then(d => d[contentKey(type)]);
+  },
   remove: (type: ContentType, id: string) => del<{ success: boolean }>(`/content/${type}s/${id}`),
 };
 
@@ -96,6 +101,52 @@ export const classeVirtuelleApi = {
   create: (body: Record<string, unknown>) => post<{ success: boolean; classe: ClasseVirtuelle }>('/classes-virtuelles', body),
   mine: () => get<{ classes: ClasseVirtuelle[] }>('/classes-virtuelles/mine'),
   mineAsEleve: () => get<{ classes: ClasseVirtuelle[] }>('/classes-virtuelles/eleve/mine'),
+};
+
+export const messagingApi = {
+  conversations: () => get<{ conversations: Conversation[] }>('/messaging/conversations'),
+  startOrGet: (otherUserId: string) => post<{ conversation: Conversation }>('/messaging/conversations', { otherUserId }),
+  messages: (id: string) => get<{ messages: Message[] }>(`/messaging/conversations/${id}/messages`),
+  send: (id: string, text: string) => post<{ success: boolean; message: Message }>(`/messaging/conversations/${id}/messages`, { text }),
+};
+
+export const soumissionApi = {
+  create: (body: { exerciceId: string; reponseTexte?: string; fichierUrl?: string }) =>
+    post<{ success: boolean; soumission: Soumission }>('/soumissions', body),
+  mine: () => get<{ soumissions: Soumission[] }>('/soumissions/mine'),
+  byExercice: (exerciceId: string) => get<{ soumissions: Soumission[] }>(`/soumissions/exercice/${exerciceId}`),
+  corriger: (id: string, body: { note?: number; commentaire?: string }) =>
+    patch<{ success: boolean; soumission: Soumission }>(`/soumissions/${id}/corriger`, body),
+};
+
+export const uploadApi = {
+  file: async (file: File): Promise<{ success: boolean; url: string; type: string; format?: string }> => {
+    const token = getToken();
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${API_URL}/uploads`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      body: formData,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Erreur serveur');
+    return data;
+  },
+};
+
+export const assistantApi = {
+  chat: (messages: Array<{ role: 'user' | 'assistant'; content: string }>) =>
+    post<{ reply: string }>('/assistant/chat', { messages }),
+};
+
+export const adminApi = {
+  stats: () => get<AdminStats>('/admin/stats'),
+  users: (params: { role?: string; search?: string } = {}) => {
+    const qs = new URLSearchParams(params as Record<string, string>).toString();
+    return get<{ users: AdminUser[] }>(`/admin/users${qs ? `?${qs}` : ''}`);
+  },
+  conversations: () => get<{ conversations: Conversation[] }>('/admin/conversations'),
 };
 
 export { del, get, patch, post };

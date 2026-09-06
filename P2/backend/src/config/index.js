@@ -20,4 +20,5 @@ module.exports = {
     API_KEY: process.env.CLOUDINARY_API_KEY,
     API_SECRET: process.env.CLOUDINARY_API_SECRET,
   },
+  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
 };

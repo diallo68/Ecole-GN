@@ -9,5 +9,9 @@ router.use('/classes-virtuelles', require('./classeVirtuelle.routes'));
 router.use('/quiz', require('./quiz.routes'));
 router.use('/messaging', require('./messaging.routes'));
 router.use('/reviews', require('./review.routes'));
+router.use('/admin', require('./admin.routes'));
+router.use('/soumissions', require('./soumission.routes'));
+router.use('/assistant', require('./assistant.routes'));
+router.use('/uploads', require('./upload.routes'));
 
 module.exports = router;

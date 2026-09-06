@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { repetiteurApi, quizApi } from '@/lib/api';
+import AssistantWidget from '@/components/AssistantWidget';
 import type { Repetiteur, QuizSummary } from '@/types';
 
 export default function HomePage() {
@@ -15,6 +16,7 @@ export default function HomePage() {
   }, []);
 
   return (
+    <>
     <div className="space-y-14">
       <section className="relative overflow-hidden rounded-3xl bg-brand-dark text-white px-6 py-14 md:py-20 text-center">
         <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-accent/20" />
@@ -82,5 +84,7 @@ export default function HomePage() {
         )}
       </section>
     </div>
+    <AssistantWidget />
+    </>
   );
 }

@@ -2,8 +2,17 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { LayoutDashboard, Users, ClipboardList, UserRound, MessageCircle } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import DashboardShell, { type DashboardNavItem } from '@/components/DashboardShell';
+
+const items: DashboardNavItem[] = [
+  { href: '/admin', label: 'Aperçu', icon: LayoutDashboard },
+  { href: '/admin/utilisateurs', label: 'Inscrits', icon: UserRound },
+  { href: '/admin/repetiteurs', label: 'Enseignants', icon: Users },
+  { href: '/admin/quiz', label: 'Quiz', icon: ClipboardList },
+  { href: '/admin/messagerie', label: 'Messagerie', icon: MessageCircle },
+];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -15,13 +24,5 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (!user || user.role !== 'admin') return null;
 
-  return (
-    <div>
-      <div className="flex gap-3 mb-6 border-b border-ink/10 pb-3">
-        <Link href="/admin/repetiteurs" className="text-sm font-semibold hover:text-brand">Modération enseignants</Link>
-        <Link href="/admin/quiz" className="text-sm font-semibold hover:text-brand">Quiz</Link>
-      </div>
-      {children}
-    </div>
-  );
+  return <DashboardShell items={items}>{children}</DashboardShell>;
 }

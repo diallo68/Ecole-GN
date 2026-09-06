@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { repetiteurApi, reservationApi } from '@/lib/api';
+import { MessageCircle } from 'lucide-react';
+import { repetiteurApi, reservationApi, messagingApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import type { Repetiteur } from '@/types';
 
@@ -26,6 +27,16 @@ export default function RepetiteurDetailPage() {
       setMatiere(d.repetiteur.repetiteur.matieres?.[0] || '');
     }).catch(() => toast.error('Enseignant introuvable'));
   }, [id]);
+
+  const contacter = async () => {
+    if (!isLoggedIn()) { router.push('/login'); return; }
+    try {
+      const { conversation } = await messagingApi.startOrGet(id);
+      router.push(`/dashboard/messages?c=${conversation._id}`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erreur');
+    }
+  };
 
   const reserver = async () => {
     if (!isLoggedIn()) { router.push('/login'); return; }
@@ -59,6 +70,9 @@ export default function RepetiteurDetailPage() {
         {repetiteur.repetiteur.tarifHoraire && (
           <p className="mt-4 text-lg font-bold text-brand">{repetiteur.repetiteur.tarifHoraire.toLocaleString('fr-FR')} GNF / heure</p>
         )}
+        <button onClick={contacter} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand-dark">
+          <MessageCircle size={16} /> Contacter {repetiteur.prenom}
+        </button>
       </div>
 
       <div className="bg-white rounded-xl border border-ink/10 p-6 h-fit">

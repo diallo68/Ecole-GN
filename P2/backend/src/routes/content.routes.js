@@ -9,6 +9,7 @@ const { auth, requireRole } = require('../middlewares/auth.middleware');
   router.post(`/${type}s`, auth, requireRole('repetiteur'), c.create);
   router.get(`/${type}s/mine`, auth, requireRole('repetiteur'), c.mine);
   router.get(`/${type}s/repetiteur/:repetiteurId`, c.listByRepetiteur);
+  router.get(`/${type}s`, auth, c.listAll);
   router.delete(`/${type}s/:id`, auth, requireRole('repetiteur'), c.remove);
 });
 

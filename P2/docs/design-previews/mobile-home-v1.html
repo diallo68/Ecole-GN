@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr" class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gandal - Soutien Scolaire</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Google Fonts: Outfit for a modern, friendly, geometric feel perfect for education -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#F0F7F4',  // Light tint for icon backgrounds
+                            100: '#D9ECE4', // Slightly darker light green for contrast text
+                            500: '#1A7A53',
+                            600: '#135A3D', // Primary Accent (Requested deep green)
+                            700: '#0D402B', // Hover/Darker shade (Requested)
+                            900: '#051A11',
+                        },
+                        ui: {
+                            bg: '#FAFAF9', // Stone 50
+                            surface: '#FFFFFF',
+                            border: '#E7E5E4', // Stone 200
+                            text: '#1C1917', // Stone 900
+                            muted: '#78716C', // Stone 500
+                        }
+                    },
+                    boxShadow: {
+                        'glow': '0 8px 24px -8px rgba(19, 90, 61, 0.4)', // Updated to deep green rgba
+                        'float': '0 12px 32px -12px rgba(28, 25, 23, 0.08)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base configuration to mimic a physical device screen on desktop, full bleed on mobile */
+        :root {
+            --app-height: 100dvh;
+        }
+
+        body {
+            background-color: #E7E5E4; /* Darker backdrop for desktop framing */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #app-frame {
+            width: 100%;
+            height: var(--app-height);
+            background-color: theme('colors.ui.bg');
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Desktop device simulation */
+        @media (min-width: 640px) {
+            #app-frame {
+                width: 400px;
+                height: 850px;
+                max-height: 90vh;
+                border-radius: 2.5rem;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                border: 8px solid #1C1917; /* Phone bezel */
+            }
+        }
+
+        /* Hide scrollbars but keep functionality */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Spring physics interaction class */
+        .tap-spring {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .tap-spring:active {
+            transform: scale(0.96);
+        }
+
+        /* Staggered entrance animation */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-cascade > * {
+            opacity: 0;
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-cascade > *:nth-child(1) { animation-delay: 0.1s; }
+        .animate-cascade > *:nth-child(2) { animation-delay: 0.2s; }
+        .animate-cascade > *:nth-child(3) { animation-delay: 0.3s; }
+        .animate-cascade > *:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Snapping lists */
+        .snap-container {
+            scroll-snap-type: x mandatory;
+            scroll-padding-left: 1.5rem;
+        }
+        .snap-item {
+            scroll-snap-align: start;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Mobile App Frame -->
+    <div id="app-frame">
+
+        <!-- Main Scrollable Area -->
+        <main class="flex-1 overflow-y-auto hide-scrollbar animate-cascade pb-28 pt-8">
+
+            <!-- Header Section -->
+            <header class="px-6 mb-8 flex justify-between items-start">
+                <div>
+                    <h1 class="text-4xl font-black text-ui-text tracking-tight mb-1">Gandal.</h1>
+                    <p class="text-ui-muted text-sm font-medium pr-8 leading-snug">
+                        Le soutien scolaire,<br>partout en Guinée.
+                    </p>
+                </div>
+                <button class="w-10 h-10 rounded-full bg-ui-surface border border-ui-border flex items-center justify-center text-ui-text tap-spring relative">
+                    <i class="ph ph-bell text-xl"></i>
+                    <span class="absolute top-2 right-2.5 w-2 h-2 bg-brand-600 rounded-full border-2 border-ui-surface"></span>
+                </button>
+            </header>
+
+            <!-- Primary Actions (Bento Style) -->
+            <section class="px-6 mb-10 grid grid-cols-2 gap-4">
+                <!-- Action 1: Find Tutor (Accent) -->
+                <button class="tap-spring relative overflow-hidden bg-brand-600 rounded-[1.5rem] p-5 flex flex-col justify-between aspect-square shadow-glow text-left group">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                    <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white mb-4 backdrop-blur-sm">
+                        <i class="ph ph-magnifying-glass text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-white font-bold text-lg leading-tight mb-1">Trouver un<br>enseignant</h2>
+                        <span class="text-brand-100 text-xs font-medium flex items-center gap-1">
+                            Explorer <i class="ph ph-arrow-right"></i>
+                        </span>
+                    </div>
+                </button>
+
+                <!-- Action 2: Take Quiz (Secondary) -->
+                <button class="tap-spring bg-ui-surface border border-ui-border rounded-[1.5rem] p-5 flex flex-col justify-between aspect-square shadow-sm text-left">
+                    <div class="w-12 h-12 rounded-full bg-brand-50 flex items-center justify-center text-brand-600 mb-4">
+                        <i class="ph ph-lightning text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-ui-text font-bold text-lg leading-tight mb-1">Faire un<br>quiz</h2>
+                        <span class="text-ui-muted text-xs font-medium flex items-center gap-1">
+                            S'évaluer <i class="ph ph-arrow-right"></i>
+                        </span>
+                    </div>
+                </button>
+            </section>
+
+            <!-- Tutors Section (Horizontal Scroll) -->
+            <section class="mb-10">
+                <div class="px-6 flex justify-between items-end mb-4">
+                    <h3 class="text-xl font-bold text-ui-text">Enseignants dispo</h3>
+                    <button class="text-brand-600 text-sm font-semibold tap-spring">Voir tout</button>
+                </div>
+
+                <div class="flex overflow-x-auto hide-scrollbar snap-container gap-4 px-6 pb-4">
+
+                    <!-- Tutor Card 1 -->
+                    <div class="snap-item shrink-0 w-36 bg-ui-surface border border-ui-border rounded-2xl p-4 flex flex-col items-center text-center tap-spring shadow-float">
+                        <div class="w-16 h-16 rounded-full overflow-hidden mb-3 relative">
+                            <img src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=150&q=80" alt="Mamadou Diallo" class="w-full h-full object-cover">
+                            <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                        </div>
+                        <h4 class="font-bold text-sm text-ui-text truncate w-full">M. Diallo</h4>
+                        <span class="text-[10px] font-bold tracking-wider text-brand-600 uppercase bg-brand-50 px-2 py-0.5 rounded-md mt-1 mb-2">Maths</span>
+                        <div class="flex items-center text-xs text-ui-muted gap-1">
+                            <i class="ph-fill ph-map-pin"></i> Dixinn
+                        </div>
+                    </div>
+
+                    <!-- Tutor Card 2 -->
+                    <div class="snap-item shrink-0 w-36 bg-ui-surface border border-ui-border rounded-2xl p-4 flex flex-col items-center text-center tap-spring shadow-float">
+                        <div class="w-16 h-16 rounded-full overflow-hidden mb-3 relative">
+                            <img src="https://images.unsplash.com/photo-1531123897727-8f129e1bf98c?auto=format&fit=crop&w=150&q=80" alt="Fatoumata Sylla" class="w-full h-full object-cover">
+                            <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                        </div>
+                        <h4 class="font-bold text-sm text-ui-text truncate w-full">F. Sylla</h4>
+                        <span class="text-[10px] font-bold tracking-wider text-blue-600 uppercase bg-blue-50 px-2 py-0.5 rounded-md mt-1 mb-2">Physique</span>
+                        <div class="flex items-center text-xs text-ui-muted gap-1">
+                            <i class="ph-fill ph-map-pin"></i> Kipé
+                        </div>
+                    </div>
+
+                    <!-- Tutor Card 3 -->
+                    <div class="snap-item shrink-0 w-36 bg-ui-surface border border-ui-border rounded-2xl p-4 flex flex-col items-center text-center tap-spring shadow-float">
+                        <div class="w-16 h-16 rounded-full overflow-hidden mb-3 relative flex items-center justify-center bg-stone-200 text-stone-500 font-bold text-xl">
+                            IB
+                            <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                        </div>
+                        <h4 class="font-bold text-sm text-ui-text truncate w-full">I. Barry</h4>
+                        <span class="text-[10px] font-bold tracking-wider text-emerald-600 uppercase bg-emerald-50 px-2 py-0.5 rounded-md mt-1 mb-2">Français</span>
+                        <div class="flex items-center text-xs text-ui-muted gap-1">
+                            <i class="ph-fill ph-map-pin"></i> Kaloum
+                        </div>
+                    </div>
+
+                    <!-- Spacer for scroll padding end -->
+                    <div class="shrink-0 w-2"></div>
+                </div>
+            </section>
+
+            <!-- Quizzes Section (Vertical Stack) -->
+            <section class="px-6 mb-8">
+                <div class="flex justify-between items-end mb-4">
+                    <h3 class="text-xl font-bold text-ui-text">Teste-toi</h3>
+                </div>
+
+                <div class="flex flex-col gap-3">
+
+                    <!-- Quiz Card 1 -->
+                    <button class="w-full bg-ui-surface border border-ui-border rounded-2xl p-4 flex items-center gap-4 tap-spring shadow-sm text-left">
+                        <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 shrink-0">
+                            <i class="ph-fill ph-calculator text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-ui-text text-sm mb-1">Préparation Bac Blanc</h4>
+                            <div class="flex items-center gap-2 text-xs">
+                                <span class="text-brand-600 font-medium">Mathématiques</span>
+                                <span class="w-1 h-1 rounded-full bg-ui-border"></span>
+                                <span class="text-ui-muted">Terminale SE</span>
+                            </div>
+                        </div>
+                        <i class="ph ph-caret-right text-ui-muted"></i>
+                    </button>
+
+                    <!-- Quiz Card 2 -->
+                    <button class="w-full bg-ui-surface border border-ui-border rounded-2xl p-4 flex items-center gap-4 tap-spring shadow-sm text-left">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                            <i class="ph-fill ph-atom text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-ui-text text-sm mb-1">Cinématique & Forces</h4>
+                            <div class="flex items-center gap-2 text-xs">
+                                <span class="text-blue-600 font-medium">Physique</span>
+                                <span class="w-1 h-1 rounded-full bg-ui-border"></span>
+                                <span class="text-ui-muted">1ère SM</span>
+                            </div>
+                        </div>
+                        <i class="ph ph-caret-right text-ui-muted"></i>
+                    </button>
+
+                </div>
+            </section>
+
+            <!-- Avis Section (Horizontal Scroll) -->
+            <section class="mb-6">
+                <div class="px-6 flex justify-between items-end mb-4">
+                    <h3 class="text-xl font-bold text-ui-text">Avis élèves & parents</h3>
+                </div>
+
+                <div class="flex overflow-x-auto hide-scrollbar snap-container gap-4 px-6 pb-2">
+
+                    <!-- Avis 1 -->
+                    <div class="snap-item shrink-0 w-64 bg-ui-surface border border-ui-border rounded-2xl p-4 tap-spring shadow-float">
+                        <div class="flex text-amber-400 text-xs mb-2">
+                            <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
+                        </div>
+                        <p class="text-ui-text text-sm leading-snug mb-3">« Mon fils est passé de 8 à 15 en maths en un trimestre. »</p>
+                        <p class="text-xs font-bold text-ui-text">Hawa Camara <span class="font-normal text-ui-muted">· Parent</span></p>
+                    </div>
+
+                    <!-- Avis 2 -->
+                    <div class="snap-item shrink-0 w-64 bg-ui-surface border border-ui-border rounded-2xl p-4 tap-spring shadow-float">
+                        <div class="flex text-amber-400 text-xs mb-2">
+                            <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
+                        </div>
+                        <p class="text-ui-text text-sm leading-snug mb-3">« Les cours en ligne m'ont sauvé avant mon Bac. »</p>
+                        <p class="text-xs font-bold text-ui-text">Mohamed Sylla <span class="font-normal text-ui-muted">· Élève</span></p>
+                    </div>
+
+                    <!-- Spacer -->
+                    <div class="shrink-0 w-2"></div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Fixed Bottom Navigation -->
+        <nav class="absolute bottom-0 w-full bg-white/80 backdrop-blur-xl border-t border-ui-border/50 pb-safe pt-3 px-6 z-50">
+            <!-- pb-safe padding hack for standard screens, adjusted below via CSS if needed, using explicit padding for this static demo -->
+            <div class="flex justify-between items-center pb-6">
+
+                <!-- Nav Item: Accueil (Active) -->
+                <button class="flex flex-col items-center gap-1 group w-16">
+                    <div class="relative">
+                        <i class="ph-fill ph-house text-2xl text-brand-600 transition-transform group-active:scale-90"></i>
+                        <!-- Active indicator -->
+                        <span class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 bg-brand-600 rounded-full"></span>
+                    </div>
+                    <span class="text-[10px] font-bold text-brand-600">Accueil</span>
+                </button>
+
+                <!-- Nav Item: Enseignants -->
+                <button class="flex flex-col items-center gap-1 group w-16">
+                    <div class="relative">
+                        <i class="ph ph-users text-2xl text-ui-muted transition-colors group-hover:text-ui-text group-active:scale-90"></i>
+                    </div>
+                    <span class="text-[10px] font-medium text-ui-muted transition-colors group-hover:text-ui-text">Tuteurs</span>
+                </button>
+
+                <!-- Nav Item: Quiz -->
+                <button class="flex flex-col items-center gap-1 group w-16">
+                    <div class="relative">
+                        <i class="ph ph-lightning text-2xl text-ui-muted transition-colors group-hover:text-ui-text group-active:scale-90"></i>
+                    </div>
+                    <span class="text-[10px] font-medium text-ui-muted transition-colors group-hover:text-ui-text">Quiz</span>
+                </button>
+
+                <!-- Nav Item: Mon espace -->
+                <button class="flex flex-col items-center gap-1 group w-16">
+                    <div class="relative">
+                        <i class="ph ph-user-circle text-2xl text-ui-muted transition-colors group-hover:text-ui-text group-active:scale-90"></i>
+                    </div>
+                    <span class="text-[10px] font-medium text-ui-muted transition-colors group-hover:text-ui-text">Profil</span>
+                </button>
+
+            </div>
+        </nav>
+
+    </div>
+
+    <script>
+        // Simple JS to simulate overscroll bounce effect on the main container
+        const main = document.querySelector('main');
+
+        // Prevent default touchmove to stop body scrolling on iOS, but allow scrolling within main
+        document.addEventListener('touchmove', function(e) {
+            if (!main.contains(e.target)) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>

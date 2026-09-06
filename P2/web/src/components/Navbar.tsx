@@ -24,8 +24,11 @@ export default function Navbar() {
           <Link href="/quiz" className="hover:text-brand transition-colors">Quiz</Link>
           {isLoggedIn() ? (
             <>
-              <Link href="/dashboard" className="hover:text-brand transition-colors">Mon espace</Link>
-              {user?.role === 'admin' && <Link href="/admin" className="hover:text-brand transition-colors">Back-office</Link>}
+              {user?.role === 'admin' ? (
+                <Link href="/admin" className="hover:text-brand transition-colors">Back-office</Link>
+              ) : (
+                <Link href="/dashboard" className="hover:text-brand transition-colors">Mon espace</Link>
+              )}
               <button onClick={logout} className="text-[#14201b]/50 hover:text-flag transition-colors">Déconnexion</button>
             </>
           ) : (
