@@ -12,6 +12,7 @@ const uploadController = {
       const result = await uploadBuffer(req.file.buffer, { folder: 'gandal' });
       res.json({ success: true, url: result.secure_url, type: result.resource_type, format: result.format });
     } catch (err) {
+      console.error('[upload]', err);
       res.status(500).json({ error: "Échec de l'envoi du fichier" });
     }
   },
