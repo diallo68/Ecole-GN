@@ -185,11 +185,14 @@ export default function HomePage() {
           </div>
         )}
 
-        <div className="text-center mt-6">
-          <Link href={cycle ? `/quiz?cycle=${cycle}${niveau ? `&niveau=${niveau}` : ''}` : '/quiz'}
-            className="inline-flex items-center gap-1.5 text-sm text-brand font-semibold hover:text-brand-dark">
-            Voir tous les quiz <ArrowRight size={14} />
-          </Link>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+          {CYCLES.map(c => (
+            <Link key={c.value} href={`/quiz?cycle=${c.value}`}
+              className="bg-white rounded-2xl border border-ink/10 p-6 flex flex-col items-center gap-1 text-center hover:border-brand hover:shadow-md transition-all">
+              <span className="font-bold text-ink">{c.label}</span>
+              <span className="text-xs text-ink/50">{c.desc}</span>
+            </Link>
+          ))}
         </div>
       </section>
 
