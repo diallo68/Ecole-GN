@@ -2,23 +2,36 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { Lock, Sparkles } from 'lucide-react';
 import { quizApi } from '@/lib/api';
+import { useAuthStore } from '@/store/authStore';
 import type { QuizDetail, QuizCorrection } from '@/types';
+
+const ESSAI_GRATUIT_KEY = 'gandal_essai_gratuit_utilise';
 
 export default function QuizPlayPage() {
   const { id } = useParams<{ id: string }>();
+  const { isLoggedIn } = useAuthStore();
   const [quiz, setQuiz] = useState<QuizDetail | null>(null);
   const [reponses, setReponses] = useState<(number | null)[]>([]);
   const [result, setResult] = useState<{ score: number; total: number; correction: QuizCorrection[] } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [essaiEpuise, setEssaiEpuise] = useState(false);
 
   useEffect(() => {
+    // Un visiteur non inscrit n'a droit qu'à un seul quiz d'essai (côté client) —
+    // au-delà, on l'invite à créer un compte plutôt que de charger le quiz.
+    if (!isLoggedIn() && typeof window !== 'undefined' && localStorage.getItem(ESSAI_GRATUIT_KEY)) {
+      setEssaiEpuise(true);
+      return;
+    }
     quizApi.getById(id).then(d => {
       setQuiz(d.quiz);
       setReponses(new Array(d.quiz.questions.length).fill(null));
     }).catch(() => toast.error('Quiz introuvable'));
-  }, [id]);
+  }, [id, isLoggedIn]);
 
   const choisir = (qIndex: number, choixIndex: number) => {
     setReponses(prev => prev.map((r, i) => (i === qIndex ? choixIndex : r)));
@@ -30,12 +43,30 @@ export default function QuizPlayPage() {
     try {
       const data = await quizApi.submit(id, reponses as number[]);
       setResult(data);
+      if (!isLoggedIn() && typeof window !== 'undefined') {
+        localStorage.setItem(ESSAI_GRATUIT_KEY, 'true');
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erreur');
     } finally {
       setLoading(false);
     }
   };
+
+  if (essaiEpuise) {
+    return (
+      <div className="max-w-md mx-auto text-center bg-white rounded-2xl border border-ink/10 p-8">
+        <Lock size={28} className="mx-auto text-brand mb-3" strokeWidth={1.75} />
+        <h1 className="text-xl font-bold text-ink mb-2">Ton test gratuit est déjà utilisé</h1>
+        <p className="text-sm text-ink/60 mb-6">
+          Sans inscription, un seul quiz d'essai est disponible. Crée un compte gratuit pour continuer à t'entraîner à volonté.
+        </p>
+        <Link href="/register" className="inline-flex items-center justify-center gap-2 bg-brand text-white rounded-full px-6 py-3 font-semibold hover:bg-brand-dark transition-colors">
+          Créer mon compte gratuit
+        </Link>
+      </div>
+    );
+  }
 
   if (!quiz) return <p className="text-ink/60">Chargement...</p>;
 
@@ -45,8 +76,19 @@ export default function QuizPlayPage() {
       <p className="text-ink/60 mb-6">{quiz.matiere} · {quiz.niveau}</p>
 
       {result && (
-        <div className="bg-brand/10 border border-brand rounded-xl p-4 mb-6 text-center">
+        <div className="bg-brand/10 border border-brand rounded-xl p-4 mb-4 text-center">
           <p className="text-2xl font-extrabold text-brand">{result.score} / {result.total}</p>
+        </div>
+      )}
+
+      {result && !isLoggedIn() && (
+        <div className="bg-sand border border-ink/10 rounded-xl p-4 mb-6 flex items-center gap-3">
+          <Sparkles size={20} className="text-brand shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-ink">C'était ton essai gratuit !</p>
+            <p className="text-xs text-ink/60">Inscris-toi pour passer d'autres quiz et réserver un enseignant.</p>
+          </div>
+          <Link href="/register" className="text-sm font-bold text-brand hover:text-brand-dark shrink-0">S'inscrire →</Link>
         </div>
       )}
 

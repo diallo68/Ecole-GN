@@ -57,7 +57,11 @@ const quizController = {
         return { reponseCorrecte: q.reponseCorrecte, explication: q.explication, correct };
       });
 
-      await QuizAttempt.create({ userId: req.user.id, quizId: quiz._id, reponses, score, total: quiz.questions.length });
+      // Pas de suivi de tentative pour un visiteur anonyme (essai gratuit) —
+      // seuls les inscrits ont un historique dans "Mes quiz".
+      if (req.user) {
+        await QuizAttempt.create({ userId: req.user.id, quizId: quiz._id, reponses, score, total: quiz.questions.length });
+      }
       res.json({ score, total: quiz.questions.length, correction });
     } catch (err) {
       res.status(500).json({ error: 'Erreur serveur' });
