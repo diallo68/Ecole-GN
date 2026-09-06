@@ -1,0 +1,301 @@
+{
+  "_comment": "Lot d'exemple — quiz générés pour valider le format avant construction du schéma de base de données. Contenu original, à faire relire par un enseignant avant toute publication réelle.",
+  "quizzes": [
+    {
+      "niveau": "college",
+      "matiere": "Mathématiques",
+      "titre": "Fractions et pourcentages",
+      "questions": [
+        {
+          "question": "Combien font 3/4 exprimés en pourcentage ?",
+          "choix": ["34%", "75%", "43%", "57%"],
+          "reponseCorrecte": 1,
+          "explication": "3/4 = 0,75, soit 75%."
+        },
+        {
+          "question": "Quel est le résultat de 2/5 + 1/5 ?",
+          "choix": ["3/10", "3/5", "1/5", "2/25"],
+          "reponseCorrecte": 1,
+          "explication": "Les dénominateurs sont identiques : on additionne les numérateurs, 2+1=3, donc 3/5."
+        },
+        {
+          "question": "Un article coûte 20 000 GNF. Il est soldé à -25%. Quel est le nouveau prix ?",
+          "choix": ["15 000 GNF", "16 000 GNF", "5 000 GNF", "18 000 GNF"],
+          "reponseCorrecte": 0,
+          "explication": "25% de 20 000 = 5 000. 20 000 - 5 000 = 15 000 GNF."
+        },
+        {
+          "question": "Simplifie la fraction 12/16.",
+          "choix": ["6/8", "3/4", "4/3", "2/4"],
+          "reponseCorrecte": 1,
+          "explication": "12 et 16 sont divisibles par 4 : 12÷4=3, 16÷4=4, donc 3/4."
+        },
+        {
+          "question": "Quelle fraction est équivalente à 0,5 ?",
+          "choix": ["1/5", "1/2", "2/5", "5/10 seulement"],
+          "reponseCorrecte": 1,
+          "explication": "0,5 = 5/10 = 1/2 (forme simplifiée)."
+        }
+      ]
+    },
+    {
+      "niveau": "college",
+      "matiere": "Français",
+      "titre": "Conjugaison et accords",
+      "questions": [
+        {
+          "question": "Conjugue le verbe \"finir\" à la 3e personne du pluriel au présent de l'indicatif.",
+          "choix": ["ils finissent", "ils finient", "ils finisent", "ils finent"],
+          "reponseCorrecte": 0,
+          "explication": "\"Finir\" est un verbe du 2e groupe : ils finissent."
+        },
+        {
+          "question": "Quel est le participe passé du verbe \"prendre\" ?",
+          "choix": ["prendu", "pris", "prendé", "prend"],
+          "reponseCorrecte": 1,
+          "explication": "Le verbe \"prendre\" a un participe passé irrégulier : pris."
+        },
+        {
+          "question": "\"Les fleurs que j'ai ... sont belles.\" Quel accord du participe passé est correct ?",
+          "choix": ["cueilli", "cueillies", "cueillis", "cueillie"],
+          "reponseCorrecte": 1,
+          "explication": "Avec l'auxiliaire \"avoir\", le participe passé s'accorde avec le COD placé avant : \"que\" (= les fleurs, féminin pluriel) → cueillies."
+        },
+        {
+          "question": "Quelle phrase est correctement accordée ?",
+          "choix": ["Les enfants sont parti.", "Les enfants sont partis.", "Les enfants sont partie.", "Les enfants sont partit."],
+          "reponseCorrecte": 1,
+          "explication": "Avec l'auxiliaire \"être\", le participe passé s'accorde avec le sujet : \"les enfants\" (masculin pluriel) → partis."
+        },
+        {
+          "question": "Conjugue \"aller\" à la 1ère personne du singulier au futur simple.",
+          "choix": ["j'allerai", "j'irai", "je vais aller", "j'aille"],
+          "reponseCorrecte": 1,
+          "explication": "\"Aller\" a un futur irrégulier basé sur le radical \"ir-\" : j'irai."
+        }
+      ]
+    },
+    {
+      "niveau": "college",
+      "matiere": "Sciences Physiques",
+      "titre": "États de la matière et électricité",
+      "questions": [
+        {
+          "question": "Quel est le nom du changement d'état de liquide à gaz ?",
+          "choix": ["Fusion", "Solidification", "Vaporisation", "Condensation"],
+          "reponseCorrecte": 2,
+          "explication": "Le passage de l'état liquide à l'état gazeux s'appelle la vaporisation."
+        },
+        {
+          "question": "Dans un circuit électrique en série, que se passe-t-il si une lampe grille ?",
+          "choix": ["Les autres lampes restent allumées", "Toutes les lampes s'éteignent", "Rien ne change", "Le courant double"],
+          "reponseCorrecte": 1,
+          "explication": "En série, le circuit est coupé en un seul point : toutes les lampes s'éteignent."
+        },
+        {
+          "question": "Quelle est l'unité de l'intensité du courant électrique ?",
+          "choix": ["Le volt", "Le watt", "L'ampère", "L'ohm"],
+          "reponseCorrecte": 2,
+          "explication": "L'intensité du courant se mesure en ampères (A)."
+        },
+        {
+          "question": "Quel est le nom du changement d'état de solide à liquide ?",
+          "choix": ["Fusion", "Sublimation", "Condensation", "Solidification"],
+          "reponseCorrecte": 0,
+          "explication": "Le passage de l'état solide à l'état liquide s'appelle la fusion."
+        },
+        {
+          "question": "Un générateur électrique sert à :",
+          "choix": ["Consommer l'énergie électrique", "Produire une tension électrique", "Mesurer le courant", "Isoler un circuit"],
+          "reponseCorrecte": 1,
+          "explication": "Le générateur est la source qui produit la tension nécessaire au fonctionnement du circuit."
+        }
+      ]
+    },
+    {
+      "niveau": "college",
+      "matiere": "SVT",
+      "titre": "Digestion et respiration",
+      "questions": [
+        {
+          "question": "Où commence la digestion des aliments ?",
+          "choix": ["Dans l'estomac", "Dans la bouche", "Dans l'intestin grêle", "Dans le foie"],
+          "reponseCorrecte": 1,
+          "explication": "La digestion commence dans la bouche, avec la mastication et la salive."
+        },
+        {
+          "question": "Quel organe absorbe la majorité des nutriments issus de la digestion ?",
+          "choix": ["L'estomac", "Le gros intestin", "L'intestin grêle", "Le foie"],
+          "reponseCorrecte": 2,
+          "explication": "L'intestin grêle est le principal lieu d'absorption des nutriments dans le sang."
+        },
+        {
+          "question": "Quel gaz est rejeté lors de l'expiration ?",
+          "choix": ["Le dioxygène", "Le dioxyde de carbone", "L'azote", "L'hydrogène"],
+          "reponseCorrecte": 1,
+          "explication": "L'organisme rejette le dioxyde de carbone (CO2) produit par les cellules."
+        },
+        {
+          "question": "Quel organe permet les échanges gazeux entre l'air et le sang ?",
+          "choix": ["Le cœur", "Les poumons", "Le foie", "Les reins"],
+          "reponseCorrecte": 1,
+          "explication": "Les poumons, via les alvéoles pulmonaires, assurent les échanges gazeux avec le sang."
+        },
+        {
+          "question": "Qu'est-ce que la bile, produite par le foie ?",
+          "choix": ["Une hormone digestive uniquement", "Un liquide qui aide à digérer les graisses", "Un déchet éliminé sans rôle digestif", "Un acide qui digère les protéines"],
+          "reponseCorrecte": 1,
+          "explication": "La bile facilite la digestion des graisses en les fragmentant (émulsion)."
+        }
+      ]
+    },
+    {
+      "niveau": "lycee",
+      "matiere": "Mathématiques",
+      "titre": "Fonctions et dérivées",
+      "questions": [
+        {
+          "question": "Quelle est la dérivée de f(x) = x² ?",
+          "choix": ["f'(x) = x", "f'(x) = 2x", "f'(x) = 2", "f'(x) = x²"],
+          "reponseCorrecte": 1,
+          "explication": "La dérivée de xⁿ est n·xⁿ⁻¹, donc pour x², f'(x) = 2x."
+        },
+        {
+          "question": "Quelle est la dérivée d'une constante k ?",
+          "choix": ["k", "1", "0", "kx"],
+          "reponseCorrecte": 2,
+          "explication": "La dérivée d'une constante est toujours nulle."
+        },
+        {
+          "question": "Soit f(x) = 3x + 5. Quelle est l'image de 2 par f ?",
+          "choix": ["9", "10", "11", "6"],
+          "reponseCorrecte": 2,
+          "explication": "f(2) = 3×2 + 5 = 11."
+        },
+        {
+          "question": "Une fonction f est croissante sur un intervalle si :",
+          "choix": ["f'(x) < 0 sur cet intervalle", "f'(x) > 0 sur cet intervalle", "f'(x) = 0 sur cet intervalle", "f(x) = 0 sur cet intervalle"],
+          "reponseCorrecte": 1,
+          "explication": "Une dérivée positive sur un intervalle signifie que la fonction y est croissante."
+        },
+        {
+          "question": "Quelle est la dérivée de f(x) = 1/x (pour x ≠ 0) ?",
+          "choix": ["f'(x) = 1/x²", "f'(x) = -1/x²", "f'(x) = -1/x", "f'(x) = ln(x)"],
+          "reponseCorrecte": 1,
+          "explication": "La dérivée de 1/x est -1/x²."
+        }
+      ]
+    },
+    {
+      "niveau": "lycee",
+      "matiere": "Français",
+      "titre": "Analyse littéraire et figures de style",
+      "questions": [
+        {
+          "question": "\"Un silence de mort régnait dans la salle\" est un exemple de :",
+          "choix": ["Métaphore", "Comparaison", "Hyperbole", "Litote"],
+          "reponseCorrecte": 0,
+          "explication": "C'est une métaphore : on attribue au silence une qualité (\"de mort\") sans outil de comparaison explicite (\"comme\")."
+        },
+        {
+          "question": "Quel type de texte a pour but principal de convaincre le lecteur ?",
+          "choix": ["Le texte narratif", "Le texte descriptif", "Le texte argumentatif", "Le texte poétique"],
+          "reponseCorrecte": 2,
+          "explication": "Le texte argumentatif vise à défendre une thèse et convaincre le lecteur."
+        },
+        {
+          "question": "\"Va, cours, vole, et nous venge\" (Corneille) illustre quelle figure de style ?",
+          "choix": ["L'anaphore", "L'accumulation", "L'antithèse", "L'euphémisme"],
+          "reponseCorrecte": 1,
+          "explication": "L'accumulation de verbes à l'impératif crée un effet d'urgence et d'intensité croissante."
+        },
+        {
+          "question": "Qu'est-ce qu'une litote ?",
+          "choix": ["Dire plus pour suggérer moins", "Dire moins pour suggérer plus", "Répéter un mot plusieurs fois", "Comparer deux éléments avec \"comme\""],
+          "reponseCorrecte": 1,
+          "explication": "La litote atténue l'expression pour suggérer davantage (ex: \"Va, je ne te hais point\" pour dire \"je t'aime\")."
+        },
+        {
+          "question": "Dans quel registre littéraire cherche-t-on à provoquer la pitié ou la tristesse du lecteur ?",
+          "choix": ["Le registre comique", "Le registre épique", "Le registre pathétique", "Le registre ironique"],
+          "reponseCorrecte": 2,
+          "explication": "Le registre pathétique cherche à émouvoir en suscitant la pitié ou la tristesse."
+        }
+      ]
+    },
+    {
+      "niveau": "lycee",
+      "matiere": "Sciences Physiques",
+      "titre": "Mécanique et lois de Newton",
+      "questions": [
+        {
+          "question": "Selon la première loi de Newton, un objet au repos reste au repos si :",
+          "choix": ["Une force lui est appliquée", "La somme des forces qui s'exercent sur lui est nulle", "Il est en mouvement", "Sa masse est nulle"],
+          "reponseCorrecte": 1,
+          "explication": "C'est le principe d'inertie : sans force résultante, un corps garde son état de repos ou de mouvement rectiligne uniforme."
+        },
+        {
+          "question": "La formule de la deuxième loi de Newton est :",
+          "choix": ["F = m + a", "F = m × a", "F = m / a", "F = m - a"],
+          "reponseCorrecte": 1,
+          "explication": "La force résultante est égale au produit de la masse par l'accélération : F = m×a."
+        },
+        {
+          "question": "Quelle est l'unité de la force dans le système international ?",
+          "choix": ["Le joule", "Le newton", "Le watt", "Le pascal"],
+          "reponseCorrecte": 1,
+          "explication": "La force se mesure en newtons (N)."
+        },
+        {
+          "question": "D'après la troisième loi de Newton, si un corps A exerce une force sur un corps B :",
+          "choix": ["B n'exerce aucune force sur A", "B exerce une force égale et opposée sur A", "B exerce une force plus faible sur A", "Seul A est affecté"],
+          "reponseCorrecte": 1,
+          "explication": "Principe des actions réciproques : toute force exercée par A sur B est accompagnée d'une force égale et opposée exercée par B sur A."
+        },
+        {
+          "question": "Le poids d'un objet dépend de :",
+          "choix": ["Sa masse et de la pesanteur du lieu", "Sa couleur", "Sa vitesse uniquement", "Son volume uniquement"],
+          "reponseCorrecte": 0,
+          "explication": "Le poids P = m×g dépend de la masse m et de l'intensité de la pesanteur g du lieu."
+        }
+      ]
+    },
+    {
+      "niveau": "lycee",
+      "matiere": "SVT",
+      "titre": "Génétique et système nerveux",
+      "questions": [
+        {
+          "question": "Où se trouve l'information génétique dans une cellule ?",
+          "choix": ["Dans le cytoplasme uniquement", "Dans le noyau, sous forme d'ADN", "Dans la membrane cellulaire", "Dans les mitochondries uniquement"],
+          "reponseCorrecte": 1,
+          "explication": "L'ADN, support de l'information génétique, est principalement contenu dans le noyau des cellules."
+        },
+        {
+          "question": "Qu'est-ce qu'un gène ?",
+          "choix": ["Une cellule spécialisée", "Un fragment d'ADN codant pour un caractère", "Un type de protéine", "Un organite cellulaire"],
+          "reponseCorrecte": 1,
+          "explication": "Un gène est une portion d'ADN qui porte l'information nécessaire à la fabrication d'une protéine ou d'un caractère héréditaire."
+        },
+        {
+          "question": "Quel type de cellule transmet l'information nerveuse ?",
+          "choix": ["Le globule rouge", "Le neurone", "L'hépatocyte", "L'ovocyte"],
+          "reponseCorrecte": 1,
+          "explication": "Le neurone est la cellule spécialisée dans la transmission de l'influx nerveux."
+        },
+        {
+          "question": "Qu'est-ce qu'un allèle ?",
+          "choix": ["Une version différente d'un même gène", "Un chromosome entier", "Une cellule reproductrice", "Une maladie génétique"],
+          "reponseCorrecte": 0,
+          "explication": "Un allèle est une des versions possibles d'un gène, situées au même endroit sur les chromosomes homologues."
+        },
+        {
+          "question": "Par quel type de signal l'information circule-t-elle le long d'un neurone ?",
+          "choix": ["Un signal chimique uniquement", "Un signal électrique (influx nerveux)", "Un signal lumineux", "Un signal thermique"],
+          "reponseCorrecte": 1,
+          "explication": "L'information circule le long du neurone sous forme d'un signal électrique appelé influx nerveux (la transmission entre neurones, elle, est chimique via les synapses)."
+        }
+      ]
+    }
+  ]
+}
