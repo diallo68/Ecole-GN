@@ -1,21 +1,17 @@
 const Joi = require('joi');
 
-const phone = Joi.string().pattern(/^\+224\d{8,9}$/).message('Numéro de téléphone guinéen invalide (format +224XXXXXXXX)');
-
+// Inscription/connexion par email uniquement sur ce projet (pas de SMS).
 const sendCode = Joi.object({
-  method: Joi.string().valid('sms', 'email').required(),
-  phone:  Joi.when('method', { is: 'sms', then: phone.required(), otherwise: Joi.forbidden() }),
-  email:  Joi.when('method', { is: 'email', then: Joi.string().email().required(), otherwise: Joi.forbidden() }),
+  email:  Joi.string().email().required(),
   prenom: Joi.string().trim().min(2).max(50).required(),
 });
 
 const register = Joi.object({
-  prenom: Joi.string().trim().min(2).max(50).required(),
-  nom:    Joi.string().trim().max(50).allow('').optional(),
-  phone:  Joi.string().optional(),
-  email:  Joi.string().email().optional(),
-  method: Joi.string().valid('sms', 'email').required(),
-  code:   Joi.string().length(6).required(),
+  prenom:   Joi.string().trim().min(2).max(50).required(),
+  nom:      Joi.string().trim().max(50).allow('').optional(),
+  phone:    Joi.string().trim().max(20).allow('').optional(), // simple champ de contact, pas un identifiant
+  email:    Joi.string().email().required(),
+  code:     Joi.string().length(6).required(),
   password: Joi.string().min(8).required(),
   city:     Joi.string().trim().max(100).optional(),
   role:     Joi.string().valid('eleve', 'parent', 'repetiteur').required(),
@@ -23,8 +19,8 @@ const register = Joi.object({
 });
 
 const login = Joi.object({
-  identifier: Joi.string().required(),
-  password:   Joi.string().required(),
+  email:    Joi.string().email().required(),
+  password: Joi.string().required(),
 });
 
 const updateRepetiteurProfile = Joi.object({

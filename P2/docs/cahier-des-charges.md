@@ -63,7 +63,7 @@ Ces outils sont réservés au répétiteur pour ses propres élèves (pas un cat
 - Contenu généré par IA (pas par les répétiteurs, ni rédigé manuellement question par question) — un espace admin permet de déclencher la génération par niveau/matière/chapitre, relire et publier les quiz produits
 
 ### 5.4 Comptes et rôles
-- Inscription élève / parent / répétiteur (par téléphone, comme YouGouYouGou)
+- Inscription élève / parent / répétiteur **par email uniquement** (code de vérification envoyé par email — pas de SMS/Africa's Talking sur ce projet)
 - Un compte parent peut être lié à plusieurs profils élèves (fratrie)
 - Espace répétiteur : gestion du contenu publié, agenda, revenus
 

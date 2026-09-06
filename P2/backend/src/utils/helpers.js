@@ -1,6 +1,26 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 const config = require('../config');
+
+let transporter = null;
+function getTransporter() {
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      host: config.SMTP.HOST,
+      port: config.SMTP.PORT,
+      secure: config.SMTP.PORT === 465,
+      auth: config.SMTP.USER ? { user: config.SMTP.USER, pass: config.SMTP.PASS } : undefined,
+    });
+  }
+  return transporter;
+}
+
+// ── Envoi d'email transactionnel (code de vérification, notifications) ──
+async function sendTransactionalEmail({ to, subject, text, html }) {
+  if (!config.SMTP.HOST) throw new Error('SMTP non configuré (SMTP_HOST manquant)');
+  await getTransporter().sendMail({ from: config.SMTP.FROM, to, subject, text, html });
+}
 
 // ── Tokens JWT (access + refresh) ───────────────────────────
 async function generateTokens(user) {
@@ -19,4 +39,4 @@ function sanitizeText(str) {
   return str.replace(/<[^>]*>/g, '').trim();
 }
 
-module.exports = { generateTokens, sanitizeText };
+module.exports = { generateTokens, sanitizeText, sendTransactionalEmail };

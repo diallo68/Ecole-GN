@@ -2,19 +2,19 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 // Un même schéma pour les 4 rôles (élève, parent, répétiteur, admin) — les
-// champs spécifiques à un rôle restent vides pour les autres, comme sur
-// YouGouYouGou. Simplifie l'auth commune (inscription par téléphone, OTP).
+// champs spécifiques à un rôle restent vides pour les autres. Auth par
+// email uniquement (pas de SMS sur ce projet) : "phone" reste un simple
+// champ de contact optionnel, pas un identifiant de connexion.
 const UserSchema = new mongoose.Schema({
   prenom:   { type: String, required: true, trim: true },
   nom:      { type: String, trim: true },
-  phone:    { type: String, unique: true, sparse: true },
-  email:    { type: String, trim: true, lowercase: true },
+  phone:    { type: String },
+  email:    { type: String, required: true, unique: true, trim: true, lowercase: true },
   password: { type: String, required: true },
   city:     { type: String },
   role:     { type: String, enum: ['eleve', 'parent', 'repetiteur', 'admin'], default: 'eleve' },
 
   verified:     { type: Boolean, default: false },
-  verifyMethod: { type: String, enum: ['sms', 'email'], default: 'sms' },
   verifyCode:   { type: String },
   codeExpiry:   { type: Date },
   otpSendFailed:   { type: Boolean, default: false },

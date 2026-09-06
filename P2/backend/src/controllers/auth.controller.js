@@ -1,85 +1,59 @@
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
-const AfricasTalking = require('africastalking');
 const User = require('../models/user.model');
 const config = require('../config');
-const { generateTokens } = require('../utils/helpers');
+const { generateTokens, sendTransactionalEmail } = require('../utils/helpers');
 const { createLogger } = require('../middlewares/logger');
 
 const logAuth = createLogger('AUTH');
 
-const at = AfricasTalking({ apiKey: config.AT_API_KEY || 'fake', username: config.AT_USERNAME || 'sandbox' });
-const sms = at.SMS;
-
 const authController = {
-  // ── Envoi du code de vérification (inscription par téléphone) ──────────
+  // ── Envoi du code de vérification par email ─────────────────────────
   async sendCode(req, res) {
     try {
-      const { phone, email, method, prenom } = req.body;
-      logAuth.info('send-code demandé', { method, phone: phone?.slice(0, 6) + '***' });
+      const { email, prenom } = req.body;
+      logAuth.info('send-code demandé', { email: email.slice(0, 3) + '***' });
 
       const code = crypto.randomInt(100000, 1000000).toString();
       const expiry = new Date(Date.now() + 15 * 60 * 1000);
       const hashedCode = await bcrypt.hash(code, 8);
 
-      let existing = null;
-      if (method === 'sms' && phone) existing = await User.findOne({ phone });
-      if (method === 'email' && email) existing = await User.findOne({ email: email.toLowerCase() });
-
-      let userDoc = null;
+      const existing = await User.findOne({ email: email.toLowerCase() });
+      let userDoc = existing;
       if (existing) {
         existing.verifyCode = hashedCode;
         existing.codeExpiry = expiry;
         await existing.save();
-        userDoc = existing;
       } else {
         const tempPassword = await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10);
-        const tempUser = {
-          prenom: prenom || '', verifyCode: hashedCode, codeExpiry: expiry,
-          verifyMethod: method, password: tempPassword, verified: false,
-        };
-        if (method === 'sms') tempUser.phone = phone;
-        else { tempUser.email = email.toLowerCase(); tempUser.phone = 'em_' + Date.now(); }
-        try {
-          userDoc = await User.create(tempUser);
-        } catch (createErr) {
-          if (createErr.code === 11000) {
-            const dup = method === 'sms' ? await User.findOne({ phone }) : await User.findOne({ email: email.toLowerCase() });
-            if (dup) { dup.verifyCode = hashedCode; dup.codeExpiry = expiry; await dup.save(); userDoc = dup; }
-            else throw createErr;
-          } else throw createErr;
-        }
+        userDoc = await User.create({
+          prenom: prenom || '', email: email.toLowerCase(), verifyCode: hashedCode, codeExpiry: expiry,
+          password: tempPassword, verified: false,
+        });
       }
 
-      let smsSent = false, emailSent = false, sendError = null;
+      let emailSent = false, sendError = null;
       try {
-        if (method === 'sms' && phone) {
-          if (!config.AT_API_KEY) throw new Error('AT_API_KEY non configurée');
-          const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
-          const atResponse = await sms.send({ to: [formattedPhone], message: `Gandal : Votre code de vérification est ${code}. Ne le partagez pas.` });
-          const recipient = atResponse?.SMSMessageData?.Recipients?.[0];
-          if (recipient && recipient.status !== 'Success') throw new Error(`Échec livraison SMS : ${recipient.status}`);
-          smsSent = true;
-        } else if (method === 'email' && email) {
-          // TODO: brancher un service d'envoi d'email transactionnel (ex: SendGrid)
-          logAuth.warn('Envoi email non implémenté — code non envoyé', { email });
-          throw new Error('Envoi par email pas encore disponible');
-        }
+        await sendTransactionalEmail({
+          to: email,
+          subject: 'Votre code Gandal',
+          text: `Bonjour ${prenom || ''}, votre code de vérification est : ${code}`,
+          html: `<strong>Bonjour ${prenom || ''},</strong><br><p>Votre code de vérification Gandal est : <h2 style="color:#2563eb;">${code}</h2></p>`,
+        });
+        emailSent = true;
       } catch (sendErr) {
         sendError = sendErr.message || 'Erreur inconnue';
-        logAuth.error('Erreur envoi OTP', { method, error: sendErr.message });
+        logAuth.error('Erreur envoi email OTP', { error: sendErr.message });
       }
 
-      if (userDoc) {
-        userDoc.otpSendFailed = !(smsSent || emailSent);
-        userDoc.otpSendError = sendError || undefined;
-        userDoc.otpSendFailedAt = sendError ? new Date() : undefined;
-        await userDoc.save({ validateBeforeSave: false });
-      }
+      userDoc.otpSendFailed = !emailSent;
+      userDoc.otpSendError = sendError || undefined;
+      userDoc.otpSendFailedAt = sendError ? new Date() : undefined;
+      await userDoc.save({ validateBeforeSave: false });
 
-      const response = { success: true, method, smsSent, emailSent };
+      const response = { success: true, emailSent };
       if (!config.IS_PROD && process.env.ALLOW_DEBUG_OTP === 'true') response.debug_code = code;
-      if (sendError && !smsSent && !emailSent) {
+      if (sendError && !emailSent) {
         response.sendFailed = true;
         response.sendErrorHint = config.IS_PROD ? "L'envoi du code a échoué. Réessayez." : sendError;
       }
@@ -93,9 +67,8 @@ const authController = {
   // ── Finalise l'inscription après vérification du code ───────────────────
   async register(req, res) {
     try {
-      const { prenom, nom, phone, email, password, city, code, method, role, niveau } = req.body;
-      const query = method === 'sms' ? { phone } : { email: email.toLowerCase() };
-      const user = await User.findOne(query);
+      const { prenom, nom, phone, email, password, city, code, role, niveau } = req.body;
+      const user = await User.findOne({ email: email.toLowerCase() });
       if (!user) return res.status(400).json({ error: "Veuillez d'abord demander un code" });
       if (user.verified) return res.status(400).json({ error: 'Ce compte est déjà vérifié' });
 
@@ -105,6 +78,7 @@ const authController = {
 
       user.prenom = prenom;
       user.nom = nom || '';
+      user.phone = phone || undefined;
       user.password = password;
       user.city = city;
       user.role = role;
@@ -130,8 +104,8 @@ const authController = {
   // ── Connexion ────────────────────────────────────────────────────────
   async login(req, res) {
     try {
-      const { identifier, password } = req.body;
-      const user = await User.findOne({ $or: [{ email: identifier.toLowerCase() }, { phone: identifier }] });
+      const { email, password } = req.body;
+      const user = await User.findOne({ email: email.toLowerCase() });
       if (!user || !(await user.comparePassword(password))) {
         return res.status(401).json({ error: 'Identifiants incorrects' });
       }
