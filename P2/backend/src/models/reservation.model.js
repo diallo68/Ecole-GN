@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
+const { NIVEAUX_VALUES } = require('../utils/niveaux');
 
 const ReservationSchema = new mongoose.Schema({
   eleveId:      { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   parentId:     { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // si réservé par un parent
   repetiteurId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   matiere:      { type: String, required: true },
-  niveau:       { type: String, enum: ['primaire', 'college', 'lycee'], required: true },
+  niveau:       { type: String, enum: NIVEAUX_VALUES, required: true },
   mode:         { type: String, enum: ['presentiel', 'en_ligne'], required: true },
   dateHeure:    { type: Date, required: true },
   dureeMinutes: { type: Number, default: 60 },

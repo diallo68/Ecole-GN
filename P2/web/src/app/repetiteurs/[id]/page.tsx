@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { MessageCircle } from 'lucide-react';
 import { repetiteurApi, reservationApi, messagingApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import { niveauLabel } from '@/lib/constants';
 import type { Repetiteur } from '@/types';
 
 export default function RepetiteurDetailPage() {
@@ -15,7 +16,7 @@ export default function RepetiteurDetailPage() {
 
   const [repetiteur, setRepetiteur] = useState<Repetiteur | null>(null);
   const [matiere, setMatiere] = useState('');
-  const [niveau, setNiveau] = useState('college');
+  const [niveau, setNiveau] = useState('');
   const [mode, setMode] = useState<'presentiel' | 'en_ligne'>('en_ligne');
   const [dateHeure, setDateHeure] = useState('');
   const [adresse, setAdresse] = useState('');
@@ -25,6 +26,7 @@ export default function RepetiteurDetailPage() {
     repetiteurApi.getById(id).then(d => {
       setRepetiteur(d.repetiteur);
       setMatiere(d.repetiteur.repetiteur.matieres?.[0] || '');
+      setNiveau(d.repetiteur.repetiteur.niveaux?.[0] || '');
     }).catch(() => toast.error('Enseignant introuvable'));
   }, [id]);
 
@@ -82,7 +84,7 @@ export default function RepetiteurDetailPage() {
             {repetiteur.repetiteur.matieres?.map(m => <option key={m} value={m}>{m}</option>)}
           </select>
           <select value={niveau} onChange={e => setNiveau(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2">
-            {repetiteur.repetiteur.niveaux?.map(n => <option key={n} value={n}>{n}</option>)}
+            {repetiteur.repetiteur.niveaux?.map(n => <option key={n} value={n}>{niveauLabel(n)}</option>)}
           </select>
           <select value={mode} onChange={e => setMode(e.target.value as 'presentiel' | 'en_ligne')} className="w-full border border-ink/15 rounded-lg px-3 py-2">
             <option value="en_ligne">En ligne (visio)</option>

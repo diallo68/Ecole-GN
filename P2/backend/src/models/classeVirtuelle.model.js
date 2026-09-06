@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { NIVEAUX_VALUES } = require('../utils/niveaux');
 
 // Une session de classe virtuelle planifiée par un répétiteur — peut être
 // liée à une réservation individuelle, ou ouverte à plusieurs élèves du
@@ -9,7 +10,7 @@ const ClasseVirtuelleSchema = new mongoose.Schema({
   reservationId:{ type: mongoose.Schema.Types.ObjectId, ref: 'Reservation' },
   titre:        { type: String, required: true },
   matiere:      { type: String, required: true },
-  niveau:       { type: String, enum: ['primaire', 'college', 'lycee'], required: true },
+  niveau:       { type: String, enum: NIVEAUX_VALUES, required: true },
   dateHeure:    { type: Date, required: true },
   dureeMinutes: { type: Number, default: 60 },
   lienVisio:    { type: String, required: true }, // salle meet.jit.si générée

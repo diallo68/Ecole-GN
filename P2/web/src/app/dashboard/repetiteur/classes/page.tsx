@@ -5,10 +5,8 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { classeVirtuelleApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import { MATIERES, NIVEAUX, niveauLabel } from '@/lib/constants';
 import type { ClasseVirtuelle, Niveau } from '@/types';
-
-const MATIERES = ['Mathématiques', 'Français', 'Sciences Physiques', 'SVT'];
-const NIVEAUX: Niveau[] = ['primaire', 'college', 'lycee'];
 
 export default function RepetiteurClassesPage() {
   const router = useRouter();
@@ -16,7 +14,7 @@ export default function RepetiteurClassesPage() {
   const [classes, setClasses] = useState<ClasseVirtuelle[]>([]);
   const [titre, setTitre] = useState('');
   const [matiere, setMatiere] = useState(MATIERES[0]);
-  const [niveau, setNiveau] = useState<Niveau>('college');
+  const [niveau, setNiveau] = useState<Niveau>('7e');
   const [dateHeure, setDateHeure] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -52,7 +50,7 @@ export default function RepetiteurClassesPage() {
             {MATIERES.map(m => <option key={m} value={m}>{m}</option>)}
           </select>
           <select value={niveau} onChange={e => setNiveau(e.target.value as Niveau)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm">
-            {NIVEAUX.map(n => <option key={n} value={n}>{n}</option>)}
+            {NIVEAUX.map(n => <option key={n.value} value={n.value}>{n.label}</option>)}
           </select>
           <input type="datetime-local" value={dateHeure} onChange={e => setDateHeure(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
           <button onClick={planifier} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 text-sm font-semibold hover:bg-brand-dark disabled:opacity-50">
@@ -68,7 +66,7 @@ export default function RepetiteurClassesPage() {
         ) : classes.map(c => (
           <div key={c._id} className="bg-white rounded-xl border border-ink/10 p-4">
             <p className="font-semibold">{c.titre}</p>
-            <p className="text-sm text-ink/60">{c.matiere} · {c.niveau} · {new Date(c.dateHeure).toLocaleString('fr-FR')}</p>
+            <p className="text-sm text-ink/60">{c.matiere} · {niveauLabel(c.niveau)} · {new Date(c.dateHeure).toLocaleString('fr-FR')}</p>
             <a href={c.lienVisio} target="_blank" rel="noreferrer" className="text-sm text-brand font-semibold">Lien de la salle →</a>
           </div>
         ))}

@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { Lock, Sparkles, ArrowLeft, ArrowRight } from 'lucide-react';
 import { quizApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import { niveauLabel } from '@/lib/constants';
 import type { QuizDetail, QuizCorrection } from '@/types';
 
 const ESSAI_GRATUIT_KEY = 'gandal_essai_gratuit_utilise';
@@ -74,7 +75,7 @@ export default function QuizPlayPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-1">{quiz.titre}</h1>
-      <p className="text-ink/60 mb-6">{quiz.matiere} · {quiz.niveau}</p>
+      <p className="text-ink/60 mb-6">{quiz.matiere} · {niveauLabel(quiz.niveau)}</p>
 
       {result && (
         <div className="bg-brand/10 border border-brand rounded-xl p-4 mb-4 text-center">

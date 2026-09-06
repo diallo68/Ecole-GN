@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { FileText, Image as ImageIcon, File, Download } from 'lucide-react';
 import { contentApi } from '@/lib/api';
-import { MATIERES } from '@/lib/constants';
+import { MATIERES, niveauLabel } from '@/lib/constants';
 import { useAuthStore } from '@/store/authStore';
 import type { ContentItem } from '@/types';
 
@@ -27,7 +27,7 @@ export default function MesCoursPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-extrabold text-ink">Mes cours</h1>
-        <p className="text-sm text-ink/50">Supports de cours publiés par les enseignants Gandal{user?.eleve?.niveau ? ` — niveau ${user.eleve.niveau}` : ''}.</p>
+        <p className="text-sm text-ink/50">Supports de cours publiés par les enseignants Gandal{user?.eleve?.niveau ? ` — ${niveauLabel(user.eleve.niveau)}` : ''}.</p>
       </div>
 
       <div className="flex flex-wrap gap-2">

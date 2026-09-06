@@ -4,10 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { quizApi } from '@/lib/api';
+import { MATIERES, NIVEAUX } from '@/lib/constants';
 import type { Niveau } from '@/types';
-
-const MATIERES = ['Mathématiques', 'Français', 'Sciences Physiques', 'SVT'];
-const NIVEAUX: Niveau[] = ['primaire', 'college', 'lycee'];
 
 interface DraftQuestion {
   question: string;
@@ -22,7 +20,7 @@ export default function NouveauQuizPage() {
   const router = useRouter();
   const [titre, setTitre] = useState('');
   const [matiere, setMatiere] = useState(MATIERES[0]);
-  const [niveau, setNiveau] = useState<Niveau>('college');
+  const [niveau, setNiveau] = useState<Niveau>('7e');
   const [questions, setQuestions] = useState<DraftQuestion[]>([emptyQuestion()]);
   const [loading, setLoading] = useState(false);
 
@@ -64,7 +62,7 @@ export default function NouveauQuizPage() {
             {MATIERES.map(m => <option key={m} value={m}>{m}</option>)}
           </select>
           <select value={niveau} onChange={e => setNiveau(e.target.value as Niveau)} className="flex-1 border border-ink/15 rounded-lg px-3 py-2">
-            {NIVEAUX.map(n => <option key={n} value={n}>{n}</option>)}
+            {NIVEAUX.map(n => <option key={n.value} value={n.value}>{n.label}</option>)}
           </select>
         </div>
       </div>

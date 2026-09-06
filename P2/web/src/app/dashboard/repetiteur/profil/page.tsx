@@ -5,10 +5,8 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { repetiteurApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import { MATIERES, CYCLES, niveauxDuCycle } from '@/lib/constants';
 import type { Niveau } from '@/types';
-
-const MATIERES = ['Mathématiques', 'Français', 'Sciences Physiques', 'SVT'];
-const NIVEAUX: Niveau[] = ['primaire', 'college', 'lycee'];
 
 export default function RepetiteurProfilPage() {
   const router = useRouter();
@@ -93,13 +91,20 @@ export default function RepetiteurProfilPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-1">Niveaux</label>
-          <div className="flex flex-wrap gap-2">
-            {NIVEAUX.map(n => (
-              <button key={n} type="button" onClick={() => toggle(niveaux, n, setNiveaux)}
-                className={`text-sm px-3 py-1.5 rounded-full border capitalize ${niveaux.includes(n) ? 'bg-brand text-white border-brand' : 'border-ink/15'}`}>
-                {n}
-              </button>
+          <label className="block text-sm font-semibold mb-1">Classes enseignées</label>
+          <div className="space-y-2">
+            {CYCLES.map(cycle => (
+              <div key={cycle.value}>
+                <p className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1">{cycle.label}</p>
+                <div className="flex flex-wrap gap-2">
+                  {niveauxDuCycle(cycle.value).map(n => (
+                    <button key={n.value} type="button" onClick={() => toggle(niveaux, n.value, setNiveaux)}
+                      className={`text-sm px-3 py-1.5 rounded-full border ${niveaux.includes(n.value) ? 'bg-brand text-white border-brand' : 'border-ink/15'}`}>
+                      {n.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>

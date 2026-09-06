@@ -5,9 +5,9 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { Colors, ALL_CITIES } from '@/lib/constants';
+import { Colors, ALL_CITIES, CYCLES, niveauxDuCycle } from '@/lib/constants';
 import Toast from 'react-native-toast-message';
-import type { Role, Niveau } from '@/types';
+import type { Role, Niveau, Cycle } from '@/types';
 
 // Même parcours "une question à la fois" que sur YouGouYouGou (moins intimidant
 // qu'un long formulaire) — adapté à Gandal : email uniquement, pas de téléphone,
@@ -15,14 +15,8 @@ import type { Role, Niveau } from '@/types';
 type AccountChoice = 'eleve_parent' | 'repetiteur' | '';
 type SubRole = 'eleve' | 'parent' | '';
 type Step = 'form' | 'otp';
-type QuestionId = 'accountType' | 'subRole' | 'nameCombo' | 'email' | 'password' | 'password2' | 'city' | 'niveau';
+type QuestionId = 'accountType' | 'subRole' | 'nameCombo' | 'email' | 'password' | 'password2' | 'city' | 'cycle' | 'niveau';
 interface Question { id: QuestionId }
-
-const NIVEAUX: Array<{ value: Niveau; label: string }> = [
-  { value: 'primaire', label: 'Primaire' },
-  { value: 'college', label: 'Collège' },
-  { value: 'lycee', label: 'Lycée' },
-];
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -42,7 +36,8 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
   const [city, setCity] = useState('');
-  const [niveau, setNiveau] = useState<Niveau>('college');
+  const [cycle, setCycle] = useState<Cycle | ''>('');
+  const [niveau, setNiveau] = useState<Niveau | ''>('');
   const [code, setCode] = useState('');
 
   const [showCityPicker, setShowCityPicker] = useState(false);
@@ -64,7 +59,7 @@ export default function RegisterScreen() {
     const q: Question[] = [{ id: 'accountType' }];
     if (accountType === 'eleve_parent') q.push({ id: 'subRole' });
     q.push({ id: 'nameCombo' }, { id: 'email' }, { id: 'password' }, { id: 'password2' }, { id: 'city' });
-    if (role === 'eleve') q.push({ id: 'niveau' });
+    if (role === 'eleve') q.push({ id: 'cycle' }, { id: 'niveau' });
     return q;
   }, [accountType, role]);
 
@@ -124,6 +119,13 @@ export default function RegisterScreen() {
     if (advancing.current) return;
     advancing.current = true;
     setSubRole(v);
+    setTimeout(() => { advancing.current = false; setQIndex(i => i + 1); }, 200);
+  };
+  const pickCycle = (v: Cycle) => {
+    if (advancing.current) return;
+    advancing.current = true;
+    setCycle(v);
+    setNiveau('');
     setTimeout(() => { advancing.current = false; setQIndex(i => i + 1); }, 200);
   };
   const pickNiveau = (v: Niveau) => {
@@ -299,19 +301,33 @@ export default function RegisterScreen() {
             </View>
           )}
 
-          {q.id === 'niveau' && (
+          {q.id === 'cycle' && (
             <>
-              <Text style={styles.question}>Ton niveau scolaire ?</Text>
+              <Text style={styles.question}>Ton niveau d'étude ?</Text>
               <View style={styles.choiceRow}>
-                {NIVEAUX.map(n => (
-                  <ChoiceCard key={n.value} label={n.label} active={niveau === n.value} onPress={() => pickNiveau(n.value)} compact />
+                {CYCLES.map(c => (
+                  <ChoiceCard key={c.value} label={c.label} active={cycle === c.value} onPress={() => pickCycle(c.value)} compact />
+                ))}
+              </View>
+            </>
+          )}
+
+          {q.id === 'niveau' && cycle && (
+            <>
+              <Text style={styles.question}>Ta classe précise ?</Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 6 }}>
+                {niveauxDuCycle(cycle).map(n => (
+                  <TouchableOpacity key={n.value} onPress={() => pickNiveau(n.value)}
+                    style={[styles.choiceCard, styles.choiceCardCompact, { flexBasis: '30%', flexGrow: 0 }, niveau === n.value && styles.choiceCardActive]}>
+                    <Text style={[styles.choiceLabel, niveau === n.value && styles.choiceLabelActive]}>{n.label}</Text>
+                  </TouchableOpacity>
                 ))}
               </View>
             </>
           )}
         </View>
 
-        {q.id !== 'accountType' && q.id !== 'subRole' && q.id !== 'niveau' && (
+        {q.id !== 'accountType' && q.id !== 'subRole' && q.id !== 'cycle' && q.id !== 'niveau' && (
           <View style={styles.navRow}>
             <TouchableOpacity onPress={goBack}>
               <Text style={styles.navBack}>← Retour</Text>
@@ -333,7 +349,7 @@ export default function RegisterScreen() {
             </TouchableOpacity>
           </View>
         )}
-        {(q.id === 'subRole' || q.id === 'niveau') && (
+        {(q.id === 'subRole' || q.id === 'cycle' || q.id === 'niveau') && (
           <TouchableOpacity onPress={goBack} style={{ alignSelf: 'flex-start' }}>
             <Text style={styles.navBack}>← Retour</Text>
           </TouchableOpacity>

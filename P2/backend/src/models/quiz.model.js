@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { NIVEAUX_VALUES } = require('../utils/niveaux');
 
 // Question à choix multiples d'un quiz.
 const QuestionSchema = new mongoose.Schema({
@@ -14,7 +15,7 @@ const QuestionSchema = new mongoose.Schema({
 const QuizSchema = new mongoose.Schema({
   titre:     { type: String, required: true },
   matiere:   { type: String, required: true },
-  niveau:    { type: String, enum: ['primaire', 'college', 'lycee'], required: true },
+  niveau:    { type: String, enum: NIVEAUX_VALUES, required: true },
   questions: [QuestionSchema],
   publie:    { type: Boolean, default: false }, // reste brouillon tant qu'un admin ne l'a pas relu/publié
   genereParIA: { type: Boolean, default: true },

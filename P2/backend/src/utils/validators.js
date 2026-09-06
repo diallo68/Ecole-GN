@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { NIVEAUX_VALUES } = require('./niveaux');
 
 // Inscription/connexion par email uniquement sur ce projet (pas de SMS).
 const sendCode = Joi.object({
@@ -15,7 +16,7 @@ const register = Joi.object({
   password: Joi.string().min(8).required(),
   city:     Joi.string().trim().max(100).optional(),
   role:     Joi.string().valid('eleve', 'parent', 'repetiteur').required(),
-  niveau:   Joi.when('role', { is: 'eleve', then: Joi.string().valid('primaire', 'college', 'lycee').required(), otherwise: Joi.forbidden() }),
+  niveau:   Joi.when('role', { is: 'eleve', then: Joi.string().valid(...NIVEAUX_VALUES).required(), otherwise: Joi.forbidden() }),
 });
 
 const login = Joi.object({
@@ -26,7 +27,7 @@ const login = Joi.object({
 const updateRepetiteurProfile = Joi.object({
   bio:          Joi.string().max(1000).allow('').optional(),
   matieres:     Joi.array().items(Joi.string()).optional(),
-  niveaux:      Joi.array().items(Joi.string().valid('primaire', 'college', 'lycee')).optional(),
+  niveaux:      Joi.array().items(Joi.string().valid(...NIVEAUX_VALUES)).optional(),
   tarifHoraire: Joi.number().min(0).optional(),
   disponible:   Joi.boolean().optional(),
   avatar:       Joi.string().uri({ scheme: ['https'] }).allow('').optional(),

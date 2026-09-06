@@ -1,5 +1,6 @@
 export type Role = 'eleve' | 'parent' | 'repetiteur' | 'admin';
-export type Niveau = 'primaire' | 'college' | 'lycee';
+export type Niveau = 'cp1' | 'cp2' | 'ce1' | 'ce2' | 'cm1' | 'cm2' | '7e' | '8e' | '9e' | '10e' | '11e' | '12e' | 'terminale';
+export type Cycle = 'primaire' | 'college' | 'lycee';
 
 export interface Eleve {
   niveau?: Niveau;

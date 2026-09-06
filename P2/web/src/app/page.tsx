@@ -2,17 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, Leaf, HelpCircle } from 'lucide-react';
+import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, Leaf, Landmark, Map, HelpCircle } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { repetiteurApi, quizApi } from '@/lib/api';
 import AssistantWidget from '@/components/AssistantWidget';
+import { niveauLabel } from '@/lib/constants';
 import type { Repetiteur, QuizSummary } from '@/types';
 
 const MATIERE_ICONS: Record<string, LucideIcon> = {
   'Mathématiques': Sigma,
   'Français': Languages,
   'Sciences Physiques': Atom,
-  'SVT': Leaf,
+  'Biologie': Leaf,
+  'Histoire': Landmark,
+  'Géographie': Map,
 };
 
 export default function HomePage() {
@@ -135,7 +138,7 @@ export default function HomePage() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <span className="text-[10px] font-bold uppercase tracking-wide bg-ink/5 text-ink/50 px-2 py-0.5 rounded">{q.matiere}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-wide bg-ink/5 text-ink/50 px-2 py-0.5 rounded">{q.niveau}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wide bg-ink/5 text-ink/50 px-2 py-0.5 rounded">{niveauLabel(q.niveau)}</span>
                     </div>
                     <p className="font-bold text-ink leading-tight truncate">{q.titre}</p>
                     <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand mt-1">

@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import { quizApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { Colors } from '@/lib/constants';
+import { Colors, niveauLabel } from '@/lib/constants';
 import type { QuizDetail, QuizCorrection } from '@/types';
 
 const ESSAI_GRATUIT_KEY = 'gandal_essai_gratuit_utilise';
@@ -80,7 +80,7 @@ export default function QuizPlayScreen() {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: Colors.surfaceBg }} contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
       <Text style={{ fontSize: 20, fontWeight: '900', color: Colors.ink }}>{quiz.titre}</Text>
-      <Text style={{ fontSize: 13, color: Colors.inkMuted, marginBottom: 16 }}>{quiz.matiere} · {quiz.niveau}</Text>
+      <Text style={{ fontSize: 13, color: Colors.inkMuted, marginBottom: 16 }}>{quiz.matiere} · {niveauLabel(quiz.niveau)}</Text>
 
       {result && (
         <View style={{ backgroundColor: Colors.brandLight, borderRadius: 14, padding: 16, marginBottom: 12, alignItems: 'center' }}>

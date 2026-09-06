@@ -6,14 +6,14 @@ import { useState, useRef, useEffect, useMemo, forwardRef } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { authApi } from '@/lib/api';
-import { ALL_CITIES } from '@/lib/constants';
+import { ALL_CITIES, CYCLES, niveauxDuCycle } from '@/lib/constants';
 import { useAuthStore } from '@/store/authStore';
-import type { Role, Niveau } from '@/types';
+import type { Role, Niveau, Cycle } from '@/types';
 
 type AccountChoice = 'eleve_parent' | 'repetiteur' | '';
 type SubRole = 'eleve' | 'parent' | '';
 type Step = 'form' | 'otp';
-type QuestionId = 'accountType' | 'subRole' | 'nameCombo' | 'email' | 'password' | 'password2' | 'city' | 'niveau';
+type QuestionId = 'accountType' | 'subRole' | 'nameCombo' | 'email' | 'password' | 'password2' | 'city' | 'cycle' | 'niveau';
 interface Question { id: QuestionId }
 
 export default function RegisterPage() {
@@ -33,7 +33,8 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
   const [city, setCity] = useState('');
-  const [niveau, setNiveau] = useState<Niveau>('college');
+  const [cycle, setCycle] = useState<Cycle | ''>('');
+  const [niveau, setNiveau] = useState<Niveau | ''>('');
   const [code, setCode] = useState('');
 
   const answerRef = useRef<HTMLInputElement & HTMLSelectElement>(null);
@@ -53,7 +54,7 @@ export default function RegisterPage() {
     const q: Question[] = [{ id: 'accountType' }];
     if (accountType === 'eleve_parent') q.push({ id: 'subRole' });
     q.push({ id: 'nameCombo' }, { id: 'email' }, { id: 'password' }, { id: 'password2' }, { id: 'city' });
-    if (role === 'eleve') q.push({ id: 'niveau' });
+    if (role === 'eleve') q.push({ id: 'cycle' }, { id: 'niveau' });
     return q;
   }, [accountType, role]);
 
@@ -114,6 +115,13 @@ export default function RegisterPage() {
     if (advancing.current) return;
     advancing.current = true;
     setSubRole(v);
+    setTimeout(() => { advancing.current = false; setQIndex(i => i + 1); }, 200);
+  };
+  const pickCycle = (v: Cycle) => {
+    if (advancing.current) return;
+    advancing.current = true;
+    setCycle(v);
+    setNiveau('');
     setTimeout(() => { advancing.current = false; setQIndex(i => i + 1); }, 200);
   };
   const pickNiveau = (v: Niveau) => {
@@ -228,19 +236,30 @@ export default function RegisterPage() {
           </div>
         )}
 
-        {q.id === 'niveau' && (
+        {q.id === 'cycle' && (
           <>
-            <h1 className="text-xl font-extrabold text-ink">Ton niveau scolaire ?</h1>
+            <h1 className="text-xl font-extrabold text-ink">Ton niveau d'étude ?</h1>
             <div className="grid grid-cols-3 gap-2 mt-1">
-              <ChoiceCard label="Primaire" active={niveau === 'primaire'} onClick={() => pickNiveau('primaire')} />
-              <ChoiceCard label="Collège" active={niveau === 'college'} onClick={() => pickNiveau('college')} />
-              <ChoiceCard label="Lycée" active={niveau === 'lycee'} onClick={() => pickNiveau('lycee')} />
+              {CYCLES.map(c => (
+                <ChoiceCard key={c.value} label={c.label} active={cycle === c.value} onClick={() => pickCycle(c.value)} />
+              ))}
+            </div>
+          </>
+        )}
+
+        {q.id === 'niveau' && cycle && (
+          <>
+            <h1 className="text-xl font-extrabold text-ink">Ta classe précise ?</h1>
+            <div className="grid grid-cols-3 gap-2 mt-1">
+              {niveauxDuCycle(cycle).map(n => (
+                <ChoiceCard key={n.value} label={n.label} active={niveau === n.value} onClick={() => pickNiveau(n.value)} />
+              ))}
             </div>
           </>
         )}
       </div>
 
-      {q.id !== 'accountType' && q.id !== 'subRole' && q.id !== 'niveau' && (
+      {q.id !== 'accountType' && q.id !== 'subRole' && q.id !== 'cycle' && q.id !== 'niveau' && (
         <div className="flex items-center justify-between mt-6">
           <button onClick={goBack} className="text-sm font-bold text-ink/60 hover:text-ink">← Retour</button>
           <button onClick={goNext} disabled={loading} className="bg-brand text-white rounded-lg py-2.5 px-6 font-semibold hover:bg-brand-dark disabled:opacity-50">
@@ -253,7 +272,7 @@ export default function RegisterPage() {
           Déjà un compte ? <a href="/login" className="text-brand font-bold hover:underline">Se connecter</a>
         </p>
       )}
-      {(q.id === 'subRole' || q.id === 'niveau') && (
+      {(q.id === 'subRole' || q.id === 'cycle' || q.id === 'niveau') && (
         <button onClick={goBack} className="text-sm font-bold text-ink/60 hover:text-ink mt-6">← Retour</button>
       )}
     </div>

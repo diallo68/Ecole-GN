@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { repetiteurApi } from '@/lib/api';
+import { niveauLabel } from '@/lib/constants';
 import type { Repetiteur } from '@/types';
 
 type Filtre = 'en_attente' | 'valide' | 'tous';
@@ -52,7 +53,7 @@ export default function AdminRepetiteursPage() {
             <div key={r._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-center justify-between">
               <div>
                 <p className="font-semibold">{r.prenom} {r.nom} <span className="text-ink/40 font-normal text-sm">— {r.email}</span></p>
-                <p className="text-sm text-ink/60">{r.city} · {r.repetiteur.matieres?.join(', ')} · {r.repetiteur.niveaux?.join(', ')}</p>
+                <p className="text-sm text-ink/60">{r.city} · {r.repetiteur.matieres?.join(', ')} · {r.repetiteur.niveaux?.map(niveauLabel).join(', ')}</p>
                 <p className="text-xs mt-1">
                   <span className={`font-semibold px-2 py-0.5 rounded-full ${r.repetiteur.valide ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
                     {r.repetiteur.valide ? 'Validé' : 'En attente'}

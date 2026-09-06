@@ -7,6 +7,7 @@ import { ChevronDown } from 'lucide-react';
 import { contentApi, soumissionApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import FileUploadField from '@/components/FileUploadField';
+import { MATIERES, NIVEAUX, niveauLabel } from '@/lib/constants';
 import type { ContentItem, Niveau, Soumission } from '@/types';
 
 type ContentType = 'video' | 'support' | 'exercice';
@@ -15,8 +16,6 @@ const TYPES: { value: ContentType; label: string }[] = [
   { value: 'support', label: 'Supports de cours' },
   { value: 'exercice', label: 'Exercices' },
 ];
-const MATIERES = ['Mathématiques', 'Français', 'Sciences Physiques', 'SVT'];
-const NIVEAUX: Niveau[] = ['primaire', 'college', 'lycee'];
 
 export default function RepetiteurContenuPage() {
   const router = useRouter();
@@ -28,7 +27,7 @@ export default function RepetiteurContenuPage() {
   // Champs du formulaire — pertinents selon le type sélectionné
   const [titre, setTitre] = useState('');
   const [matiere, setMatiere] = useState(MATIERES[0]);
-  const [niveau, setNiveau] = useState<Niveau>('college');
+  const [niveau, setNiveau] = useState<Niveau>('7e');
   const [chapitre, setChapitre] = useState('');
   const [url, setUrl] = useState('');       // vidéo / support
   const [enonce, setEnonce] = useState(''); // exercice
@@ -99,7 +98,7 @@ export default function RepetiteurContenuPage() {
               {MATIERES.map(m => <option key={m} value={m}>{m}</option>)}
             </select>
             <select value={niveau} onChange={e => setNiveau(e.target.value as Niveau)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm">
-              {NIVEAUX.map(n => <option key={n} value={n}>{n}</option>)}
+              {NIVEAUX.map(n => <option key={n.value} value={n.value}>{n.label}</option>)}
             </select>
             <input placeholder="Chapitre (optionnel)" value={chapitre} onChange={e => setChapitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
 
@@ -132,7 +131,7 @@ export default function RepetiteurContenuPage() {
                 <div key={item._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-start justify-between">
                   <div>
                     <p className="font-semibold">{item.titre}</p>
-                    <p className="text-sm text-ink/60">{item.matiere} · {item.niveau}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
+                    <p className="text-sm text-ink/60">{item.matiere} · {niveauLabel(item.niveau)}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
                   </div>
                   <button onClick={() => supprimer(item._id)} className="text-red-500 text-sm hover:underline shrink-0 ml-3">Supprimer</button>
                 </div>
@@ -164,7 +163,7 @@ function ExerciceCard({ item, onDelete }: { item: ContentItem; onDelete: () => v
       <div className="p-4 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-semibold">{item.titre}</p>
-          <p className="text-sm text-ink/60">{item.matiere} · {item.niveau}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
+          <p className="text-sm text-ink/60">{item.matiere} · {niveauLabel(item.niveau)}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
           {item.enonce && <p className="text-sm text-ink/70 mt-1">{item.enonce}</p>}
         </div>
         <div className="flex items-center gap-3 shrink-0">

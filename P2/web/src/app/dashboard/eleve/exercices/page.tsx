@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { ChevronDown, Paperclip, CheckCircle2, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { contentApi, soumissionApi } from '@/lib/api';
-import { MATIERES } from '@/lib/constants';
+import { MATIERES, niveauLabel } from '@/lib/constants';
 import { useAuthStore } from '@/store/authStore';
 import FileUploadField from '@/components/FileUploadField';
 import type { ContentItem, Soumission } from '@/types';
@@ -33,7 +33,7 @@ export default function MesExercicesPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-extrabold text-ink">Mes exercices</h1>
-        <p className="text-sm text-ink/50">Exercices publiés par les enseignants Gandal{user?.eleve?.niveau ? ` — niveau ${user.eleve.niveau}` : ''}.</p>
+        <p className="text-sm text-ink/50">Exercices publiés par les enseignants Gandal{user?.eleve?.niveau ? ` — ${niveauLabel(user.eleve.niveau)}` : ''}.</p>
       </div>
 
       <div className="flex flex-wrap gap-2">

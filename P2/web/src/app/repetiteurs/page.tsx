@@ -3,10 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { repetiteurApi } from '@/lib/api';
+import { MATIERES, NIVEAUX, niveauLabel } from '@/lib/constants';
 import type { Repetiteur } from '@/types';
-
-const MATIERES = ['Mathématiques', 'Français', 'Sciences Physiques', 'SVT'];
-const NIVEAUX = ['primaire', 'college', 'lycee'];
 
 export default function RepetiteursPage() {
   const [repetiteurs, setRepetiteurs] = useState<Repetiteur[]>([]);
@@ -33,7 +31,7 @@ export default function RepetiteursPage() {
         </select>
         <select value={niveau} onChange={e => setNiveau(e.target.value)} className="border border-ink/15 rounded-lg px-3 py-2">
           <option value="">Tous les niveaux</option>
-          {NIVEAUX.map(n => <option key={n} value={n}>{n}</option>)}
+          {NIVEAUX.map(n => <option key={n.value} value={n.value}>{n.label}</option>)}
         </select>
       </div>
 
@@ -47,7 +45,7 @@ export default function RepetiteursPage() {
             <Link key={r._id} href={`/repetiteurs/${r._id}`} className="bg-white rounded-xl border border-ink/10 p-4 hover:shadow-md transition-shadow">
               <p className="font-bold">{r.prenom} {r.nom}</p>
               <p className="text-sm text-ink/60">{r.repetiteur.matieres?.join(', ')}</p>
-              <p className="text-xs text-ink/40 mt-1">{r.city} · {r.repetiteur.niveaux?.join(', ')}</p>
+              <p className="text-xs text-ink/40 mt-1">{r.city} · {r.repetiteur.niveaux?.map(niveauLabel).join(', ')}</p>
               {r.repetiteur.tarifHoraire && <p className="text-sm font-semibold text-brand mt-2">{r.repetiteur.tarifHoraire.toLocaleString('fr-FR')} GNF/h</p>}
               {r.repetiteur.ratingCount > 0 && <p className="text-xs text-amber-500 mt-1">★ {r.repetiteur.avgRating} ({r.repetiteur.ratingCount} avis)</p>}
             </Link>

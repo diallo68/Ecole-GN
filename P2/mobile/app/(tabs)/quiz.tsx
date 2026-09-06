@@ -3,17 +3,12 @@ import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { quizApi } from '@/lib/api';
-import { Colors, MATIERES } from '@/lib/constants';
-import type { QuizSummary, Niveau } from '@/types';
-
-const NIVEAUX: Array<{ value: Niveau; label: string; icon: React.ComponentProps<typeof Ionicons>['name']; desc: string }> = [
-  { value: 'primaire', label: 'Primaire', icon: 'school-outline', desc: 'CP au CM2' },
-  { value: 'college', label: 'Collège', icon: 'library-outline', desc: '6ème à la 3ème' },
-  { value: 'lycee', label: 'Lycée', icon: 'ribbon-outline', desc: 'Seconde à Terminale' },
-];
+import { Colors, MATIERES, CYCLES, niveauxDuCycle, niveauLabel } from '@/lib/constants';
+import type { QuizSummary, Niveau, Cycle } from '@/types';
 
 export default function QuizListScreen() {
   const router = useRouter();
+  const [cycle, setCycle] = useState<Cycle | null>(null);
   const [niveau, setNiveau] = useState<Niveau | null>(null);
   const [matiere, setMatiere] = useState<string | null>(null);
   const [quizzes, setQuizzes] = useState<QuizSummary[]>([]);
@@ -23,20 +18,19 @@ export default function QuizListScreen() {
     quizApi.list({ matiere: matiere || undefined, niveau }).then(d => setQuizzes(d.quizzes)).catch(() => {});
   }, [niveau, matiere]);
 
-  // ── Étape 1 : choix du niveau, obligatoire ──────────────────────────────
-  if (!niveau) {
+  // ── Étape 1 : choix du cycle ─────────────────────────────────────────────
+  if (!cycle) {
     return (
       <View style={{ flex: 1, backgroundColor: Colors.surfaceBg, padding: 20, justifyContent: 'center' }}>
         <Text style={{ fontSize: 20, fontWeight: '900', color: Colors.ink, textAlign: 'center', marginBottom: 6 }}>Quiz d'auto-évaluation</Text>
-        <Text style={{ fontSize: 13, color: Colors.inkMuted, textAlign: 'center', marginBottom: 24 }}>Commence par choisir ton niveau scolaire.</Text>
+        <Text style={{ fontSize: 13, color: Colors.inkMuted, textAlign: 'center', marginBottom: 24 }}>Commence par choisir ton niveau d'étude.</Text>
         <View style={{ gap: 12 }}>
-          {NIVEAUX.map(n => (
-            <TouchableOpacity key={n.value} onPress={() => setNiveau(n.value)}
+          {CYCLES.map(c => (
+            <TouchableOpacity key={c.value} onPress={() => setCycle(c.value)}
               style={{ backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 16, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-              <Ionicons name={n.icon} size={26} color={Colors.brand} />
               <View style={{ flex: 1 }}>
-                <Text style={{ fontWeight: '800', color: Colors.ink, fontSize: 15 }}>{n.label}</Text>
-                <Text style={{ fontSize: 12, color: Colors.inkMuted }}>{n.desc}</Text>
+                <Text style={{ fontWeight: '800', color: Colors.ink, fontSize: 15 }}>{c.label}</Text>
+                <Text style={{ fontSize: 12, color: Colors.inkMuted }}>{c.desc}</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color={Colors.inkSubtle} />
             </TouchableOpacity>
@@ -46,15 +40,36 @@ export default function QuizListScreen() {
     );
   }
 
-  // ── Étape 2 : liste des quiz du niveau choisi ───────────────────────────
+  // ── Étape 2 : choix de la classe précise ─────────────────────────────────
+  if (!niveau) {
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors.surfaceBg, padding: 20 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+          <Text style={{ fontSize: 18, fontWeight: '900', color: Colors.ink }}>{CYCLES.find(c => c.value === cycle)?.label}</Text>
+          <TouchableOpacity onPress={() => setCycle(null)}>
+            <Text style={{ fontSize: 12, color: Colors.brand, fontWeight: '700' }}>Changer</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={{ fontSize: 13, color: Colors.inkMuted, marginBottom: 20 }}>Choisis ta classe.</Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+          {niveauxDuCycle(cycle).map(n => (
+            <TouchableOpacity key={n.value} onPress={() => setNiveau(n.value)}
+              style={{ backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 14, paddingVertical: 16, paddingHorizontal: 20, minWidth: '30%', alignItems: 'center' }}>
+              <Text style={{ fontWeight: '800', color: Colors.ink, fontSize: 14 }}>{n.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+    );
+  }
+
+  // ── Étape 3 : liste des quiz de la classe choisie ────────────────────────
   return (
     <View style={{ flex: 1, backgroundColor: Colors.surfaceBg }}>
       <View style={{ padding: 16, paddingBottom: 8, gap: 8 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ fontSize: 16, fontWeight: '800', color: Colors.ink }}>
-            {NIVEAUX.find(n => n.value === niveau)?.label}
-          </Text>
-          <TouchableOpacity onPress={() => { setNiveau(null); setMatiere(null); }}>
+          <Text style={{ fontSize: 16, fontWeight: '800', color: Colors.ink }}>{niveauLabel(niveau)}</Text>
+          <TouchableOpacity onPress={() => { setCycle(null); setNiveau(null); setMatiere(null); }}>
             <Text style={{ fontSize: 12, color: Colors.brand, fontWeight: '700' }}>Changer de niveau</Text>
           </TouchableOpacity>
         </View>
@@ -79,7 +94,7 @@ export default function QuizListScreen() {
           <TouchableOpacity onPress={() => router.push(`/quiz/${item._id}`)}
             style={{ backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 14, padding: 14 }}>
             <Text style={{ fontWeight: '800', color: Colors.ink }}>{item.titre}</Text>
-            <Text style={{ fontSize: 12, color: Colors.inkMuted, marginTop: 2 }}>{item.matiere} · {item.niveau}</Text>
+            <Text style={{ fontSize: 12, color: Colors.inkMuted, marginTop: 2 }}>{item.matiere} · {niveauLabel(item.niveau)}</Text>
           </TouchableOpacity>
         )}
       />

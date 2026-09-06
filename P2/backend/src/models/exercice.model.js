@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { NIVEAUX_VALUES } = require('../utils/niveaux');
 
 // Exercice créé par un répétiteur pour ses élèves.
 const ExerciceSchema = new mongoose.Schema({
@@ -7,7 +8,7 @@ const ExerciceSchema = new mongoose.Schema({
   enonce:       { type: String, required: true },
   correction:   { type: String }, // optionnelle
   matiere:      { type: String, required: true },
-  niveau:       { type: String, enum: ['primaire', 'college', 'lycee'], required: true },
+  niveau:       { type: String, enum: NIVEAUX_VALUES, required: true },
   chapitre:     { type: String },
   fichierUrl:   { type: String }, // pièce jointe optionnelle (Cloudinary)
 }, { timestamps: true });

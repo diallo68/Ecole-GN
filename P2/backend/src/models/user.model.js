@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const { NIVEAUX_VALUES } = require('../utils/niveaux');
 
 // Un même schéma pour les 4 rôles (élève, parent, répétiteur, admin) — les
 // champs spécifiques à un rôle restent vides pour les autres. Auth par
@@ -23,8 +24,8 @@ const UserSchema = new mongoose.Schema({
 
   // ── Champs élève ──────────────────────────────────────────
   eleve: {
-    niveau: { type: String, enum: ['primaire', 'college', 'lycee'] },
-    classe: { type: String }, // ex: "6ème année", "9ème", "Terminale"
+    niveau: { type: String, enum: NIVEAUX_VALUES },
+    classe: { type: String }, // ancien champ libre, conservé pour compat (ex: "6ème année")
     parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
 
@@ -33,7 +34,7 @@ const UserSchema = new mongoose.Schema({
     bio:          { type: String, maxlength: 1000 },
     avatar:       { type: String },
     matieres:     [{ type: String }], // ex: ['Mathématiques', 'Physique-Chimie']
-    niveaux:      [{ type: String, enum: ['primaire', 'college', 'lycee'] }],
+    niveaux:      [{ type: String, enum: NIVEAUX_VALUES }],
     tarifHoraire: { type: Number }, // en GNF
     disponible:   { type: Boolean, default: true },
     valide:       { type: Boolean, default: false }, // modération admin avant mise en ligne
