@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Gandal",
+    "slug": "gandal",
+    "scheme": "gandal",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "backgroundColor": "#2563eb"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "bundleIdentifier": "gn.gandal.app",
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "gn.gandal.app"
+    },
+    "plugins": ["expo-router"]
+  }
+}
