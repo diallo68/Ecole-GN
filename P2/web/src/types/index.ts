@@ -1,6 +1,12 @@
 export type Role = 'eleve' | 'parent' | 'repetiteur' | 'admin';
-export type Niveau = 'cp1' | 'cp2' | 'ce1' | 'ce2' | 'cm1' | 'cm2' | '7e' | '8e' | '9e' | '10e' | '11e' | '12e' | 'terminale';
+export type Niveau =
+  | 'cp1' | 'cp2' | 'ce1' | 'ce2' | 'cm1' | 'cm2'
+  | '7e' | '8e' | '9e' | '10e'
+  | '11e-ss' | '11e-se' | '11e-sm'
+  | '12e-ss' | '12e-se' | '12e-sm'
+  | 'terminale-ss' | 'terminale-se' | 'terminale-sm';
 export type Cycle = 'primaire' | 'college' | 'lycee';
+export type Filiere = 'ss' | 'se' | 'sm';
 
 export interface Eleve {
   niveau?: Niveau;
