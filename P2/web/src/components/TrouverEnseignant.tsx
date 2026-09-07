@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ChevronDown, Search, Star } from 'lucide-react';
+import { ChevronDown, Search } from 'lucide-react';
 import { repetiteurApi } from '@/lib/api';
-import { MATIERES, ALL_CITIES, DISPONIBILITES, niveauLabel, tarifLabel } from '@/lib/constants';
+import { MATIERES, ALL_CITIES, DISPONIBILITES, tarifLabel } from '@/lib/constants';
 import type { Repetiteur } from '@/types';
 
 const TARIF_MAX_OPTIONS = [
@@ -97,38 +97,22 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {filtres.map(r => (
-            <Link key={r._id} href={`/repetiteurs/${r._id}`} className="bg-white rounded-2xl border border-ink/10 p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all">
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-11 h-11 rounded-full bg-sand text-brand-dark font-bold grid place-items-center border border-ink/10">
+            <Link key={r._id} href={`/repetiteurs/${r._id}`} className="bg-sand rounded-[1.75rem] border border-transparent p-5 hover:shadow-lg hover:-translate-y-0.5 hover:border-ink/5 transition-all">
+              <div className="flex items-start justify-between mb-4">
+                <div className="w-12 h-12 rounded-full bg-white text-brand-dark font-bold grid place-items-center border border-ink/10">
                   {r.prenom?.[0]}{r.nom?.[0]}
                 </div>
                 {r.repetiteur.ratingCount > 0 && (
-                  <div className="flex items-center gap-1 bg-sand px-2 py-1 rounded-lg text-xs font-semibold">
-                    <Star size={11} className="fill-amber-400 text-amber-400" /> {r.repetiteur.avgRating}
+                  <div className="flex items-center gap-1 bg-white px-2 py-1 rounded-lg shadow-sm border border-ink/5 text-xs font-semibold">
+                    ★ {r.repetiteur.avgRating}
                   </div>
                 )}
               </div>
               <p className="font-bold text-ink">{r.prenom} {r.nom}</p>
               <p className="text-sm text-ink/50 mt-0.5">{r.repetiteur.matieres?.join(', ')}</p>
-              <p className="text-xs text-ink/40 mt-1">{r.city} · {r.repetiteur.niveaux?.slice(0, 3).map(niveauLabel).join(', ')}{r.repetiteur.niveaux?.length > 3 ? '...' : ''}</p>
-
-              {r.repetiteur.disponibilites?.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {r.repetiteur.disponibilites.map(d => (
-                    <span key={d} className="text-[10px] font-semibold bg-brand-light text-brand-dark px-2 py-0.5 rounded-full">
-                      {DISPONIBILITES.find(x => x.value === d)?.label || d}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              <div className="flex items-center justify-between mt-3 pt-3 border-t border-ink/10">
-                <span className="text-xs text-ink/40">{r.repetiteur.disponible ? 'Disponible' : 'Complet'}</span>
-                {r.repetiteur.tarif?.montant ? (
-                  <span className="text-sm font-bold text-brand">{tarifLabel(r.repetiteur.tarif)}</span>
-                ) : (
-                  <span className="text-xs text-ink/30">Tarif sur demande</span>
-                )}
+              <div className="flex items-center justify-between mt-4 pt-3 border-t border-ink/10">
+                <span className="text-xs text-ink/40">{r.city}</span>
+                {r.repetiteur.tarif?.montant && <span className="text-sm font-bold text-brand">{tarifLabel(r.repetiteur.tarif)}</span>}
               </div>
             </Link>
           ))}
