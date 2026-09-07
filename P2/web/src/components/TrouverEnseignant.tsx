@@ -2,27 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ChevronDown, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { repetiteurApi } from '@/lib/api';
-import { MATIERES, ALL_CITIES, DISPONIBILITES, tarifLabel } from '@/lib/constants';
+import { tarifLabel } from '@/lib/constants';
+import { useFiltreEnseignantStore } from '@/store/filtreEnseignantStore';
 import type { Repetiteur } from '@/types';
 
-const TARIF_MAX_OPTIONS = [
-  { value: '', label: 'Tous les tarifs' },
-  { value: '30000', label: "Jusqu'à 30 000 GNF" },
-  { value: '60000', label: "Jusqu'à 60 000 GNF" },
-  { value: '100000', label: "Jusqu'à 100 000 GNF" },
-  { value: '300000', label: "Jusqu'à 300 000 GNF" },
-];
-
-// Bloc filtres + résultats de recherche d'enseignants — utilisé à la fois
-// sur la page dédiée /repetiteurs et directement sur l'accueil.
+// Bloc résultats de recherche d'enseignants — utilisé à la fois sur la page
+// dédiée /repetiteurs et directement sur l'accueil. Les filtres eux-mêmes
+// (matière/tarif/ville/disponibilité) vivent dans la navbar globale et sont
+// partagés via useFiltreEnseignantStore.
 export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' | 'h2' }) {
+  const { matiere, tarifMax, ville, disponibilite } = useFiltreEnseignantStore();
   const [repetiteurs, setRepetiteurs] = useState<Repetiteur[]>([]);
-  const [matiere, setMatiere] = useState('');
-  const [tarifMax, setTarifMax] = useState('');
-  const [ville, setVille] = useState('');
-  const [disponibilite, setDisponibilite] = useState('');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -53,41 +45,10 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
     <div>
       <Titre className="text-2xl md:text-3xl font-bold tracking-tight text-ink mb-5">Trouver un enseignant</Titre>
 
-      <div className="flex flex-col gap-3 mb-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <FilterBox label="Je veux apprendre">
-            <select value={matiere} onChange={e => setMatiere(e.target.value)} className="w-full appearance-none bg-transparent outline-none text-sm font-bold text-ink pr-5 cursor-pointer">
-              <option value="">Toutes les matières</option>
-              {MATIERES.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </FilterBox>
-
-          <FilterBox label="Tarif">
-            <select value={tarifMax} onChange={e => setTarifMax(e.target.value)} className="w-full appearance-none bg-transparent outline-none text-sm font-bold text-ink pr-5 cursor-pointer">
-              {TARIF_MAX_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-          </FilterBox>
-
-          <FilterBox label="Ville">
-            <select value={ville} onChange={e => setVille(e.target.value)} className="w-full appearance-none bg-transparent outline-none text-sm font-bold text-ink pr-5 cursor-pointer">
-              <option value="">Toutes les villes</option>
-              {ALL_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </FilterBox>
-
-          <FilterBox label="Mes disponibilités">
-            <select value={disponibilite} onChange={e => setDisponibilite(e.target.value)} className="w-full appearance-none bg-transparent outline-none text-sm font-bold text-ink pr-5 cursor-pointer">
-              <option value="">Toutes les heures</option>
-              {DISPONIBILITES.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
-            </select>
-          </FilterBox>
-        </div>
-
-        <div className="relative sm:max-w-xs">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Nom ou mot-clé..."
-            className="w-full border border-ink/10 rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none focus:border-brand bg-white" />
-        </div>
+      <div className="relative sm:max-w-xs mb-8">
+        <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30" />
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Nom ou mot-clé..."
+          className="w-full border border-ink/10 rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none focus:border-brand bg-white" />
       </div>
 
       {loading ? (
@@ -97,13 +58,13 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {filtres.map(r => (
-            <Link key={r._id} href={`/repetiteurs/${r._id}`} className="bg-sand rounded-[1.75rem] border border-transparent p-5 hover:shadow-lg hover:-translate-y-0.5 hover:border-ink/5 transition-all">
+            <Link key={r._id} href={`/repetiteurs/${r._id}`} className="bg-white rounded-2xl border border-ink/10 p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all">
               <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 rounded-full bg-white text-brand-dark font-bold grid place-items-center border border-ink/10">
+                <div className="w-12 h-12 rounded-full bg-sand text-brand-dark font-bold grid place-items-center border border-ink/10">
                   {r.prenom?.[0]}{r.nom?.[0]}
                 </div>
                 {r.repetiteur.ratingCount > 0 && (
-                  <div className="flex items-center gap-1 bg-white px-2 py-1 rounded-lg shadow-sm border border-ink/5 text-xs font-semibold">
+                  <div className="flex items-center gap-1 bg-sand px-2 py-1 rounded-lg text-xs font-semibold">
                     ★ {r.repetiteur.avgRating}
                   </div>
                 )}
@@ -118,16 +79,6 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-function FilterBox({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="relative border border-ink/10 rounded-2xl px-3.5 py-2 bg-white">
-      <span className="block text-[11px] text-ink/40 leading-none mb-1">{label}</span>
-      {children}
-      <ChevronDown size={14} className="absolute right-3.5 top-1/2 translate-y-[2px] text-ink/30 pointer-events-none" />
     </div>
   );
 }

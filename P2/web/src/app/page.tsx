@@ -113,13 +113,13 @@ export default function HomePage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {repetiteurs.map(r => (
-              <Link key={r._id} href={`/repetiteurs/${r._id}`} className="bg-sand rounded-[1.75rem] border border-transparent p-5 hover:shadow-lg hover:-translate-y-0.5 hover:border-ink/5 transition-all">
+              <Link key={r._id} href={`/repetiteurs/${r._id}`} className="bg-white rounded-2xl border border-ink/10 p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-full bg-white text-brand-dark font-bold grid place-items-center border border-ink/10">
+                  <div className="w-12 h-12 rounded-full bg-sand text-brand-dark font-bold grid place-items-center border border-ink/10">
                     {r.prenom?.[0]}{r.nom?.[0]}
                   </div>
                   {r.repetiteur.ratingCount > 0 && (
-                    <div className="flex items-center gap-1 bg-white px-2 py-1 rounded-lg shadow-sm border border-ink/5 text-xs font-semibold">
+                    <div className="flex items-center gap-1 bg-sand px-2 py-1 rounded-lg text-xs font-semibold">
                       ★ {r.repetiteur.avgRating}
                     </div>
                   )}

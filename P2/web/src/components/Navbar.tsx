@@ -2,23 +2,35 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { BookOpen, ChevronDown, LayoutDashboard, LogOut } from 'lucide-react';
+import { BookOpen, ChevronDown, LayoutDashboard, LogOut, SlidersHorizontal } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import FiltreEnseignantBar from './FiltreEnseignantBar';
 
 export default function Navbar() {
   const { user, isLoggedIn, logout } = useAuthStore();
+  const [filtresOpen, setFiltresOpen] = useState(false);
 
   return (
     <header className="bg-white/90 backdrop-blur-md sticky top-0 z-20 border-b border-ink/10">
-      <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-ink">
+      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+        <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-ink shrink-0">
           <span className="w-8 h-8 rounded-lg bg-brand text-white grid place-items-center shrink-0">
             <BookOpen size={16} strokeWidth={2.4} />
           </span>
-          Gandal
+          <span className="hidden sm:inline">Gandal</span>
         </Link>
 
-        <nav className="flex items-center gap-5 text-sm font-medium text-ink/70">
+        {/* Filtres enseignants — barre compacte visible sur toutes les pages (desktop) */}
+        <div className="hidden lg:block">
+          <FiltreEnseignantBar />
+        </div>
+        {/* Version mobile/tablette : bouton qui déplie les filtres */}
+        <button onClick={() => setFiltresOpen(o => !o)}
+          className="lg:hidden flex items-center gap-1.5 text-xs font-semibold text-ink/60 border border-ink/10 rounded-full px-3 py-1.5 shrink-0">
+          <SlidersHorizontal size={13} /> Filtres
+        </button>
+
+        <nav className="flex items-center gap-5 text-sm font-medium text-ink/70 shrink-0">
           <Link href="/repetiteurs" className="hover:text-ink transition-colors">Enseignants</Link>
           {isLoggedIn() && user ? (
             <UserMenu prenom={user.prenom} nom={user.nom} isAdmin={user.role === 'admin'} onLogout={logout} />
@@ -30,6 +42,12 @@ export default function Navbar() {
           )}
         </nav>
       </div>
+
+      {filtresOpen && (
+        <div className="lg:hidden border-t border-ink/10 px-4 py-3 bg-white">
+          <FiltreEnseignantBar vertical />
+        </div>
+      )}
     </header>
   );
 }
