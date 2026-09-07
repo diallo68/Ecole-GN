@@ -27,9 +27,15 @@ const login = Joi.object({
   password: Joi.string().required(),
 });
 
-// Complète le profil après inscription — photo et pièce d'identité restent
-// optionnelles pour le moment (pas de vérification d'identité obligatoire).
+// Page "Mon profil" — informations personnelles, communes aux 4 rôles.
+// L'email n'est volontairement pas modifiable ici (identifiant de connexion,
+// lié à la vérification par code).
 const updateMe = Joi.object({
+  prenom:        Joi.string().trim().min(2).max(50).optional(),
+  nom:           Joi.string().trim().max(50).allow('').optional(),
+  age:           Joi.number().integer().min(3).max(120).allow(null).optional(),
+  phone:         Joi.string().trim().min(6).max(20).optional(),
+  city:          Joi.string().trim().max(100).allow('').optional(),
   photo:         Joi.string().uri({ scheme: ['https'] }).allow('').optional(),
   pieceIdentite: Joi.string().uri({ scheme: ['https'] }).allow('').optional(),
 });

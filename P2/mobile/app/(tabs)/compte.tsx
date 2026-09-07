@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { reservationApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { Colors } from '@/lib/constants';
@@ -47,6 +48,14 @@ export default function CompteScreen() {
               <Text style={{ fontSize: 12, color: Colors.warning }}>Profil en attente de validation par l'équipe Gandal.</Text>
             </View>
           )}
+          <TouchableOpacity onPress={() => router.push('/profil')}
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 12, padding: 14, marginBottom: 14 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Ionicons name="person-circle-outline" size={20} color={Colors.brand} />
+              <Text style={{ fontWeight: '700', color: Colors.ink, fontSize: 14 }}>Mon profil</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={Colors.inkSubtle} />
+          </TouchableOpacity>
           <TouchableOpacity onPress={logout} style={{ alignSelf: 'flex-start' }}>
             <Text style={{ color: Colors.danger, fontSize: 13, fontWeight: '700' }}>Déconnexion</Text>
           </TouchableOpacity>

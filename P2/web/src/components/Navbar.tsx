@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { BookOpen, ChevronDown, LayoutDashboard, LogOut, SlidersHorizontal } from 'lucide-react';
+import { BookOpen, ChevronDown, LayoutDashboard, LogOut, SlidersHorizontal, UserCircle } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import FiltreEnseignantBar from './FiltreEnseignantBar';
 
@@ -81,18 +81,14 @@ function UserMenu({ prenom, nom, isAdmin, onLogout }: { prenom: string; nom?: st
           <div className="px-3.5 py-2 border-b border-ink/5">
             <p className="font-semibold text-ink text-sm truncate">{prenom} {nom}</p>
           </div>
-          {!isAdmin && (
-            <Link href="/dashboard" onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-ink/70 hover:bg-sand transition-colors">
-              <LayoutDashboard size={15} /> Mon espace
-            </Link>
-          )}
-          {isAdmin && (
-            <Link href="/admin" onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-ink/70 hover:bg-sand transition-colors">
-              <LayoutDashboard size={15} /> Mon profil
-            </Link>
-          )}
+          <Link href="/profil" onClick={() => setOpen(false)}
+            className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-ink/70 hover:bg-sand transition-colors">
+            <UserCircle size={15} /> Mon profil
+          </Link>
+          <Link href={isAdmin ? '/admin' : '/dashboard'} onClick={() => setOpen(false)}
+            className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-ink/70 hover:bg-sand transition-colors">
+            <LayoutDashboard size={15} /> {isAdmin ? 'Tableau de bord' : 'Mon espace'}
+          </Link>
           <button onClick={() => { setOpen(false); onLogout(); }}
             className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-flag hover:bg-flag/5 transition-colors">
             <LogOut size={15} /> Déconnexion

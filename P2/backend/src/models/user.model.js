@@ -13,6 +13,7 @@ const { TARIF_PERIODES, DISPONIBILITES_VALUES } = require('../utils/repetiteurOp
 const UserSchema = new mongoose.Schema({
   prenom:        { type: String, required: true, trim: true },
   nom:           { type: String, trim: true },
+  age:           { type: Number, min: 3, max: 120 },
   phone:         { type: String },
   photo:         { type: String },
   pieceIdentite: { type: String },

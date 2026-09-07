@@ -93,7 +93,7 @@ const authController = {
       await user.save();
       const { accessToken, refreshToken } = await generateTokens(user);
       const safeUser = {
-        _id: user._id, prenom: user.prenom, nom: user.nom, phone: user.phone,
+        _id: user._id, prenom: user.prenom, nom: user.nom, age: user.age, phone: user.phone,
         photo: user.photo, email: user.email, city: user.city, role: user.role, verified: user.verified,
       };
       res.json({ success: true, token: accessToken, refreshToken, user: safeUser });
@@ -113,7 +113,7 @@ const authController = {
       }
       const { accessToken, refreshToken } = await generateTokens(user);
       const safeUser = {
-        _id: user._id, prenom: user.prenom, nom: user.nom, phone: user.phone, photo: user.photo,
+        _id: user._id, prenom: user.prenom, nom: user.nom, age: user.age, phone: user.phone, photo: user.photo,
         email: user.email, city: user.city, role: user.role, verified: user.verified,
         repetiteur: user.role === 'repetiteur' ? user.repetiteur : undefined,
         eleve: user.role === 'eleve' ? user.eleve : undefined,
@@ -132,11 +132,16 @@ const authController = {
     res.json({ user });
   },
 
-  // ── Complète le profil (photo, pièce d'identité) après inscription ──
+  // ── Met à jour "Mon profil" (identité personnelle, tous rôles confondus) ─
   async updateMe(req, res) {
-    const { photo, pieceIdentite } = req.body;
+    const { prenom, nom, age, phone, city, photo, pieceIdentite } = req.body;
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+    if (prenom !== undefined) user.prenom = prenom;
+    if (nom !== undefined) user.nom = nom;
+    if (age !== undefined) user.age = age === null ? undefined : age;
+    if (phone !== undefined) user.phone = phone;
+    if (city !== undefined) user.city = city;
     if (photo !== undefined) user.photo = photo || undefined;
     if (pieceIdentite !== undefined) user.pieceIdentite = pieceIdentite || undefined;
     await user.save();

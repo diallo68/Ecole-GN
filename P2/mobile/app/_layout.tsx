@@ -14,6 +14,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ title: 'Connexion' }} />
         <Stack.Screen name="register" options={{ title: 'Inscription' }} />
+        <Stack.Screen name="profil" options={{ title: 'Mon profil' }} />
         <Stack.Screen name="repetiteur/[id]" options={{ title: 'Enseignant' }} />
         <Stack.Screen name="quiz/[id]" options={{ title: 'Quiz' }} />
       </Stack>

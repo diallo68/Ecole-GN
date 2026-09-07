@@ -33,6 +33,7 @@ export interface User {
   _id: string;
   prenom: string;
   nom: string;
+  age?: number;
   phone?: string;
   photo?: string;
   pieceIdentite?: string;

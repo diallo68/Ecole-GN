@@ -46,7 +46,7 @@ export const authApi = {
 
   me: () => get<{ user: User }>('/auth/me'),
 
-  updateMe: (body: { photo?: string; pieceIdentite?: string }) =>
+  updateMe: (body: { prenom?: string; nom?: string; age?: number | null; phone?: string; city?: string; photo?: string; pieceIdentite?: string }) =>
     patch<{ success: boolean; user: User }>('/auth/me', body),
 };
 
