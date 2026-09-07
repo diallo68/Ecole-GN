@@ -87,8 +87,11 @@ const authController = {
       user.verified = true;
       user.verifyCode = undefined;
       user.codeExpiry = undefined;
-      if (role === 'eleve' && niveau) user.eleve = { ...user.eleve, niveau };
-      if (role === 'repetiteur') user.repetiteur = { ...user.repetiteur, valide: false };
+      // Mutation directe des sous-champs plutôt qu'un spread { ...user.repetiteur, ... } —
+      // le spread d'un sous-document Mongoose imbriqué (repetiteur.tarif) peut le
+      // réassigner comme undefined et faire échouer le cast au save().
+      if (role === 'eleve' && niveau) user.eleve.niveau = niveau;
+      if (role === 'repetiteur') user.repetiteur.valide = false;
 
       await user.save();
       const { accessToken, refreshToken } = await generateTokens(user);
