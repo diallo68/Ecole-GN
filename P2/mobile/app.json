@@ -30,7 +30,8 @@
         {
           "photosPermission": "Gandal a besoin d'accéder à tes photos pour ajouter une photo de profil ou une pièce d'identité."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "router": {
