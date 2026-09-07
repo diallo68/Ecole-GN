@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { FileText, Image as ImageIcon, File, Download } from 'lucide-react';
+import { FileText, Image as ImageIcon, File, Download, Video as VideoIcon, ExternalLink } from 'lucide-react';
 import { contentApi } from '@/lib/api';
 import { MATIERES, niveauLabel } from '@/lib/constants';
 import { useAuthStore } from '@/store/authStore';
@@ -17,8 +17,14 @@ export default function MesCoursPage() {
 
   useEffect(() => {
     setLoading(true);
-    contentApi.listAll('support', { matiere: matiere || undefined, niveau: user?.eleve?.niveau })
-      .then(setItems)
+    const params = { matiere: matiere || undefined, niveau: user?.eleve?.niveau };
+    Promise.all([
+      contentApi.listAll('support', params),
+      contentApi.listAll('video', params),
+    ])
+      .then(([supports, videos]) => {
+        setItems([...videos, ...supports].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)));
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [matiere, user]);
@@ -44,16 +50,17 @@ export default function MesCoursPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {items.map(item => {
-            const Icon = TYPE_ICON[item.type || 'autre'];
+            const isVideo = item.url !== undefined;
+            const Icon = isVideo ? VideoIcon : TYPE_ICON[item.type || 'autre'];
             const auteur = typeof item.repetiteurId === 'object' ? `${item.repetiteurId.prenom} ${item.repetiteurId.nom}` : null;
             return (
-              <a key={item._id} href={item.fichierUrl} target="_blank" rel="noreferrer"
+              <a key={item._id} href={isVideo ? item.url : item.fichierUrl} target="_blank" rel="noreferrer"
                 className="bg-white rounded-2xl border border-ink/10 p-4 hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col gap-2">
                 <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-xl bg-brand-light text-brand-dark grid place-items-center shrink-0">
                     <Icon size={18} strokeWidth={2.2} />
                   </div>
-                  <Download size={15} className="text-ink/30 mt-1" />
+                  {isVideo ? <ExternalLink size={15} className="text-ink/30 mt-1" /> : <Download size={15} className="text-ink/30 mt-1" />}
                 </div>
                 <p className="font-semibold text-ink text-sm">{item.titre}</p>
                 <p className="text-xs text-ink/50">{item.matiere}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>

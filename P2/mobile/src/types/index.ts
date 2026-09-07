@@ -69,6 +69,37 @@ export interface Reservation {
   prix?: number;
 }
 
+export interface ContentItem {
+  _id: string;
+  repetiteurId: string | { _id: string; prenom: string; nom: string };
+  titre: string;
+  matiere: string;
+  niveau: Niveau;
+  chapitre?: string;
+  createdAt: string;
+  // vidéo
+  url?: string;
+  description?: string;
+  // support
+  fichierUrl?: string;
+  type?: 'pdf' | 'image' | 'autre';
+  // exercice
+  enonce?: string;
+  correction?: string;
+}
+
+export interface Soumission {
+  _id: string;
+  exerciceId: { _id: string; titre: string; matiere: string; niveau: Niveau } | string;
+  eleveId: { _id: string; prenom: string; nom: string } | string;
+  reponseTexte?: string;
+  fichierUrl?: string;
+  statut: 'rendu' | 'corrige';
+  note?: number;
+  commentaire?: string;
+  createdAt: string;
+}
+
 export interface ClasseVirtuelle {
   _id: string;
   repetiteurId: string | { _id: string; prenom: string; nom: string };

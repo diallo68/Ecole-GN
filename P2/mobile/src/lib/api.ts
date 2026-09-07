@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { User, Repetiteur, Reservation, ClasseVirtuelle, QuizSummary, QuizDetail, QuizCorrection } from '@/types';
+import type { User, Repetiteur, Reservation, ClasseVirtuelle, ContentItem, Soumission, QuizSummary, QuizDetail, QuizCorrection } from '@/types';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000/api';
 
@@ -21,6 +21,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 const get   = <T>(path: string) => request<T>(path);
 const post  = <T>(path: string, body?: unknown) => request<T>(path, { method: 'POST', body: body ? JSON.stringify(body) : undefined });
 const patch = <T>(path: string, body?: unknown) => request<T>(path, { method: 'PATCH', body: body ? JSON.stringify(body) : undefined });
+const del   = <T>(path: string) => request<T>(path, { method: 'DELETE' });
 
 // new URLSearchParams(obj) sérialise une valeur `undefined`/`null` en la
 // chaîne littérale "undefined" (ex: "?matiere=undefined"), ce qui casse les
@@ -85,8 +86,35 @@ export const reservationApi = {
 };
 
 export const classeVirtuelleApi = {
+  create: (body: Record<string, unknown>) => post<{ success: boolean; classe: ClasseVirtuelle }>('/classes-virtuelles', body),
   mine: () => get<{ classes: ClasseVirtuelle[] }>('/classes-virtuelles/mine'),
   mineAsEleve: () => get<{ classes: ClasseVirtuelle[] }>('/classes-virtuelles/eleve/mine'),
+};
+
+type ContentType = 'video' | 'support' | 'exercice';
+const contentKey = (type: ContentType) => `${type}s`;
+
+export const contentApi = {
+  create: (type: ContentType, body: Record<string, unknown>) =>
+    post<{ success: boolean; [key: string]: unknown }>(`/content/${type}s`, body),
+  mine: (type: ContentType) =>
+    get<Record<string, ContentItem[]>>(`/content/${type}s/mine`).then(d => d[contentKey(type)]),
+  byRepetiteur: (type: ContentType, repetiteurId: string) =>
+    get<Record<string, ContentItem[]>>(`/content/${type}s/repetiteur/${repetiteurId}`).then(d => d[contentKey(type)]),
+  listAll: (type: ContentType, params: { matiere?: string; niveau?: string } = {}) => {
+    const qs = buildQuery(params);
+    return get<Record<string, ContentItem[]>>(`/content/${type}s${qs ? `?${qs}` : ''}`).then(d => d[contentKey(type)]);
+  },
+  remove: (type: ContentType, id: string) => del<{ success: boolean }>(`/content/${type}s/${id}`),
+};
+
+export const soumissionApi = {
+  create: (body: { exerciceId: string; reponseTexte?: string; fichierUrl?: string }) =>
+    post<{ success: boolean; soumission: Soumission }>('/soumissions', body),
+  mine: () => get<{ soumissions: Soumission[] }>('/soumissions/mine'),
+  byExercice: (exerciceId: string) => get<{ soumissions: Soumission[] }>(`/soumissions/exercice/${exerciceId}`),
+  corriger: (id: string, body: { note?: number; commentaire?: string }) =>
+    patch<{ success: boolean; soumission: Soumission }>(`/soumissions/${id}/corriger`, body),
 };
 
 export const quizApi = {

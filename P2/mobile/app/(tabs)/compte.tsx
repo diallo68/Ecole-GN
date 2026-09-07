@@ -62,14 +62,22 @@ export default function CompteScreen() {
               <Text style={{ fontSize: 12, color: Colors.warning }}>Profil en attente de validation par l'équipe Gandal.</Text>
             </View>
           )}
-          <TouchableOpacity onPress={() => router.push('/profil')}
-            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 12, padding: 14, marginBottom: 10 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <Ionicons name="person-circle-outline" size={20} color={Colors.brand} />
-              <Text style={{ fontWeight: '700', color: Colors.ink, fontSize: 14 }}>Mon profil</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={Colors.inkSubtle} />
-          </TouchableOpacity>
+          <View style={{ gap: 8, marginBottom: 10 }}>
+            <MenuRow icon="person-circle-outline" label="Mon profil" onPress={() => router.push('/profil')} />
+            {user.role === 'repetiteur' && (
+              <>
+                <MenuRow icon="school-outline" label="Mon profil enseignant" desc="Bio, matières, tarif, disponibilités" onPress={() => router.push('/repetiteur-profil')} />
+                <MenuRow icon="book-outline" label="Mon contenu" desc="Vidéos, supports, exercices" onPress={() => router.push('/repetiteur-contenu')} />
+                <MenuRow icon="videocam-outline" label="Classes virtuelles" desc="Planifier une séance" onPress={() => router.push('/repetiteur-classes')} />
+              </>
+            )}
+            {user.role === 'eleve' && (
+              <>
+                <MenuRow icon="book-outline" label="Mes cours" onPress={() => router.push('/eleve-cours')} />
+                <MenuRow icon="create-outline" label="Mes exercices" onPress={() => router.push('/eleve-exercices')} />
+              </>
+            )}
+          </View>
           <TouchableOpacity onPress={logout} style={{ alignSelf: 'flex-start', marginBottom: 8 }}>
             <Text style={{ color: Colors.danger, fontSize: 13, fontWeight: '700' }}>Déconnexion</Text>
           </TouchableOpacity>
@@ -105,5 +113,21 @@ export default function CompteScreen() {
         );
       }}
     />
+  );
+}
+
+function MenuRow({ icon, label, desc, onPress }: { icon: keyof typeof Ionicons.glyphMap; label: string; desc?: string; onPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onPress}
+      style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 12, padding: 14 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
+        <Ionicons name={icon} size={20} color={Colors.brand} />
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontWeight: '700', color: Colors.ink, fontSize: 14 }}>{label}</Text>
+          {desc && <Text style={{ fontSize: 11, color: Colors.inkMuted, marginTop: 1 }}>{desc}</Text>}
+        </View>
+      </View>
+      <Ionicons name="chevron-forward" size={18} color={Colors.inkSubtle} />
+    </TouchableOpacity>
   );
 }
