@@ -6,6 +6,7 @@ import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, L
 import type { LucideIcon } from 'lucide-react';
 import { repetiteurApi, quizApi } from '@/lib/api';
 import AssistantWidget from '@/components/AssistantWidget';
+import TrouverEnseignant from '@/components/TrouverEnseignant';
 import { niveauLabel, tarifLabel, CYCLES, niveauxDuCycle } from '@/lib/constants';
 import { useAuthStore } from '@/store/authStore';
 import type { Repetiteur, QuizSummary, Cycle, Niveau } from '@/types';
@@ -133,6 +134,11 @@ export default function HomePage() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* Trouver un enseignant — filtres + résultats directement sur l'accueil */}
+      <section>
+        <TrouverEnseignant titreAs="h2" />
       </section>
 
       {/* Quiz */}
