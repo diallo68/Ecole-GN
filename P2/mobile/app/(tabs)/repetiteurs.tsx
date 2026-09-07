@@ -1,29 +1,58 @@
 import { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, FlatList, TouchableOpacity, ActivityIndicator, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { repetiteurApi } from '@/lib/api';
-import { Colors, MATIERES, NIVEAUX, DISPONIBILITES, tarifLabel } from '@/lib/constants';
+import { Colors, MATIERES, DISPONIBILITES, ALL_CITIES, tarifLabel } from '@/lib/constants';
 import type { Repetiteur } from '@/types';
+
+const TARIF_MAX_OPTIONS: { value: string | null; label: string }[] = [
+  { value: null, label: 'Tous les tarifs' },
+  { value: '30000', label: "Jusqu'à 30 000 GNF" },
+  { value: '60000', label: "Jusqu'à 60 000 GNF" },
+  { value: '100000', label: "Jusqu'à 100 000 GNF" },
+  { value: '300000', label: "Jusqu'à 300 000 GNF" },
+];
 
 export default function RepetiteursScreen() {
   const router = useRouter();
   const [repetiteurs, setRepetiteurs] = useState<Repetiteur[]>([]);
   const [matiere, setMatiere] = useState<string | null>(null);
-  const [niveau, setNiveau] = useState<string | null>(null);
+  const [tarifMax, setTarifMax] = useState<string | null>(null);
+  const [ville, setVille] = useState<string | null>(null);
   const [disponibilite, setDisponibilite] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [showCityPicker, setShowCityPicker] = useState(false);
+  const [citySearch, setCitySearch] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    repetiteurApi.list({ matiere: matiere || undefined, niveau: niveau || undefined, disponibilite: disponibilite || undefined })
+    repetiteurApi.list({
+      matiere: matiere || undefined,
+      tarifMax: tarifMax || undefined,
+      ville: ville || undefined,
+      disponibilite: disponibilite || undefined,
+    })
       .then(d => setRepetiteurs(d.repetiteurs))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [matiere, niveau, disponibilite]);
+  }, [matiere, tarifMax, ville, disponibilite]);
+
+  const filtres = repetiteurs.filter(r =>
+    !search || `${r.prenom} ${r.nom}`.toLowerCase().includes(search.toLowerCase()) ||
+    r.repetiteur.matieres?.some(m => m.toLowerCase().includes(search.toLowerCase())),
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.surfaceBg }}>
       <View style={{ padding: 12, gap: 8 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 12, paddingHorizontal: 12 }}>
+          <Ionicons name="search-outline" size={15} color={Colors.inkMuted} style={{ marginRight: 8 }} />
+          <TextInput value={search} onChangeText={setSearch} placeholder="Nom ou mot-clé..." placeholderTextColor={Colors.inkSubtle}
+            style={{ flex: 1, paddingVertical: 10, fontSize: 13, color: Colors.ink }} />
+        </View>
+
         <FlatList
           horizontal showsHorizontalScrollIndicator={false}
           data={[{ value: null, label: 'Toutes matières' }, ...MATIERES.map(m => ({ value: m, label: m }))]}
@@ -37,12 +66,12 @@ export default function RepetiteursScreen() {
         />
         <FlatList
           horizontal showsHorizontalScrollIndicator={false}
-          data={[{ value: null, label: 'Tous niveaux' }, ...NIVEAUX]}
+          data={TARIF_MAX_OPTIONS}
           keyExtractor={item => item.label}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => setNiveau(item.value)}
-              style={{ backgroundColor: niveau === item.value ? Colors.brand : Colors.white, borderWidth: 1, borderColor: niveau === item.value ? Colors.brand : Colors.surfaceBorder, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6, marginRight: 8 }}>
-              <Text style={{ color: niveau === item.value ? Colors.white : Colors.ink, fontSize: 12, fontWeight: '700' }}>{item.label}</Text>
+            <TouchableOpacity onPress={() => setTarifMax(item.value)}
+              style={{ backgroundColor: tarifMax === item.value ? Colors.brand : Colors.white, borderWidth: 1, borderColor: tarifMax === item.value ? Colors.brand : Colors.surfaceBorder, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6, marginRight: 8 }}>
+              <Text style={{ color: tarifMax === item.value ? Colors.white : Colors.ink, fontSize: 12, fontWeight: '700' }}>{item.label}</Text>
             </TouchableOpacity>
           )}
         />
@@ -57,13 +86,19 @@ export default function RepetiteursScreen() {
             </TouchableOpacity>
           )}
         />
+
+        <TouchableOpacity onPress={() => { setCitySearch(''); setShowCityPicker(true); }}
+          style={{ alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: ville ? Colors.brand : Colors.white, borderWidth: 1, borderColor: ville ? Colors.brand : Colors.surfaceBorder, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6 }}>
+          <Ionicons name="location-outline" size={13} color={ville ? Colors.white : Colors.inkMuted} />
+          <Text style={{ color: ville ? Colors.white : Colors.ink, fontSize: 12, fontWeight: '700' }}>{ville || 'Toutes les villes'}</Text>
+        </TouchableOpacity>
       </View>
 
       {loading ? (
         <ActivityIndicator style={{ marginTop: 40 }} color={Colors.brand} />
       ) : (
         <FlatList
-          data={repetiteurs}
+          data={filtres}
           keyExtractor={item => item._id}
           contentContainerStyle={{ padding: 12, gap: 10 }}
           ListEmptyComponent={<Text style={{ textAlign: 'center', color: Colors.inkMuted, marginTop: 20 }}>Aucun enseignant ne correspond.</Text>}
@@ -80,6 +115,41 @@ export default function RepetiteursScreen() {
           )}
         />
       )}
+
+      <Modal visible={showCityPicker} transparent animationType="slide" onRequestClose={() => setShowCityPicker(false)}>
+        <TouchableOpacity style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.45)' }} activeOpacity={1} onPress={() => setShowCityPicker(false)} />
+        <View style={{ backgroundColor: Colors.white, borderTopLeftRadius: 20, borderTopRightRadius: 20, position: 'absolute', bottom: 0, left: 0, right: 0, maxHeight: '75%' }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: Colors.surfaceBorder }}>
+            <TouchableOpacity onPress={() => { setVille(null); setShowCityPicker(false); }}>
+              <Text style={{ color: Colors.inkMuted, fontSize: 15 }}>Toutes</Text>
+            </TouchableOpacity>
+            <Text style={{ fontWeight: '800', fontSize: 15, color: Colors.ink }}>Choisir une ville</Text>
+            <TouchableOpacity onPress={() => setShowCityPicker(false)}>
+              <Text style={{ color: Colors.inkMuted, fontSize: 15 }}>Fermer</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ paddingHorizontal: 16, paddingVertical: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surfaceBg, borderRadius: 10, paddingHorizontal: 12, borderWidth: 1, borderColor: Colors.surfaceBorder }}>
+              <Ionicons name="search-outline" size={16} color={Colors.inkMuted} style={{ marginRight: 8 }} />
+              <TextInput value={citySearch} onChangeText={setCitySearch} placeholder="Rechercher une ville..." placeholderTextColor={Colors.inkMuted}
+                style={{ flex: 1, paddingVertical: 10, fontSize: 14, color: Colors.ink }} autoFocus />
+            </View>
+          </View>
+          <FlatList
+            data={ALL_CITIES.filter(c => c.toLowerCase().includes(citySearch.toLowerCase()))}
+            keyExtractor={c => c}
+            keyboardShouldPersistTaps="handled"
+            renderItem={({ item: c }) => (
+              <TouchableOpacity onPress={() => { setVille(c); setShowCityPicker(false); }}
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: Colors.surfaceBorder, backgroundColor: ville === c ? Colors.brandLight : Colors.white }}>
+                <Text style={{ fontSize: 15, color: Colors.ink, fontWeight: ville === c ? '700' : '400' }}>{c}</Text>
+                {ville === c && <Ionicons name="checkmark" size={17} color={Colors.brand} />}
+              </TouchableOpacity>
+            )}
+            contentContainerStyle={{ paddingBottom: 30 }}
+          />
+        </View>
+      </Modal>
     </View>
   );
 }
