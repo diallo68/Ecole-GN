@@ -31,6 +31,8 @@ export interface User {
   prenom: string;
   nom: string;
   phone?: string;
+  photo?: string;
+  pieceIdentite?: string;
   email: string;
   city?: string;
   role: Role;

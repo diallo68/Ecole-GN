@@ -67,7 +67,7 @@ const authController = {
   // ── Finalise l'inscription après vérification du code ───────────────────
   async register(req, res) {
     try {
-      const { prenom, nom, phone, email, password, city, code, role, niveau } = req.body;
+      const { prenom, nom, phone, photo, pieceIdentite, email, password, city, code, role, niveau } = req.body;
       const user = await User.findOne({ email: email.toLowerCase() });
       if (!user) return res.status(400).json({ error: "Veuillez d'abord demander un code" });
       if (user.verified) return res.status(400).json({ error: 'Ce compte est déjà vérifié' });
@@ -78,7 +78,9 @@ const authController = {
 
       user.prenom = prenom;
       user.nom = nom || '';
-      user.phone = phone || undefined;
+      user.phone = phone;
+      user.photo = photo || undefined;
+      user.pieceIdentite = pieceIdentite || undefined;
       user.password = password;
       user.city = city;
       user.role = role;
@@ -92,7 +94,7 @@ const authController = {
       const { accessToken, refreshToken } = await generateTokens(user);
       const safeUser = {
         _id: user._id, prenom: user.prenom, nom: user.nom, phone: user.phone,
-        email: user.email, city: user.city, role: user.role, verified: user.verified,
+        photo: user.photo, email: user.email, city: user.city, role: user.role, verified: user.verified,
       };
       res.json({ success: true, token: accessToken, refreshToken, user: safeUser });
     } catch (err) {
@@ -111,7 +113,7 @@ const authController = {
       }
       const { accessToken, refreshToken } = await generateTokens(user);
       const safeUser = {
-        _id: user._id, prenom: user.prenom, nom: user.nom, phone: user.phone,
+        _id: user._id, prenom: user.prenom, nom: user.nom, phone: user.phone, photo: user.photo,
         email: user.email, city: user.city, role: user.role, verified: user.verified,
         repetiteur: user.role === 'repetiteur' ? user.repetiteur : undefined,
         eleve: user.role === 'eleve' ? user.eleve : undefined,
@@ -128,6 +130,17 @@ const authController = {
     const user = await User.findById(req.user.id).select('-password -verifyCode -codeExpiry -refreshToken');
     if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
     res.json({ user });
+  },
+
+  // ── Complète le profil (photo, pièce d'identité) après inscription ──
+  async updateMe(req, res) {
+    const { photo, pieceIdentite } = req.body;
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+    if (photo !== undefined) user.photo = photo || undefined;
+    if (pieceIdentite !== undefined) user.pieceIdentite = pieceIdentite || undefined;
+    await user.save();
+    res.json({ success: true, user: user.toObject({ transform: (_, ret) => { delete ret.password; delete ret.verifyCode; delete ret.codeExpiry; delete ret.refreshToken; return ret; } }) });
   },
 };
 

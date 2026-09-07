@@ -5,11 +5,16 @@ const { NIVEAUX_VALUES } = require('../utils/niveaux');
 // Un même schéma pour les 4 rôles (élève, parent, répétiteur, admin) — les
 // champs spécifiques à un rôle restent vides pour les autres. Auth par
 // email uniquement (pas de SMS sur ce projet) : "phone" reste un simple
-// champ de contact optionnel, pas un identifiant de connexion.
+// champ de contact, obligatoire à l'inscription mais pas un identifiant
+// de connexion. "photo" et "pieceIdentite" (URL Cloudinary) sont
+// optionnels pour le moment — la vérification d'identité n'est pas
+// encore imposée.
 const UserSchema = new mongoose.Schema({
-  prenom:   { type: String, required: true, trim: true },
-  nom:      { type: String, trim: true },
-  phone:    { type: String },
+  prenom:        { type: String, required: true, trim: true },
+  nom:           { type: String, trim: true },
+  phone:         { type: String },
+  photo:         { type: String },
+  pieceIdentite: { type: String },
   email:    { type: String, required: true, unique: true, trim: true, lowercase: true },
   password: { type: String, required: true },
   city:     { type: String },

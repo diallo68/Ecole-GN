@@ -8,9 +8,11 @@ const sendCode = Joi.object({
 });
 
 const register = Joi.object({
-  prenom:   Joi.string().trim().min(2).max(50).required(),
-  nom:      Joi.string().trim().max(50).allow('').optional(),
-  phone:    Joi.string().trim().max(20).allow('').optional(), // simple champ de contact, pas un identifiant
+  prenom:        Joi.string().trim().min(2).max(50).required(),
+  nom:           Joi.string().trim().max(50).allow('').optional(),
+  phone:         Joi.string().trim().min(6).max(20).required(), // simple champ de contact, pas un identifiant
+  photo:         Joi.string().uri({ scheme: ['https'] }).allow('').optional(),
+  pieceIdentite: Joi.string().uri({ scheme: ['https'] }).allow('').optional(),
   email:    Joi.string().email().required(),
   code:     Joi.string().length(6).required(),
   password: Joi.string().min(8).required(),
@@ -22,6 +24,13 @@ const register = Joi.object({
 const login = Joi.object({
   email:    Joi.string().email().required(),
   password: Joi.string().required(),
+});
+
+// Complète le profil après inscription — photo et pièce d'identité restent
+// optionnelles pour le moment (pas de vérification d'identité obligatoire).
+const updateMe = Joi.object({
+  photo:         Joi.string().uri({ scheme: ['https'] }).allow('').optional(),
+  pieceIdentite: Joi.string().uri({ scheme: ['https'] }).allow('').optional(),
 });
 
 const updateRepetiteurProfile = Joi.object({
@@ -45,6 +54,6 @@ function validate(schema) {
 }
 
 module.exports = {
-  schemas: { sendCode, register, login, updateRepetiteurProfile },
+  schemas: { sendCode, register, login, updateMe, updateRepetiteurProfile },
   validate,
 };

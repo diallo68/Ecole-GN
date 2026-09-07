@@ -33,6 +33,28 @@ export const authApi = {
     post<{ success: boolean; token: string; refreshToken: string; user: User }>('/auth/login', body),
 
   me: () => get<{ user: User }>('/auth/me'),
+
+  updateMe: (body: { photo?: string; pieceIdentite?: string }) =>
+    patch<{ success: boolean; user: User }>('/auth/me', body),
+};
+
+export const uploadApi = {
+  // React Native : on envoie l'URI locale du fichier choisi (image-picker /
+  // document-picker) en multipart/form-data, sans passer par `request()`
+  // (Content-Type doit être laissé à fetch pour poser la boundary).
+  file: async (fileUri: string, name: string, mimeType: string) => {
+    const token = await AsyncStorage.getItem('gandal_token');
+    const form = new FormData();
+    form.append('file', { uri: fileUri, name, type: mimeType } as unknown as Blob);
+    const res = await fetch(`${API_URL}/upload`, {
+      method: 'POST',
+      headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      body: form,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Erreur d'envoi");
+    return data as { success: boolean; url: string; type: string; format: string };
+  },
 };
 
 export const repetiteurApi = {

@@ -20,8 +20,6 @@ export default function Navbar() {
 
         <nav className="flex items-center gap-5 text-sm font-medium text-ink/70">
           <Link href="/repetiteurs" className="hover:text-ink transition-colors">Enseignants</Link>
-          <Link href="/quiz" className="hover:text-ink transition-colors">Quiz</Link>
-          <Link href="/#avis" className="hover:text-ink transition-colors">Avis</Link>
           {isLoggedIn() && user ? (
             <UserMenu prenom={user.prenom} nom={user.nom} isAdmin={user.role === 'admin'} onLogout={logout} />
           ) : (

@@ -2,47 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, Leaf, Landmark, Map, HelpCircle } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-import { repetiteurApi, quizApi } from '@/lib/api';
+import { ArrowRight } from 'lucide-react';
+import { repetiteurApi } from '@/lib/api';
 import AssistantWidget from '@/components/AssistantWidget';
-import { niveauLabel, CYCLES, niveauxDuCycle } from '@/lib/constants';
-import { useAuthStore } from '@/store/authStore';
-import type { Repetiteur, QuizSummary, Cycle, Niveau } from '@/types';
-
-const MATIERE_ICONS: Record<string, LucideIcon> = {
-  'Mathématiques': Sigma,
-  'Calcul & Problèmes': Sigma,
-  'Français': Languages,
-  'Physique': Atom,
-  'Chimie': FlaskConical,
-  'Biologie': Leaf,
-  'Histoire': Landmark,
-  'Géographie': Map,
-};
+import type { Repetiteur } from '@/types';
 
 export default function HomePage() {
-  const { user } = useAuthStore();
   const [repetiteurs, setRepetiteurs] = useState<Repetiteur[]>([]);
-  const [quizzes, setQuizzes] = useState<QuizSummary[]>([]);
-  const [cycle, setCycle] = useState<Cycle | ''>('');
-  const [niveau, setNiveau] = useState<Niveau | ''>('');
 
   useEffect(() => {
     repetiteurApi.list({}).then(d => setRepetiteurs(d.repetiteurs.slice(0, 4))).catch(() => {});
   }, []);
-
-  // Pré-sélectionne le niveau de l'élève connecté, sans l'imposer (il peut changer).
-  useEffect(() => {
-    if (user?.eleve?.niveau) {
-      const n = niveauxDuCycle('primaire').concat(niveauxDuCycle('college'), niveauxDuCycle('lycee')).find(x => x.value === user.eleve!.niveau);
-      if (n) { setCycle(n.cycle); setNiveau(n.value); }
-    }
-  }, [user]);
-
-  useEffect(() => {
-    quizApi.list({ niveau: niveau || undefined }).then(d => setQuizzes(d.quizzes.slice(0, 6))).catch(() => {});
-  }, [niveau]);
 
   return (
     <>
@@ -72,10 +42,6 @@ export default function HomePage() {
               <Link href="/repetiteurs" className="group flex items-center justify-center gap-2 bg-brand text-white px-7 py-3.5 rounded-2xl font-semibold hover:bg-brand-dark transition-all shadow-lg shadow-brand/20">
                 Trouver un enseignant
                 <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-              </Link>
-              <Link href="/quiz" className="flex items-center justify-center gap-2 bg-white text-ink border border-ink/10 px-7 py-3.5 rounded-2xl font-semibold hover:border-ink/20 transition-colors shadow-sm">
-                <Zap size={16} />
-                Faire un quiz gratuit
               </Link>
             </div>
           </div>
@@ -134,91 +100,8 @@ export default function HomePage() {
           </div>
         )}
       </section>
-
-      {/* Quiz */}
-      <section>
-        <div className="text-center max-w-xl mx-auto mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Teste-toi — quiz gratuits</h2>
-          <p className="text-ink/50 text-sm mt-1">Révise à ton rythme, conçus selon le programme national guinéen.</p>
-        </div>
-
-        {/* Filtres niveau : cycle puis classe précise */}
-        <div className="flex flex-col items-center gap-2 mb-8">
-          <div className="flex flex-wrap justify-center gap-2">
-            <FilterChip active={!cycle} onClick={() => { setCycle(''); setNiveau(''); }} label="Tous niveaux" />
-            {CYCLES.map(c => (
-              <FilterChip key={c.value} active={cycle === c.value} onClick={() => { setCycle(c.value); setNiveau(''); }} label={c.label} />
-            ))}
-          </div>
-          {cycle && (
-            <div className="flex flex-wrap justify-center gap-2">
-              <FilterChip active={!niveau} onClick={() => setNiveau('')} label={`Toutes les classes (${CYCLES.find(c => c.value === cycle)?.label})`} small />
-              {niveauxDuCycle(cycle).map(n => (
-                <FilterChip key={n.value} active={niveau === n.value} onClick={() => setNiveau(n.value)} label={n.label} small />
-              ))}
-            </div>
-          )}
-        </div>
-
-        {quizzes.length === 0 ? (
-          <p className="text-ink/50 text-sm text-center">Aucun quiz publié pour le moment.</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {quizzes.map(q => {
-              const Icon = MATIERE_ICONS[q.matiere] || HelpCircle;
-              return (
-                <Link key={q._id} href={`/quiz/${q._id}`} className="bg-white rounded-2xl border border-ink/10 p-4 flex items-center gap-4 hover:shadow-lg hover:-translate-y-0.5 transition-all">
-                  <div className="w-14 h-14 rounded-xl bg-sand grid place-items-center shrink-0">
-                    <Icon size={24} className="text-ink/60" strokeWidth={1.75} />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wide bg-ink/5 text-ink/50 px-2 py-0.5 rounded">{q.matiere}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-wide bg-ink/5 text-ink/50 px-2 py-0.5 rounded">{niveauLabel(q.niveau)}</span>
-                    </div>
-                    <p className="font-bold text-ink leading-tight truncate">{q.titre}</p>
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand mt-1">
-                      Commencer <ArrowRight size={12} />
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-          {CYCLES.map(c => (
-            <Link key={c.value} href={`/quiz?cycle=${c.value}`}
-              className="bg-white rounded-2xl border border-ink/10 p-6 flex flex-col items-center gap-1 text-center hover:border-brand hover:shadow-md transition-all">
-              <span className="font-bold text-ink">{c.label}</span>
-              <span className="text-xs text-ink/50">{c.desc}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Avis — pas encore de vrais avis à afficher, section honnête en attendant */}
-      <section id="avis" className="text-center bg-sand rounded-3xl py-14 px-6">
-        <MessageCircle size={28} className="mx-auto text-brand mb-3" strokeWidth={1.5} />
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Les avis arrivent bientôt</h2>
-        <p className="text-ink/50 text-sm mt-2 max-w-md mx-auto">
-          Gandal vient de démarrer en Guinée — les retours de nos premiers élèves, parents et enseignants apparaîtront ici dès qu'ils seront publiés.
-        </p>
-      </section>
     </div>
     <AssistantWidget />
     </>
-  );
-}
-
-function FilterChip({ active, onClick, label, small }: { active: boolean; onClick: () => void; label: string; small?: boolean }) {
-  return (
-    <button onClick={onClick}
-      className={`rounded-full font-semibold border transition-colors ${small ? 'px-2.5 py-1 text-[11px]' : 'px-3.5 py-1.5 text-xs'} ${
-        active ? 'bg-brand text-white border-brand' : 'bg-white border-ink/15 text-ink/60 hover:border-brand/40'
-      }`}>
-      {label}
-    </button>
   );
 }

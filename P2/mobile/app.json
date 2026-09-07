@@ -18,6 +18,14 @@
     "android": {
       "package": "gn.gandal.app"
     },
-    "plugins": ["expo-router"]
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Gandal a besoin d'accéder à tes photos pour ajouter une photo de profil ou une pièce d'identité."
+        }
+      ]
+    ]
   }
 }

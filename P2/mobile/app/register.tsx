@@ -6,22 +6,23 @@ import { Ionicons } from '@expo/vector-icons';
 import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { Colors, ALL_CITIES, CYCLES, niveauxDuCycle } from '@/lib/constants';
+import FileUploadField from '@/components/FileUploadField';
 import Toast from 'react-native-toast-message';
 import type { Role, Niveau, Cycle } from '@/types';
 
 // Même parcours "une question à la fois" que sur YouGouYouGou (moins intimidant
-// qu'un long formulaire) — adapté à Gandal : email uniquement, pas de téléphone,
-// et un choix de profil en 2 étapes (Élève/Parent d'élève puis, si besoin, lequel).
+// qu'un long formulaire) — adapté à Gandal, avec un choix de profil en 2 étapes
+// (Élève/Parent d'élève puis, si besoin, lequel).
 type AccountChoice = 'eleve_parent' | 'repetiteur' | '';
 type SubRole = 'eleve' | 'parent' | '';
-type Step = 'form' | 'otp';
-type QuestionId = 'accountType' | 'subRole' | 'nameCombo' | 'email' | 'password' | 'password2' | 'city' | 'cycle' | 'niveau';
+type Step = 'form' | 'otp' | 'documents';
+type QuestionId = 'accountType' | 'subRole' | 'nameCombo' | 'phone' | 'email' | 'password' | 'password2' | 'city' | 'cycle' | 'niveau';
 interface Question { id: QuestionId }
 
 export default function RegisterScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { login } = useAuthStore();
+  const { login, setUser } = useAuthStore();
 
   const [step, setStep] = useState<Step>('form');
   const [loading, setLoading] = useState(false);
@@ -32,6 +33,7 @@ export default function RegisterScreen() {
   const [fullName, setFullName] = useState('');
   const [prenom, setPrenom] = useState('');
   const [nom, setNom] = useState('');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
@@ -39,6 +41,8 @@ export default function RegisterScreen() {
   const [cycle, setCycle] = useState<Cycle | ''>('');
   const [niveau, setNiveau] = useState<Niveau | ''>('');
   const [code, setCode] = useState('');
+  const [photo, setPhoto] = useState('');
+  const [pieceIdentite, setPieceIdentite] = useState('');
 
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [citySearch, setCitySearch] = useState('');
@@ -58,7 +62,7 @@ export default function RegisterScreen() {
   const questions: Question[] = useMemo(() => {
     const q: Question[] = [{ id: 'accountType' }];
     if (accountType === 'eleve_parent') q.push({ id: 'subRole' });
-    q.push({ id: 'nameCombo' }, { id: 'email' }, { id: 'password' }, { id: 'password2' }, { id: 'city' });
+    q.push({ id: 'nameCombo' }, { id: 'phone' }, { id: 'email' }, { id: 'password' }, { id: 'password2' }, { id: 'city' });
     if (role === 'eleve') q.push({ id: 'cycle' }, { id: 'niveau' });
     return q;
   }, [accountType, role]);
@@ -75,6 +79,7 @@ export default function RegisterScreen() {
   const validateCurrent = (): string | null => {
     switch (q.id) {
       case 'nameCombo': return prenom.trim() ? null : 'Le prénom est obligatoire';
+      case 'phone':     return phone.trim().length >= 6 ? null : 'Entrez un numéro de téléphone valide';
       case 'email':     return email.trim() ? null : 'Entrez votre adresse email';
       case 'password':  return password.length >= 8 ? null : 'Mot de passe trop court (8 caractères min.)';
       case 'password2': return password === password2 ? null : 'Les mots de passe ne correspondent pas';
@@ -140,18 +145,65 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       const data = await authApi.register({
-        prenom, nom, email, password, city, code, role,
+        prenom, nom, phone, email, password, city, code, role,
         ...(role === 'eleve' ? { niveau } : {}),
       });
       await login(data.user, data.token);
       Toast.show({ type: 'success', text1: 'Compte créé !' });
-      router.replace('/(tabs)');
+      setStep('documents');
     } catch (e: any) {
       Toast.show({ type: 'error', text1: e.message || 'Erreur' });
     } finally {
       setLoading(false);
     }
   };
+
+  const finishDocuments = async () => {
+    if (photo || pieceIdentite) {
+      setLoading(true);
+      try {
+        const { user } = await authApi.updateMe({ photo: photo || undefined, pieceIdentite: pieceIdentite || undefined });
+        setUser(user);
+      } catch (e: any) {
+        Toast.show({ type: 'error', text1: e.message || 'Erreur' });
+      } finally {
+        setLoading(false);
+      }
+    }
+    router.replace('/(tabs)');
+  };
+
+  // ── Documents Step (facultatif, après création du compte) ──
+  if (step === 'documents') {
+    return (
+      <View style={[styles.otpContainer, { justifyContent: 'flex-start', paddingTop: insets.top + 40 }]}>
+        <View style={styles.otpLogoWrap}>
+          <Ionicons name="card-outline" size={32} color={Colors.brand} />
+        </View>
+        <Text style={styles.otpTitle}>Complète ton profil</Text>
+        <Text style={styles.otpSubtitle}>Une photo et une pièce d'identité — facultatif pour le moment.</Text>
+
+        <View style={{ width: '100%', gap: 16 }}>
+          <View style={{ gap: 6 }}>
+            <Text style={{ fontSize: 12, fontWeight: '700', color: Colors.inkMuted }}>Photo (optionnel)</Text>
+            <FileUploadField value={photo} onChange={setPhoto} label="Ajouter une photo" kind="photo" />
+          </View>
+          <View style={{ gap: 6 }}>
+            <Text style={{ fontSize: 12, fontWeight: '700', color: Colors.inkMuted }}>Pièce d'identité (optionnel)</Text>
+            <FileUploadField value={pieceIdentite} onChange={setPieceIdentite} label="Ajouter une pièce d'identité" kind="document" />
+          </View>
+
+          <TouchableOpacity onPress={finishDocuments} disabled={loading} style={[styles.btnPrimary, loading && styles.btnDisabled, { marginTop: 8 }]}>
+            {loading ? (
+              <ActivityIndicator size="small" color={Colors.white} />
+            ) : (
+              <Text style={styles.btnPrimaryText}>{(photo || pieceIdentite) ? 'Continuer' : 'Passer cette étape'}</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   // ── OTP Step ──
   if (step === 'otp') {
@@ -249,6 +301,15 @@ export default function RegisterScreen() {
               <TextInput ref={answerRef} value={fullName} onChangeText={handleFullNameChange} onSubmitEditing={goNext}
                 placeholder="Mamadou Diallo" placeholderTextColor={Colors.inkSubtle} autoComplete="name"
                 autoCapitalize="words" returnKeyType="next" style={styles.underlineInputSolo} />
+            </View>
+          )}
+
+          {q.id === 'phone' && (
+            <View style={styles.qGroup}>
+              <Text style={styles.question}>Votre numéro de téléphone ?</Text>
+              <TextInput ref={answerRef} value={phone} onChangeText={setPhone} onSubmitEditing={goNext}
+                placeholder="622 00 00 00" placeholderTextColor={Colors.inkSubtle} keyboardType="phone-pad"
+                autoComplete="tel" returnKeyType="next" style={styles.underlineInputSolo} />
             </View>
           )}
 

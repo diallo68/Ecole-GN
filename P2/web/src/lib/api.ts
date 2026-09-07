@@ -38,6 +38,9 @@ export const authApi = {
     post<{ success: boolean; token: string; refreshToken: string; user: User }>('/auth/login', body),
 
   me: () => get<{ user: User }>('/auth/me'),
+
+  updateMe: (body: { photo?: string; pieceIdentite?: string }) =>
+    patch<{ success: boolean; user: User }>('/auth/me', body),
 };
 
 export const repetiteurApi = {

@@ -8,5 +8,6 @@ router.post('/send-code', validate(schemas.sendCode), authController.sendCode);
 router.post('/register', validate(schemas.register), authController.register);
 router.post('/login', validate(schemas.login), authController.login);
 router.get('/me', auth, authController.me);
+router.patch('/me', auth, validate(schemas.updateMe), authController.updateMe);
 
 module.exports = router;

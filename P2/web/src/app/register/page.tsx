@@ -8,17 +8,18 @@ import toast from 'react-hot-toast';
 import { authApi } from '@/lib/api';
 import { ALL_CITIES, CYCLES, niveauxDuCycle } from '@/lib/constants';
 import { useAuthStore } from '@/store/authStore';
+import FileUploadField from '@/components/FileUploadField';
 import type { Role, Niveau, Cycle } from '@/types';
 
 type AccountChoice = 'eleve_parent' | 'repetiteur' | '';
 type SubRole = 'eleve' | 'parent' | '';
-type Step = 'form' | 'otp';
-type QuestionId = 'accountType' | 'subRole' | 'nameCombo' | 'email' | 'password' | 'password2' | 'city' | 'cycle' | 'niveau';
+type Step = 'form' | 'otp' | 'documents';
+type QuestionId = 'accountType' | 'subRole' | 'nameCombo' | 'phone' | 'email' | 'password' | 'password2' | 'city' | 'cycle' | 'niveau';
 interface Question { id: QuestionId }
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { login } = useAuthStore();
+  const { login, setUser } = useAuthStore();
 
   const [step, setStep] = useState<Step>('form');
   const [loading, setLoading] = useState(false);
@@ -29,6 +30,7 @@ export default function RegisterPage() {
   const [fullName, setFullName] = useState('');
   const [prenom, setPrenom] = useState('');
   const [nom, setNom] = useState('');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
@@ -36,6 +38,8 @@ export default function RegisterPage() {
   const [cycle, setCycle] = useState<Cycle | ''>('');
   const [niveau, setNiveau] = useState<Niveau | ''>('');
   const [code, setCode] = useState('');
+  const [photo, setPhoto] = useState('');
+  const [pieceIdentite, setPieceIdentite] = useState('');
 
   const answerRef = useRef<HTMLInputElement & HTMLSelectElement>(null);
   const advancing = useRef(false);
@@ -53,7 +57,7 @@ export default function RegisterPage() {
   const questions: Question[] = useMemo(() => {
     const q: Question[] = [{ id: 'accountType' }];
     if (accountType === 'eleve_parent') q.push({ id: 'subRole' });
-    q.push({ id: 'nameCombo' }, { id: 'email' }, { id: 'password' }, { id: 'password2' }, { id: 'city' });
+    q.push({ id: 'nameCombo' }, { id: 'phone' }, { id: 'email' }, { id: 'password' }, { id: 'password2' }, { id: 'city' });
     if (role === 'eleve') q.push({ id: 'cycle' }, { id: 'niveau' });
     return q;
   }, [accountType, role]);
@@ -70,6 +74,7 @@ export default function RegisterPage() {
   const validateCurrent = (): string | null => {
     switch (q.id) {
       case 'nameCombo': return prenom.trim() ? null : 'Le prénom est obligatoire';
+      case 'phone':     return phone.trim().length >= 6 ? null : 'Entrez un numéro de téléphone valide';
       case 'email':     return email.trim() ? null : 'Entrez votre adresse email';
       case 'password':  return password.length >= 8 ? null : 'Mot de passe trop court (8 caractères min.)';
       case 'password2': return password === password2 ? null : 'Les mots de passe ne correspondent pas';
@@ -136,18 +141,56 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const data = await authApi.register({
-        prenom, nom, email, password, city, code, role,
+        prenom, nom, phone, email, password, city, code, role,
         ...(role === 'eleve' ? { niveau } : {}),
       });
       login(data.user, data.token, data.refreshToken);
       toast.success('Compte créé !');
-      router.push('/dashboard');
+      setStep('documents');
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erreur');
     } finally {
       setLoading(false);
     }
   };
+
+  const finishDocuments = async () => {
+    if (photo || pieceIdentite) {
+      setLoading(true);
+      try {
+        const { user } = await authApi.updateMe({ photo: photo || undefined, pieceIdentite: pieceIdentite || undefined });
+        setUser(user);
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Erreur');
+      } finally {
+        setLoading(false);
+      }
+    }
+    router.push('/dashboard');
+  };
+
+  if (step === 'documents') {
+    return (
+      <div className="max-w-sm mx-auto bg-white rounded-2xl border border-ink/10 p-6 space-y-5">
+        <div className="text-center">
+          <div className="text-4xl mb-2">🪪</div>
+          <p className="font-bold text-ink">Complète ton profil</p>
+          <p className="text-sm text-ink/60 mt-1">Une photo et une pièce d'identité — facultatif pour le moment.</p>
+        </div>
+        <div className="space-y-2">
+          <label className="block text-xs font-semibold text-ink/50">Photo (optionnel)</label>
+          <FileUploadField value={photo} onChange={setPhoto} accept="image/*" label="Ajouter une photo" />
+        </div>
+        <div className="space-y-2">
+          <label className="block text-xs font-semibold text-ink/50">Pièce d'identité (optionnel)</label>
+          <FileUploadField value={pieceIdentite} onChange={setPieceIdentite} accept="image/*,.pdf" label="Ajouter une pièce d'identité" />
+        </div>
+        <button onClick={finishDocuments} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
+          {loading ? 'Envoi...' : (photo || pieceIdentite) ? 'Continuer' : 'Passer cette étape'}
+        </button>
+      </div>
+    );
+  }
 
   if (step === 'otp') {
     return (
@@ -204,6 +247,10 @@ export default function RegisterPage() {
 
         {q.id === 'nameCombo' && (
           <QuestionInput ref={answerRef} label="Quel est votre prénom et nom ?" value={fullName} onChange={handleFullNameChange} onEnter={handleEnter} placeholder="Mamadou Diallo" autoComplete="name" />
+        )}
+
+        {q.id === 'phone' && (
+          <QuestionInput ref={answerRef} label="Votre numéro de téléphone ?" type="tel" value={phone} onChange={setPhone} onEnter={handleEnter} placeholder="622 00 00 00" autoComplete="tel" />
         )}
 
         {q.id === 'email' && (
