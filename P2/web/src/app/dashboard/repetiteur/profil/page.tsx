@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { repetiteurApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { MATIERES, CYCLES, niveauxDuCycle } from '@/lib/constants';
-import type { Niveau } from '@/types';
+import { MATIERES, CYCLES, niveauxDuCycle, TARIF_PERIODES, DISPONIBILITES } from '@/lib/constants';
+import type { Niveau, TarifPeriode, Disponibilite } from '@/types';
 
 export default function RepetiteurProfilPage() {
   const router = useRouter();
@@ -14,7 +14,9 @@ export default function RepetiteurProfilPage() {
   const [bio, setBio] = useState('');
   const [matieres, setMatieres] = useState<string[]>([]);
   const [niveaux, setNiveaux] = useState<Niveau[]>([]);
-  const [tarifHoraire, setTarifHoraire] = useState('');
+  const [montant, setMontant] = useState('');
+  const [periode, setPeriode] = useState<TarifPeriode>('heure');
+  const [disponibilites, setDisponibilites] = useState<Disponibilite[]>([]);
   const [disponible, setDisponible] = useState(true);
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +26,9 @@ export default function RepetiteurProfilPage() {
     setBio(user.repetiteur?.bio || '');
     setMatieres(user.repetiteur?.matieres || []);
     setNiveaux(user.repetiteur?.niveaux || []);
-    setTarifHoraire(user.repetiteur?.tarifHoraire?.toString() || '');
+    setMontant(user.repetiteur?.tarif?.montant?.toString() || '');
+    setPeriode(user.repetiteur?.tarif?.periode || 'heure');
+    setDisponibilites(user.repetiteur?.disponibilites || []);
     setDisponible(user.repetiteur?.disponible ?? true);
   }, [user, router]);
 
@@ -34,21 +38,13 @@ export default function RepetiteurProfilPage() {
 
   const save = async () => {
     setLoading(true);
+    const tarif = montant ? { montant: Number(montant), periode } : undefined;
     try {
-      await repetiteurApi.updateMyProfile({
-        bio, matieres, niveaux,
-        tarifHoraire: tarifHoraire ? Number(tarifHoraire) : undefined,
-        disponible,
-      });
+      await repetiteurApi.updateMyProfile({ bio, matieres, niveaux, tarif, disponibilites, disponible });
       if (user) {
         setUser({
           ...user,
-          repetiteur: {
-            ...user.repetiteur!,
-            bio, matieres, niveaux,
-            tarifHoraire: tarifHoraire ? Number(tarifHoraire) : undefined,
-            disponible,
-          },
+          repetiteur: { ...user.repetiteur!, bio, matieres, niveaux, tarif, disponibilites, disponible },
         });
       }
       toast.success('Profil mis à jour !');
@@ -110,9 +106,28 @@ export default function RepetiteurProfilPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-1">Tarif horaire (GNF)</label>
-          <input type="number" value={tarifHoraire} onChange={e => setTarifHoraire(e.target.value)}
-            className="w-full border border-ink/15 rounded-lg px-3 py-2" placeholder="Ex: 50000" />
+          <label className="block text-sm font-semibold mb-1">Tarif (GNF)</label>
+          <div className="flex gap-2">
+            <input type="number" value={montant} onChange={e => setMontant(e.target.value)}
+              className="flex-1 border border-ink/15 rounded-lg px-3 py-2" placeholder="Ex: 50000" />
+            <select value={periode} onChange={e => setPeriode(e.target.value as TarifPeriode)}
+              className="border border-ink/15 rounded-lg px-3 py-2">
+              {TARIF_PERIODES.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
+            </select>
+          </div>
+          <p className="text-xs text-ink/40 mt-1">À l'heure pour des cours ponctuels, au mois ou à l'année pour un forfait/prépa examen.</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold mb-1">Disponibilités</label>
+          <div className="flex flex-wrap gap-2">
+            {DISPONIBILITES.map(d => (
+              <button key={d.value} type="button" onClick={() => toggle(disponibilites, d.value, setDisponibilites)}
+                className={`text-sm px-3 py-1.5 rounded-full border ${disponibilites.includes(d.value) ? 'bg-brand text-white border-brand' : 'border-ink/15'}`}>
+                {d.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <label className="flex items-center gap-2 text-sm">

@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { MessageCircle } from 'lucide-react';
 import { repetiteurApi, reservationApi, messagingApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { niveauLabel } from '@/lib/constants';
+import { niveauLabel, tarifLabel, DISPONIBILITES } from '@/lib/constants';
 import type { Repetiteur } from '@/types';
 
 export default function RepetiteurDetailPage() {
@@ -69,8 +69,17 @@ export default function RepetiteurDetailPage() {
         <div className="mt-4 flex flex-wrap gap-2">
           {repetiteur.repetiteur.matieres?.map(m => <span key={m} className="bg-ink/5 text-xs px-2.5 py-1 rounded-full">{m}</span>)}
         </div>
-        {repetiteur.repetiteur.tarifHoraire && (
-          <p className="mt-4 text-lg font-bold text-brand">{repetiteur.repetiteur.tarifHoraire.toLocaleString('fr-FR')} GNF / heure</p>
+        {repetiteur.repetiteur.tarif?.montant && (
+          <p className="mt-4 text-lg font-bold text-brand">{tarifLabel(repetiteur.repetiteur.tarif)}</p>
+        )}
+        {repetiteur.repetiteur.disponibilites?.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {repetiteur.repetiteur.disponibilites.map(d => (
+              <span key={d} className="bg-brand-light text-brand-dark text-xs font-semibold px-2.5 py-1 rounded-full">
+                {DISPONIBILITES.find(x => x.value === d)?.label || d}
+              </span>
+            ))}
+          </div>
         )}
         <button onClick={contacter} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand-dark">
           <MessageCircle size={16} /> Contacter {repetiteur.prenom}

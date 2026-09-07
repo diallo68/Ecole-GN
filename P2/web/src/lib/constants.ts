@@ -1,4 +1,20 @@
-import type { Niveau, Cycle, Filiere } from '@/types';
+import type { Niveau, Cycle, Filiere, TarifPeriode, Disponibilite } from '@/types';
+
+export const TARIF_PERIODES: Array<{ value: TarifPeriode; label: string }> = [
+  { value: 'heure', label: '/ heure' },
+  { value: 'mois', label: '/ mois' },
+  { value: 'an', label: '/ an' },
+];
+
+export const DISPONIBILITES: Array<{ value: Disponibilite; label: string }> = [
+  { value: 'matin', label: 'Matin' },
+  { value: 'apres-midi', label: 'Après-midi' },
+  { value: 'soir', label: 'Soir' },
+  { value: 'weekend', label: 'Week-end' },
+];
+
+export const tarifLabel = (t?: { montant: number; periode: TarifPeriode }): string =>
+  t?.montant ? `${t.montant.toLocaleString('fr-FR')} GNF ${TARIF_PERIODES.find(p => p.value === t.periode)?.label || ''}` : '';
 
 // Le primaire n'a pas "Sciences Physiques" en tant que matière séparée, et
 // utilise "Calcul & Problèmes" plutôt que "Mathématiques". Le secondaire

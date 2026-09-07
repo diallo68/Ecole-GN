@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const { NIVEAUX_VALUES } = require('./niveaux');
+const { TARIF_PERIODES, DISPONIBILITES_VALUES } = require('./repetiteurOptions');
 
 // Inscription/connexion par email uniquement sur ce projet (pas de SMS).
 const sendCode = Joi.object({
@@ -34,12 +35,16 @@ const updateMe = Joi.object({
 });
 
 const updateRepetiteurProfile = Joi.object({
-  bio:          Joi.string().max(1000).allow('').optional(),
-  matieres:     Joi.array().items(Joi.string()).optional(),
-  niveaux:      Joi.array().items(Joi.string().valid(...NIVEAUX_VALUES)).optional(),
-  tarifHoraire: Joi.number().min(0).optional(),
-  disponible:   Joi.boolean().optional(),
-  avatar:       Joi.string().uri({ scheme: ['https'] }).allow('').optional(),
+  bio:      Joi.string().max(1000).allow('').optional(),
+  matieres: Joi.array().items(Joi.string()).optional(),
+  niveaux:  Joi.array().items(Joi.string().valid(...NIVEAUX_VALUES)).optional(),
+  tarif: Joi.object({
+    montant: Joi.number().min(0).required(),
+    periode: Joi.string().valid(...TARIF_PERIODES).required(),
+  }).optional(),
+  disponibilites: Joi.array().items(Joi.string().valid(...DISPONIBILITES_VALUES)).optional(),
+  disponible:     Joi.boolean().optional(),
+  avatar:         Joi.string().uri({ scheme: ['https'] }).allow('').optional(),
 });
 
 function validate(schema) {

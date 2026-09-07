@@ -15,7 +15,7 @@ const adminController = {
         filter.$or = [{ prenom: re }, { nom: re }, { email: re }];
       }
       const users = await User.find(filter)
-        .select('prenom nom email city role createdAt eleve.niveau repetiteur.valide repetiteur.matieres')
+        .select('prenom nom email phone photo pieceIdentite city role createdAt eleve.niveau repetiteur.valide repetiteur.matieres')
         .sort({ createdAt: -1 })
         .limit(300);
       res.json({ users });

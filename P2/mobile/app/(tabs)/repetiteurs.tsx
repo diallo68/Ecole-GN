@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { repetiteurApi } from '@/lib/api';
-import { Colors, MATIERES, NIVEAUX } from '@/lib/constants';
+import { Colors, MATIERES, NIVEAUX, DISPONIBILITES, tarifLabel } from '@/lib/constants';
 import type { Repetiteur } from '@/types';
 
 export default function RepetiteursScreen() {
@@ -10,15 +10,16 @@ export default function RepetiteursScreen() {
   const [repetiteurs, setRepetiteurs] = useState<Repetiteur[]>([]);
   const [matiere, setMatiere] = useState<string | null>(null);
   const [niveau, setNiveau] = useState<string | null>(null);
+  const [disponibilite, setDisponibilite] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    repetiteurApi.list({ matiere: matiere || undefined, niveau: niveau || undefined })
+    repetiteurApi.list({ matiere: matiere || undefined, niveau: niveau || undefined, disponibilite: disponibilite || undefined })
       .then(d => setRepetiteurs(d.repetiteurs))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [matiere, niveau]);
+  }, [matiere, niveau, disponibilite]);
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.surfaceBg }}>
@@ -45,6 +46,17 @@ export default function RepetiteursScreen() {
             </TouchableOpacity>
           )}
         />
+        <FlatList
+          horizontal showsHorizontalScrollIndicator={false}
+          data={[{ value: null, label: 'Toutes les heures' }, ...DISPONIBILITES]}
+          keyExtractor={item => item.label}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => setDisponibilite(item.value)}
+              style={{ backgroundColor: disponibilite === item.value ? Colors.brand : Colors.white, borderWidth: 1, borderColor: disponibilite === item.value ? Colors.brand : Colors.surfaceBorder, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6, marginRight: 8 }}>
+              <Text style={{ color: disponibilite === item.value ? Colors.white : Colors.ink, fontSize: 12, fontWeight: '700' }}>{item.label}</Text>
+            </TouchableOpacity>
+          )}
+        />
       </View>
 
       {loading ? (
@@ -61,8 +73,8 @@ export default function RepetiteursScreen() {
               <Text style={{ fontWeight: '800', color: Colors.ink }}>{item.prenom} {item.nom}</Text>
               <Text style={{ fontSize: 12, color: Colors.inkMuted, marginTop: 2 }}>{item.repetiteur.matieres?.join(', ')}</Text>
               <Text style={{ fontSize: 11, color: Colors.inkSubtle, marginTop: 2 }}>{item.city}</Text>
-              {item.repetiteur.tarifHoraire && (
-                <Text style={{ fontSize: 13, fontWeight: '700', color: Colors.brand, marginTop: 6 }}>{item.repetiteur.tarifHoraire.toLocaleString('fr-FR')} GNF/h</Text>
+              {item.repetiteur.tarif?.montant && (
+                <Text style={{ fontSize: 13, fontWeight: '700', color: Colors.brand, marginTop: 6 }}>{tarifLabel(item.repetiteur.tarif)}</Text>
               )}
             </TouchableOpacity>
           )}

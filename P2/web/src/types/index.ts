@@ -7,6 +7,8 @@ export type Niveau =
   | 'terminale-ss' | 'terminale-se' | 'terminale-sm';
 export type Cycle = 'primaire' | 'college' | 'lycee';
 export type Filiere = 'ss' | 'se' | 'sm';
+export type TarifPeriode = 'heure' | 'mois' | 'an';
+export type Disponibilite = 'matin' | 'apres-midi' | 'soir' | 'weekend';
 
 export interface Eleve {
   niveau?: Niveau;
@@ -19,7 +21,8 @@ export interface RepetiteurProfile {
   avatar?: string;
   matieres: string[];
   niveaux: Niveau[];
-  tarifHoraire?: number;
+  tarif?: { montant: number; periode: TarifPeriode };
+  disponibilites: Disponibilite[];
   disponible: boolean;
   valide: boolean;
   avgRating: number;
@@ -46,6 +49,9 @@ export interface Repetiteur {
   prenom: string;
   nom: string;
   email?: string; // présent seulement sur les listes admin
+  phone?: string; // présent seulement sur les listes admin
+  photo?: string;
+  pieceIdentite?: string; // présent seulement sur les listes admin (modération)
   city?: string;
   createdAt?: string;
   repetiteur: RepetiteurProfile;
@@ -181,6 +187,9 @@ export interface AdminUser {
   prenom: string;
   nom: string;
   email: string;
+  phone?: string;
+  photo?: string;
+  pieceIdentite?: string;
   city?: string;
   role: Role;
   createdAt: string;

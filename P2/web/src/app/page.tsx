@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { repetiteurApi } from '@/lib/api';
 import AssistantWidget from '@/components/AssistantWidget';
+import { tarifLabel } from '@/lib/constants';
 import type { Repetiteur } from '@/types';
 
 export default function HomePage() {
@@ -93,7 +94,7 @@ export default function HomePage() {
                 <p className="text-sm text-ink/50 mt-0.5">{r.repetiteur.matieres?.join(', ')}</p>
                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-ink/10">
                   <span className="text-xs text-ink/40">{r.city}</span>
-                  {r.repetiteur.tarifHoraire && <span className="text-sm font-bold text-brand">{r.repetiteur.tarifHoraire.toLocaleString('fr-FR')} GNF/h</span>}
+                  {r.repetiteur.tarif?.montant && <span className="text-sm font-bold text-brand">{tarifLabel(r.repetiteur.tarif)}</span>}
                 </div>
               </Link>
             ))}

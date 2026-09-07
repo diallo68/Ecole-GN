@@ -58,7 +58,7 @@ export const uploadApi = {
 };
 
 export const repetiteurApi = {
-  list: (params: { matiere?: string; niveau?: string; ville?: string } = {}) => {
+  list: (params: { matiere?: string; niveau?: string; ville?: string; disponibilite?: string; tarifMax?: string } = {}) => {
     const qs = new URLSearchParams(params as Record<string, string>).toString();
     return get<{ repetiteurs: Repetiteur[] }>(`/repetiteurs${qs ? `?${qs}` : ''}`);
   },

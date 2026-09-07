@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const { NIVEAUX_VALUES } = require('../utils/niveaux');
+const { TARIF_PERIODES, DISPONIBILITES_VALUES } = require('../utils/repetiteurOptions');
 
 // Un même schéma pour les 4 rôles (élève, parent, répétiteur, admin) — les
 // champs spécifiques à un rôle restent vides pour les autres. Auth par
@@ -36,15 +37,21 @@ const UserSchema = new mongoose.Schema({
 
   // ── Champs répétiteur ─────────────────────────────────────
   repetiteur: {
-    bio:          { type: String, maxlength: 1000 },
-    avatar:       { type: String },
-    matieres:     [{ type: String }], // ex: ['Mathématiques', 'Physique-Chimie']
-    niveaux:      [{ type: String, enum: NIVEAUX_VALUES }],
-    tarifHoraire: { type: Number }, // en GNF
-    disponible:   { type: Boolean, default: true },
-    valide:       { type: Boolean, default: false }, // modération admin avant mise en ligne
-    avgRating:    { type: Number, default: 0 },
-    ratingCount:  { type: Number, default: 0 },
+    bio:      { type: String, maxlength: 1000 },
+    avatar:   { type: String },
+    matieres: [{ type: String }], // ex: ['Mathématiques', 'Physique-Chimie']
+    niveaux:  [{ type: String, enum: NIVEAUX_VALUES }],
+    // Un enseignant fixe un seul tarif, mais choisit librement l'unité —
+    // à l'heure (cours ponctuels), au mois ou à l'année (forfaits/prépa examen).
+    tarif: {
+      montant: { type: Number }, // en GNF
+      periode: { type: String, enum: TARIF_PERIODES, default: 'heure' },
+    },
+    disponibilites: [{ type: String, enum: DISPONIBILITES_VALUES }], // créneaux où il/elle donne cours
+    disponible:     { type: Boolean, default: true }, // interrupteur global (prend des nouveaux élèves ou non)
+    valide:         { type: Boolean, default: false }, // modération admin avant mise en ligne
+    avgRating:      { type: Number, default: 0 },
+    ratingCount:    { type: Number, default: 0 },
   },
 
   pushToken: { type: String },

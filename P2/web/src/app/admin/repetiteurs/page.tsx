@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { IdCard } from 'lucide-react';
 import { repetiteurApi } from '@/lib/api';
 import { niveauLabel } from '@/lib/constants';
 import type { Repetiteur } from '@/types';
@@ -50,15 +51,32 @@ export default function AdminRepetiteursPage() {
       ) : (
         <div className="space-y-3">
           {repetiteurs.map(r => (
-            <div key={r._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-center justify-between">
-              <div>
-                <p className="font-semibold">{r.prenom} {r.nom} <span className="text-ink/40 font-normal text-sm">— {r.email}</span></p>
-                <p className="text-sm text-ink/60">{r.city} · {r.repetiteur.matieres?.join(', ')} · {r.repetiteur.niveaux?.map(niveauLabel).join(', ')}</p>
-                <p className="text-xs mt-1">
-                  <span className={`font-semibold px-2 py-0.5 rounded-full ${r.repetiteur.valide ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
-                    {r.repetiteur.valide ? 'Validé' : 'En attente'}
-                  </span>
-                </p>
+            <div key={r._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                {r.photo ? (
+                  <img src={r.photo} alt="" className="w-11 h-11 rounded-full object-cover border border-ink/10 shrink-0" />
+                ) : (
+                  <div className="w-11 h-11 rounded-full bg-sand text-ink/40 font-bold grid place-items-center border border-ink/10 shrink-0">
+                    {r.prenom?.[0]}{r.nom?.[0]}
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <p className="font-semibold">{r.prenom} {r.nom} <span className="text-ink/40 font-normal text-sm">— {r.email}</span></p>
+                  <p className="text-sm text-ink/60">{r.city} · {r.repetiteur.matieres?.join(', ')} · {r.repetiteur.niveaux?.map(niveauLabel).join(', ')}</p>
+                  <p className="text-xs text-ink/50 mt-0.5">{r.phone || 'Pas de téléphone renseigné'}</p>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${r.repetiteur.valide ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                      {r.repetiteur.valide ? 'Validé' : 'En attente'}
+                    </span>
+                    {r.pieceIdentite ? (
+                      <a href={r.pieceIdentite} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline">
+                        <IdCard size={13} /> Pièce d'identité
+                      </a>
+                    ) : (
+                      <span className="text-xs text-ink/30">Pas de pièce d'identité</span>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="flex gap-2 shrink-0">
                 {!r.repetiteur.valide && (

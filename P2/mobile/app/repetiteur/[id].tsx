@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { repetiteurApi, reservationApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { Colors } from '@/lib/constants';
+import { Colors, DISPONIBILITES, tarifLabel } from '@/lib/constants';
 import type { Repetiteur } from '@/types';
 
 export default function RepetiteurDetailScreen() {
@@ -62,10 +62,20 @@ export default function RepetiteurDetailScreen() {
         ))}
       </View>
 
-      {repetiteur.repetiteur.tarifHoraire && (
+      {repetiteur.repetiteur.tarif?.montant && (
         <Text style={{ fontSize: 17, fontWeight: '800', color: Colors.brand, marginTop: 14 }}>
-          {repetiteur.repetiteur.tarifHoraire.toLocaleString('fr-FR')} GNF / heure
+          {tarifLabel(repetiteur.repetiteur.tarif)}
         </Text>
+      )}
+
+      {repetiteur.repetiteur.disponibilites?.length > 0 && (
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+          {repetiteur.repetiteur.disponibilites.map(d => (
+            <View key={d} style={{ backgroundColor: Colors.brandLight, borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 }}>
+              <Text style={{ fontSize: 11, fontWeight: '700', color: Colors.brandDark }}>{DISPONIBILITES.find(x => x.value === d)?.label || d}</Text>
+            </View>
+          ))}
+        </View>
       )}
 
       <View style={{ backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 14, padding: 14, marginTop: 20 }}>

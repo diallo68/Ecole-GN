@@ -9,6 +9,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { reservationApi, messagingApi, quizApi } from '@/lib/api';
+import { tarifLabel } from '@/lib/constants';
 import StatCard from '@/components/StatCard';
 import type { Reservation, Conversation, QuizAttempt, User } from '@/types';
 
@@ -65,7 +66,7 @@ function EnseignantHome({ user, aVenir, prochaine }: { user: User; reservations:
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard icon={Star} label="Note moyenne" value={rep?.ratingCount ? `${rep.avgRating} / 5` : '—'} tone="accent" />
-        <StatCard icon={Wallet} label="Tarif horaire" value={rep?.tarifHoraire ? `${rep.tarifHoraire.toLocaleString('fr-FR')} GNF` : '—'} />
+        <StatCard icon={Wallet} label="Tarif" value={rep?.tarif?.montant ? tarifLabel(rep.tarif) : '—'} />
         <StatCard icon={CalendarCheck} label="Sessions à venir" value={aVenir.length} />
         <StatCard icon={rep?.disponible ? ToggleRight : ToggleLeft} label={rep?.disponible ? 'Disponible' : 'Indisponible'} value={rep?.disponible ? 'Oui' : 'Non'} tone={rep?.disponible ? 'brand' : 'flag'} />
       </div>
