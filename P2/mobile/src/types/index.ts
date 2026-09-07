@@ -69,6 +69,19 @@ export interface Reservation {
   prix?: number;
 }
 
+export interface ClasseVirtuelle {
+  _id: string;
+  repetiteurId: string | { _id: string; prenom: string; nom: string };
+  eleveIds: string[];
+  titre: string;
+  matiere: string;
+  niveau: Niveau;
+  dateHeure: string;
+  dureeMinutes: number;
+  lienVisio: string;
+  statut: 'planifiee' | 'en_cours' | 'terminee' | 'annulee';
+}
+
 export interface QuizSummary {
   _id: string;
   titre: string;

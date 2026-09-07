@@ -79,7 +79,7 @@ export interface ContentItem {
 
 export interface ClasseVirtuelle {
   _id: string;
-  repetiteurId: string;
+  repetiteurId: string | { _id: string; prenom: string; nom: string };
   eleveIds: string[];
   titre: string;
   matiere: string;

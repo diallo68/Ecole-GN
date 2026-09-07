@@ -31,6 +31,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     items.push(
       { href: '/dashboard/eleve/cours', label: 'Mes cours', icon: BookOpen },
       { href: '/dashboard/eleve/exercices', label: 'Mes exercices', icon: PenLine },
+      { href: '/dashboard/eleve/classes', label: 'Classes virtuelles', icon: Video },
     );
   }
 

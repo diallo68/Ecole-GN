@@ -3,15 +3,16 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { classeVirtuelleApi } from '@/lib/api';
+import { classeVirtuelleApi, reservationApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { NIVEAUX, niveauLabel, matieresDuCycle } from '@/lib/constants';
-import type { ClasseVirtuelle, Niveau } from '@/types';
+import type { ClasseVirtuelle, Niveau, Reservation } from '@/types';
 
 export default function RepetiteurClassesPage() {
   const router = useRouter();
   const { user } = useAuthStore();
   const [classes, setClasses] = useState<ClasseVirtuelle[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
   const [titre, setTitre] = useState('');
   const [niveau, setNiveau] = useState<Niveau>('7e');
   const cycle = NIVEAUX.find(n => n.value === niveau)?.cycle || 'college';
@@ -30,6 +31,7 @@ export default function RepetiteurClassesPage() {
   useEffect(() => {
     if (user && user.role !== 'repetiteur') { router.push('/dashboard'); return; }
     classeVirtuelleApi.mine().then(d => setClasses(d.classes)).catch(() => {});
+    reservationApi.agenda().then(d => setReservations(d.reservations)).catch(() => {});
   }, [user, router]);
 
   const planifier = async () => {
@@ -68,17 +70,37 @@ export default function RepetiteurClassesPage() {
         </div>
       </div>
 
-      <div className="md:col-span-2 space-y-3">
-        <h2 className="font-bold">Mes classes virtuelles</h2>
-        {classes.length === 0 ? (
-          <p className="text-ink/60 text-sm">Aucune classe planifiée.</p>
-        ) : classes.map(c => (
-          <div key={c._id} className="bg-white rounded-xl border border-ink/10 p-4">
-            <p className="font-semibold">{c.titre}</p>
-            <p className="text-sm text-ink/60">{c.matiere} · {niveauLabel(c.niveau)} · {new Date(c.dateHeure).toLocaleString('fr-FR')}</p>
-            <a href={c.lienVisio} target="_blank" rel="noreferrer" className="text-sm text-brand font-semibold">Lien de la salle →</a>
-          </div>
-        ))}
+      <div className="md:col-span-2 space-y-6">
+        <div className="space-y-3">
+          <h2 className="font-bold">Mes classes virtuelles</h2>
+          {classes.length === 0 ? (
+            <p className="text-ink/60 text-sm">Aucune classe planifiée.</p>
+          ) : classes.map(c => (
+            <div key={c._id} className="bg-white rounded-xl border border-ink/10 p-4">
+              <p className="font-semibold">{c.titre}</p>
+              <p className="text-sm text-ink/60">{c.matiere} · {niveauLabel(c.niveau)} · {new Date(c.dateHeure).toLocaleString('fr-FR')}</p>
+              <a href={c.lienVisio} target="_blank" rel="noreferrer" className="text-sm text-brand font-semibold">Lien de la salle →</a>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="font-bold">Mes réservations (créneaux avec élèves)</h2>
+          {reservations.length === 0 ? (
+            <p className="text-ink/60 text-sm">Aucune réservation pour l'instant.</p>
+          ) : reservations.map(r => (
+            <div key={r._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-center justify-between gap-3">
+              <div>
+                <p className="font-semibold">{r.matiere} · {niveauLabel(r.niveau)}</p>
+                <p className="text-sm text-ink/60">
+                  {new Date(r.dateHeure).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })} — {r.mode === 'en_ligne' ? 'En ligne' : 'Présentiel'}
+                </p>
+                {r.lienVisio && <a href={r.lienVisio} target="_blank" rel="noreferrer" className="text-sm text-brand font-semibold">Rejoindre la visio →</a>}
+              </div>
+              <span className="text-xs font-semibold bg-sand px-2.5 py-1 rounded-full capitalize shrink-0">{r.statut.replace('_', ' ')}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

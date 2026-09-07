@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { User, Repetiteur, Reservation, QuizSummary, QuizDetail, QuizCorrection } from '@/types';
+import type { User, Repetiteur, Reservation, ClasseVirtuelle, QuizSummary, QuizDetail, QuizCorrection } from '@/types';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000/api';
 
@@ -82,6 +82,11 @@ export const reservationApi = {
   create: (body: Record<string, unknown>) => post<{ success: boolean; reservation: Reservation }>('/reservations', body),
   mine: () => get<{ reservations: Reservation[] }>('/reservations/mine'),
   agenda: () => get<{ reservations: Reservation[] }>('/reservations/agenda'),
+};
+
+export const classeVirtuelleApi = {
+  mine: () => get<{ classes: ClasseVirtuelle[] }>('/classes-virtuelles/mine'),
+  mineAsEleve: () => get<{ classes: ClasseVirtuelle[] }>('/classes-virtuelles/eleve/mine'),
 };
 
 export const quizApi = {
