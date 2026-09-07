@@ -27,6 +27,18 @@ const post = <T>(path: string, body?: unknown) => request<T>(path, { method: 'PO
 const patch = <T>(path: string, body?: unknown) => request<T>(path, { method: 'PATCH', body: body ? JSON.stringify(body) : undefined });
 const del  = <T>(path: string) => request<T>(path, { method: 'DELETE' });
 
+// new URLSearchParams(obj) sérialise une valeur `undefined` en la chaîne
+// littérale "undefined" (ex: "?matiere=undefined"), ce qui casse les
+// filtres côté backend au lieu de les omettre — on retire donc les clés
+// vides avant de construire la query string.
+function buildQuery(params: Record<string, string | number | undefined>): string {
+  const clean: Record<string, string> = {};
+  for (const [k, v] of Object.entries(params)) {
+    if (v !== undefined && v !== null && v !== '') clean[k] = String(v);
+  }
+  return new URLSearchParams(clean).toString();
+}
+
 export const authApi = {
   sendCode: (body: { email: string; prenom: string }) =>
     post<{ success: boolean; emailSent: boolean; sendFailed?: boolean; sendErrorHint?: string; debug_code?: string }>('/auth/send-code', body),
@@ -45,7 +57,7 @@ export const authApi = {
 
 export const repetiteurApi = {
   list: (params: { matiere?: string; niveau?: string; ville?: string; disponibilite?: string; tarifMax?: string } = {}) => {
-    const qs = new URLSearchParams(params as Record<string, string>).toString();
+    const qs = buildQuery(params);
     return get<{ repetiteurs: Repetiteur[] }>(`/repetiteurs${qs ? `?${qs}` : ''}`);
   },
   getById: (id: string) => get<{ repetiteur: Repetiteur }>(`/repetiteurs/${id}`),
@@ -66,7 +78,7 @@ export const reservationApi = {
 
 export const quizApi = {
   list: (params: { matiere?: string; niveau?: string } = {}) => {
-    const qs = new URLSearchParams(params as Record<string, string>).toString();
+    const qs = buildQuery(params);
     return get<{ quizzes: QuizSummary[] }>(`/quiz${qs ? `?${qs}` : ''}`);
   },
   getById: (id: string) => get<{ quiz: QuizDetail }>(`/quiz/${id}`),
@@ -94,7 +106,7 @@ export const contentApi = {
   byRepetiteur: (type: ContentType, repetiteurId: string) =>
     get<Record<string, ContentItem[]>>(`/content/${type}s/repetiteur/${repetiteurId}`).then(d => d[contentKey(type)]),
   listAll: (type: ContentType, params: { matiere?: string; niveau?: string } = {}) => {
-    const qs = new URLSearchParams(params as Record<string, string>).toString();
+    const qs = buildQuery(params);
     return get<Record<string, ContentItem[]>>(`/content/${type}s${qs ? `?${qs}` : ''}`).then(d => d[contentKey(type)]);
   },
   remove: (type: ContentType, id: string) => del<{ success: boolean }>(`/content/${type}s/${id}`),
@@ -146,7 +158,7 @@ export const assistantApi = {
 export const adminApi = {
   stats: () => get<AdminStats>('/admin/stats'),
   users: (params: { role?: string; search?: string } = {}) => {
-    const qs = new URLSearchParams(params as Record<string, string>).toString();
+    const qs = buildQuery(params);
     return get<{ users: AdminUser[] }>(`/admin/users${qs ? `?${qs}` : ''}`);
   },
   conversations: () => get<{ conversations: Conversation[] }>('/admin/conversations'),

@@ -22,6 +22,18 @@ const get   = <T>(path: string) => request<T>(path);
 const post  = <T>(path: string, body?: unknown) => request<T>(path, { method: 'POST', body: body ? JSON.stringify(body) : undefined });
 const patch = <T>(path: string, body?: unknown) => request<T>(path, { method: 'PATCH', body: body ? JSON.stringify(body) : undefined });
 
+// new URLSearchParams(obj) sérialise une valeur `undefined`/`null` en la
+// chaîne littérale "undefined" (ex: "?matiere=undefined"), ce qui casse les
+// filtres côté backend au lieu de les omettre — on retire donc les clés
+// vides avant de construire la query string.
+function buildQuery(params: Record<string, string | number | null | undefined>): string {
+  const clean: Record<string, string> = {};
+  for (const [k, v] of Object.entries(params)) {
+    if (v !== undefined && v !== null && v !== '') clean[k] = String(v);
+  }
+  return new URLSearchParams(clean).toString();
+}
+
 export const authApi = {
   sendCode: (body: { email: string; prenom: string }) =>
     post<{ success: boolean; emailSent: boolean; sendFailed?: boolean; sendErrorHint?: string; debug_code?: string }>('/auth/send-code', body),
@@ -59,7 +71,7 @@ export const uploadApi = {
 
 export const repetiteurApi = {
   list: (params: { matiere?: string; niveau?: string; ville?: string; disponibilite?: string; tarifMax?: string } = {}) => {
-    const qs = new URLSearchParams(params as Record<string, string>).toString();
+    const qs = buildQuery(params);
     return get<{ repetiteurs: Repetiteur[] }>(`/repetiteurs${qs ? `?${qs}` : ''}`);
   },
   getById: (id: string) => get<{ repetiteur: Repetiteur }>(`/repetiteurs/${id}`),
@@ -74,7 +86,7 @@ export const reservationApi = {
 
 export const quizApi = {
   list: (params: { matiere?: string; niveau?: string } = {}) => {
-    const qs = new URLSearchParams(params as Record<string, string>).toString();
+    const qs = buildQuery(params);
     return get<{ quizzes: QuizSummary[] }>(`/quiz${qs ? `?${qs}` : ''}`);
   },
   getById: (id: string) => get<{ quiz: QuizDetail }>(`/quiz/${id}`),
