@@ -10,13 +10,18 @@
     "splash": {
       "backgroundColor": "#2563eb"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "bundleIdentifier": "gn.gandal.app",
       "supportsTablet": false
     },
     "android": {
-      "package": "gn.gandal.app"
+      "package": "gn.gandal.app",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -26,6 +31,15 @@
           "photosPermission": "Gandal a besoin d'accéder à tes photos pour ajouter une photo de profil ou une pièce d'identité."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "ff0f386a-1106-4abc-bee9-a8ce879c9d7b"
+      }
+    },
+    "owner": "madma"
   }
 }
