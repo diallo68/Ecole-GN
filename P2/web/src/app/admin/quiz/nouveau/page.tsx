@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { quizApi } from '@/lib/api';
-import { NIVEAUX, matieresDuCycle } from '@/lib/constants';
+import { NIVEAUX, matieresDuNiveau } from '@/lib/constants';
 import type { Niveau } from '@/types';
 
 interface DraftQuestion {
@@ -20,16 +20,14 @@ export default function NouveauQuizPage() {
   const router = useRouter();
   const [titre, setTitre] = useState('');
   const [niveau, setNiveau] = useState<Niveau>('7e');
-  const cycle = NIVEAUX.find(n => n.value === niveau)?.cycle || 'college';
-  const matieresDisponibles = matieresDuCycle(cycle);
+  const matieresDisponibles = matieresDuNiveau(niveau);
   const [matiere, setMatiere] = useState(matieresDisponibles[0]);
   const [questions, setQuestions] = useState<DraftQuestion[]>([emptyQuestion()]);
   const [loading, setLoading] = useState(false);
 
   const changerNiveau = (v: Niveau) => {
     setNiveau(v);
-    const nouveauCycle = NIVEAUX.find(n => n.value === v)?.cycle || 'college';
-    const options = matieresDuCycle(nouveauCycle);
+    const options = matieresDuNiveau(v);
     if (!options.includes(matiere)) setMatiere(options[0]);
   };
 

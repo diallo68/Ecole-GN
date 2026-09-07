@@ -7,7 +7,7 @@ import { ChevronDown } from 'lucide-react';
 import { contentApi, soumissionApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import FileUploadField from '@/components/FileUploadField';
-import { NIVEAUX, niveauLabel, matieresDuCycle } from '@/lib/constants';
+import { NIVEAUX, niveauLabel, matieresDuNiveau } from '@/lib/constants';
 import type { ContentItem, Niveau, Soumission } from '@/types';
 
 type ContentType = 'video' | 'support' | 'exercice';
@@ -27,15 +27,13 @@ export default function RepetiteurContenuPage() {
   // Champs du formulaire — pertinents selon le type sélectionné
   const [titre, setTitre] = useState('');
   const [niveau, setNiveau] = useState<Niveau>('7e');
-  const cycle = NIVEAUX.find(n => n.value === niveau)?.cycle || 'college';
-  const matieresDisponibles = matieresDuCycle(cycle);
+  const matieresDisponibles = matieresDuNiveau(niveau);
   const [matiere, setMatiere] = useState(matieresDisponibles[0]);
   const [chapitre, setChapitre] = useState('');
 
   const changerNiveau = (v: Niveau) => {
     setNiveau(v);
-    const nouveauCycle = NIVEAUX.find(n => n.value === v)?.cycle || 'college';
-    const options = matieresDuCycle(nouveauCycle);
+    const options = matieresDuNiveau(v);
     if (!options.includes(matiere)) setMatiere(options[0]);
   };
   const [url, setUrl] = useState('');       // vidéo / support

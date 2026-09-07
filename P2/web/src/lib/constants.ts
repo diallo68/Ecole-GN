@@ -16,15 +16,42 @@ export const DISPONIBILITES: Array<{ value: Disponibilite; label: string }> = [
 export const tarifLabel = (t?: { montant: number; periode: TarifPeriode }): string =>
   t?.montant ? `${t.montant.toLocaleString('fr-FR')} GNF ${TARIF_PERIODES.find(p => p.value === t.periode)?.label || ''}` : '';
 
-// Le primaire n'a pas "Sciences Physiques" en tant que matière séparée, et
-// utilise "Calcul & Problèmes" plutôt que "Mathématiques". Le secondaire
-// distingue Physique et Chimie plutôt qu'une matière fusionnée.
+// Programme officiel guinéen — le primaire n'a pas "Sciences Physiques" en
+// tant que matière séparée et utilise "Calcul & Problèmes" plutôt que
+// "Mathématiques". Au collège, matières communes à tous. Au lycée, chaque
+// série (filière) a son propre programme — ce ne sont PAS les mêmes matières
+// d'une série à l'autre (ex : pas de Physique/Chimie en Sciences Sociales).
 export const MATIERES_PRIMAIRE = ['Calcul & Problèmes', 'Français', 'Biologie', 'Histoire', 'Géographie'];
-export const MATIERES_SECONDAIRE = ['Mathématiques', 'Français', 'Physique', 'Chimie', 'Biologie', 'Histoire', 'Géographie'];
-// Liste globale (union) pour les contextes sans cycle précis (profil enseignant, icônes...).
-export const MATIERES = ['Mathématiques', 'Calcul & Problèmes', 'Français', 'Physique', 'Chimie', 'Biologie', 'Histoire', 'Géographie'];
+export const MATIERES_COLLEGE = ['Mathématiques', 'Physique', 'Chimie', 'Français', 'Histoire', 'Géographie', 'Biologie', 'Éducation civique et Morale', 'Anglais'];
+export const MATIERES_LYCEE_SM = ['Mathématiques', 'Physique', 'Chimie', 'Français', 'Philosophie', 'Anglais', 'Économie'];
+export const MATIERES_LYCEE_SS = ['Français', 'Philosophie', 'Économie', 'Mathématiques', 'Anglais', 'Géographie', 'Histoire'];
+export const MATIERES_LYCEE_SE = ['Français', 'Biologie', 'Mathématiques', 'Physique', 'Chimie', 'Anglais', 'Économie'];
+// Liste globale (union, dédupliquée) pour les contextes sans niveau précis
+// (matières enseignées par un enseignant, icônes...).
+export const MATIERES = Array.from(new Set([
+  ...MATIERES_PRIMAIRE, ...MATIERES_COLLEGE, ...MATIERES_LYCEE_SM, ...MATIERES_LYCEE_SS, ...MATIERES_LYCEE_SE,
+]));
 
-export const matieresDuCycle = (cycle: Cycle) => cycle === 'primaire' ? MATIERES_PRIMAIRE : MATIERES_SECONDAIRE;
+const MATIERES_LYCEE_PAR_FILIERE: Record<Filiere, string[]> = { sm: MATIERES_LYCEE_SM, ss: MATIERES_LYCEE_SS, se: MATIERES_LYCEE_SE };
+
+// À utiliser quand le niveau précis est connu (cas courant : le lycée a
+// besoin de la filière, pas seulement du cycle).
+export const matieresDuNiveau = (niveau: Niveau): string[] => {
+  const n = NIVEAUX.find(x => x.value === niveau);
+  if (!n) return MATIERES_COLLEGE;
+  if (n.cycle === 'primaire') return MATIERES_PRIMAIRE;
+  if (n.cycle === 'college') return MATIERES_COLLEGE;
+  return MATIERES_LYCEE_PAR_FILIERE[n.filiere || 'sm'];
+};
+
+// Conservé pour les contextes qui n'ont que le cycle (primaire/collège
+// uniquement — le lycée doit passer par matieresDuNiveau ou matieresDuCycle
+// avec une filière explicite).
+export const matieresDuCycle = (cycle: Cycle, filiere?: Filiere): string[] => {
+  if (cycle === 'primaire') return MATIERES_PRIMAIRE;
+  if (cycle === 'college') return MATIERES_COLLEGE;
+  return MATIERES_LYCEE_PAR_FILIERE[filiere || 'sm'];
+};
 
 // Référentiel des classes selon le système éducatif guinéen — le secondaire
 // continue le compte du primaire (7ème après le CM2), contrairement au

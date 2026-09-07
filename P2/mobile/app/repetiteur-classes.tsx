@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { classeVirtuelleApi, reservationApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { Colors, NIVEAUX, niveauLabel, matieresDuCycle } from '@/lib/constants';
+import { Colors, NIVEAUX, niveauLabel, matieresDuNiveau } from '@/lib/constants';
 import type { ClasseVirtuelle, Reservation, Niveau } from '@/types';
 
 export default function RepetiteurClassesScreen() {
@@ -14,16 +14,14 @@ export default function RepetiteurClassesScreen() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [titre, setTitre] = useState('');
   const [niveau, setNiveau] = useState<Niveau>('7e');
-  const cycle = NIVEAUX.find(n => n.value === niveau)?.cycle || 'college';
-  const matieresDisponibles = matieresDuCycle(cycle);
+  const matieresDisponibles = matieresDuNiveau(niveau);
   const [matiere, setMatiere] = useState(matieresDisponibles[0]);
   const [dateHeure, setDateHeure] = useState(''); // "AAAA-MM-JJ HH:MM"
   const [loading, setLoading] = useState(false);
 
   const changerNiveau = (v: Niveau) => {
     setNiveau(v);
-    const nouveauCycle = NIVEAUX.find(n => n.value === v)?.cycle || 'college';
-    const options = matieresDuCycle(nouveauCycle);
+    const options = matieresDuNiveau(v);
     if (!options.includes(matiere)) setMatiere(options[0]);
   };
 

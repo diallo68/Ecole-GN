@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { classeVirtuelleApi, reservationApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { NIVEAUX, niveauLabel, matieresDuCycle } from '@/lib/constants';
+import { NIVEAUX, niveauLabel, matieresDuNiveau } from '@/lib/constants';
 import type { ClasseVirtuelle, Niveau, Reservation } from '@/types';
 
 export default function RepetiteurClassesPage() {
@@ -15,16 +15,14 @@ export default function RepetiteurClassesPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [titre, setTitre] = useState('');
   const [niveau, setNiveau] = useState<Niveau>('7e');
-  const cycle = NIVEAUX.find(n => n.value === niveau)?.cycle || 'college';
-  const matieresDisponibles = matieresDuCycle(cycle);
+  const matieresDisponibles = matieresDuNiveau(niveau);
   const [matiere, setMatiere] = useState(matieresDisponibles[0]);
   const [dateHeure, setDateHeure] = useState('');
   const [loading, setLoading] = useState(false);
 
   const changerNiveau = (v: Niveau) => {
     setNiveau(v);
-    const nouveauCycle = NIVEAUX.find(n => n.value === v)?.cycle || 'college';
-    const options = matieresDuCycle(nouveauCycle);
+    const options = matieresDuNiveau(v);
     if (!options.includes(matiere)) setMatiere(options[0]);
   };
 

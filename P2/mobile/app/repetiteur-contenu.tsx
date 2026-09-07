@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import { contentApi, soumissionApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { Colors, NIVEAUX, niveauLabel, matieresDuCycle } from '@/lib/constants';
+import { Colors, NIVEAUX, niveauLabel, matieresDuNiveau } from '@/lib/constants';
 import FileUploadField from '@/components/FileUploadField';
 import type { ContentItem, Soumission, Niveau } from '@/types';
 
@@ -25,8 +25,7 @@ export default function RepetiteurContenuScreen() {
 
   const [titre, setTitre] = useState('');
   const [niveau, setNiveau] = useState<Niveau>('7e');
-  const cycle = NIVEAUX.find(n => n.value === niveau)?.cycle || 'college';
-  const matieresDisponibles = matieresDuCycle(cycle);
+  const matieresDisponibles = matieresDuNiveau(niveau);
   const [matiere, setMatiere] = useState(matieresDisponibles[0]);
   const [chapitre, setChapitre] = useState('');
   const [url, setUrl] = useState('');
@@ -35,8 +34,7 @@ export default function RepetiteurContenuScreen() {
 
   const changerNiveau = (v: Niveau) => {
     setNiveau(v);
-    const nouveauCycle = NIVEAUX.find(n => n.value === v)?.cycle || 'college';
-    const options = matieresDuCycle(nouveauCycle);
+    const options = matieresDuNiveau(v);
     if (!options.includes(matiere)) setMatiere(options[0]);
   };
 
