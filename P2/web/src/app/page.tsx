@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, Leaf, Landmark, Map, HelpCircle } from 'lucide-react';
+import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, Leaf, Landmark, Map, HelpCircle } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { repetiteurApi, quizApi } from '@/lib/api';
 import AssistantWidget from '@/components/AssistantWidget';
@@ -12,8 +12,10 @@ import type { Repetiteur, QuizSummary, Cycle, Niveau } from '@/types';
 
 const MATIERE_ICONS: Record<string, LucideIcon> = {
   'Mathématiques': Sigma,
+  'Calcul & Problèmes': Sigma,
   'Français': Languages,
-  'Sciences Physiques': Atom,
+  'Physique': Atom,
+  'Chimie': FlaskConical,
   'Biologie': Leaf,
   'Histoire': Landmark,
   'Géographie': Map,

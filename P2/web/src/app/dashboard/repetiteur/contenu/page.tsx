@@ -7,7 +7,7 @@ import { ChevronDown } from 'lucide-react';
 import { contentApi, soumissionApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import FileUploadField from '@/components/FileUploadField';
-import { MATIERES, NIVEAUX, niveauLabel } from '@/lib/constants';
+import { NIVEAUX, niveauLabel, matieresDuCycle } from '@/lib/constants';
 import type { ContentItem, Niveau, Soumission } from '@/types';
 
 type ContentType = 'video' | 'support' | 'exercice';
@@ -26,9 +26,18 @@ export default function RepetiteurContenuPage() {
 
   // Champs du formulaire — pertinents selon le type sélectionné
   const [titre, setTitre] = useState('');
-  const [matiere, setMatiere] = useState(MATIERES[0]);
   const [niveau, setNiveau] = useState<Niveau>('7e');
+  const cycle = NIVEAUX.find(n => n.value === niveau)?.cycle || 'college';
+  const matieresDisponibles = matieresDuCycle(cycle);
+  const [matiere, setMatiere] = useState(matieresDisponibles[0]);
   const [chapitre, setChapitre] = useState('');
+
+  const changerNiveau = (v: Niveau) => {
+    setNiveau(v);
+    const nouveauCycle = NIVEAUX.find(n => n.value === v)?.cycle || 'college';
+    const options = matieresDuCycle(nouveauCycle);
+    if (!options.includes(matiere)) setMatiere(options[0]);
+  };
   const [url, setUrl] = useState('');       // vidéo / support
   const [enonce, setEnonce] = useState(''); // exercice
   const [correction, setCorrection] = useState(''); // exercice
@@ -94,11 +103,11 @@ export default function RepetiteurContenuPage() {
           <h2 className="font-bold mb-3">Publier {type === 'video' ? 'une vidéo' : type === 'support' ? 'un support' : 'un exercice'}</h2>
           <div className="space-y-2">
             <input placeholder="Titre" value={titre} onChange={e => setTitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
-            <select value={matiere} onChange={e => setMatiere(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm">
-              {MATIERES.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-            <select value={niveau} onChange={e => setNiveau(e.target.value as Niveau)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm">
+            <select value={niveau} onChange={e => changerNiveau(e.target.value as Niveau)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm">
               {NIVEAUX.map(n => <option key={n.value} value={n.value}>{n.label}</option>)}
+            </select>
+            <select value={matiere} onChange={e => setMatiere(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm">
+              {matieresDisponibles.map(m => <option key={m} value={m}>{m}</option>)}
             </select>
             <input placeholder="Chapitre (optionnel)" value={chapitre} onChange={e => setChapitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
 

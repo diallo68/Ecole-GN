@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { quizApi } from '@/lib/api';
-import { MATIERES, CYCLES, niveauxDuCycle, niveauLabel } from '@/lib/constants';
+import { CYCLES, niveauxDuCycle, niveauLabel, matieresDuCycle } from '@/lib/constants';
 import type { QuizSummary, Cycle, Niveau } from '@/types';
 
 export default function QuizListPage() {
@@ -80,7 +80,7 @@ function QuizListContent() {
 
       <div className="flex flex-wrap gap-2 mb-6">
         <FilterPill active={!matiere} onClick={() => setMatiere('')} label="Toutes les matières" />
-        {MATIERES.map(m => <FilterPill key={m} active={matiere === m} onClick={() => setMatiere(m)} label={m} />)}
+        {matieresDuCycle(cycle).map(m => <FilterPill key={m} active={matiere === m} onClick={() => setMatiere(m)} label={m} />)}
       </div>
 
       {quizzes.length === 0 ? (

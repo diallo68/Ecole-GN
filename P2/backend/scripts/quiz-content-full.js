@@ -8,7 +8,7 @@ const add = (titre, matiere, niveau, questions) => quizzes.push({ titre, matiere
 
 // ══════════════════════════ MATHÉMATIQUES ══════════════════════════
 
-add('Compter et additionner', 'Mathématiques', 'cp1', [
+add('Compter et additionner', 'Calcul & Problèmes', 'cp1', [
   Q('Combien font 2 + 3 ?', ['4', '5', '6', '7'], 1, '2 + 3 = 5.'),
   Q('Quel nombre vient juste après 9 ?', ['8', '10', '11', '7'], 1, 'Après 9 vient 10.'),
   Q('Combien font 4 + 4 ?', ['6', '7', '8', '9'], 2, '4 + 4 = 8.'),
@@ -16,7 +16,7 @@ add('Compter et additionner', 'Mathématiques', 'cp1', [
   Q('Combien font 10 - 3 ?', ['6', '7', '8', '5'], 1, '10 - 3 = 7.'),
 ]);
 
-add('Additions et soustractions', 'Mathématiques', 'cp2', [
+add('Additions et soustractions', 'Calcul & Problèmes', 'cp2', [
   Q('Combien font 12 + 5 ?', ['15', '16', '17', '18'], 2, '12 + 5 = 17.'),
   Q('Combien font 18 - 6 ?', ['10', '11', '12', '13'], 2, '18 - 6 = 12.'),
   Q('Quel est le double de 7 ?', ['12', '13', '14', '15'], 2, 'Le double de 7 est 14.'),
@@ -24,7 +24,7 @@ add('Additions et soustractions', 'Mathématiques', 'cp2', [
   Q('Combien font 20 - 8 ?', ['10', '11', '12', '13'], 2, '20 - 8 = 12.'),
 ]);
 
-add('Additions, soustractions et tables', 'Mathématiques', 'ce1', [
+add('Additions, soustractions et tables', 'Calcul & Problèmes', 'ce1', [
   Q('Combien font 25 + 17 ?', ['40', '41', '42', '43'], 2, '25 + 17 = 42.'),
   Q('Combien font 5 × 2 ?', ['8', '10', '12', '9'], 1, '5 × 2 = 10.'),
   Q('Combien font 3 × 5 ?', ['12', '15', '18', '10'], 1, '3 × 5 = 15.'),
@@ -32,7 +32,7 @@ add('Additions, soustractions et tables', 'Mathématiques', 'ce1', [
   Q('Combien font 10 × 4 ?', ['30', '40', '400', '14'], 1, '10 × 4 = 40.'),
 ]);
 
-add('Multiplication, division et mesures', 'Mathématiques', 'ce2', [
+add('Multiplication, division et mesures', 'Calcul & Problèmes', 'ce2', [
   Q('Combien font 7 × 6 ?', ['36', '42', '48', '40'], 1, '7 × 6 = 42.'),
   Q('Combien font 56 ÷ 8 ?', ['6', '7', '8', '9'], 1, '56 ÷ 8 = 7.'),
   Q('Combien de centimètres dans un mètre ?', ['10', '100', '1000', '50'], 1, '1 mètre = 100 centimètres.'),
@@ -40,7 +40,7 @@ add('Multiplication, division et mesures', 'Mathématiques', 'ce2', [
   Q('Combien font 100 - 37 ?', ['53', '63', '73', '67'], 1, '100 - 37 = 63.'),
 ]);
 
-add('Fractions et périmètres', 'Mathématiques', 'cm1', [
+add('Fractions et périmètres', 'Calcul & Problèmes', 'cm1', [
   Q('Que représente 1/2 d\'un gâteau ?', ['Le quart', 'La moitié', 'Le tiers', 'Le tout'], 1, '1/2 signifie une part sur deux, soit la moitié.'),
   Q('Quel est le périmètre d\'un rectangle de 5 cm sur 3 cm ?', ['8 cm', '15 cm', '16 cm', '18 cm'], 2, 'Périmètre = 2×(5+3) = 16 cm.'),
   Q('Combien font 3/4 + 1/4 ?', ['1/2', '1', '4/8', '2/4'], 1, '3/4 + 1/4 = 4/4 = 1.'),
@@ -48,7 +48,7 @@ add('Fractions et périmètres', 'Mathématiques', 'cm1', [
   Q('Quelle est l\'aire d\'un carré de côté 4 cm ?', ['8 cm²', '12 cm²', '16 cm²', '20 cm²'], 2, 'Aire = 4 × 4 = 16 cm².'),
 ]);
 
-add('Fractions, décimaux et pourcentages', 'Mathématiques', 'cm2', [
+add('Fractions, décimaux et pourcentages', 'Calcul & Problèmes', 'cm2', [
   Q('Combien font 1/2 + 1/4 ?', ['2/6', '3/4', '2/4', '1/6'], 1, '1/2 = 2/4, donc 2/4 + 1/4 = 3/4.'),
   Q('Combien font 3,5 + 2,7 ?', ['5,2', '6,0', '6,2', '5,7'], 2, '3,5 + 2,7 = 6,2.'),
   Q('50% d\'une quantité représente...', ['Le quart', 'La moitié', 'Le tiers', 'Le tout'], 1, '50% = 1/2, soit la moitié.'),
@@ -218,49 +218,49 @@ add('Littérature et argumentation avancée', 'Français', 'terminale', [
   Q('Une thèse et son antithèse s\'opposent dans un plan...', ['Chronologique', 'Dialectique', 'Thématique', 'Descriptif'], 1, 'Le plan dialectique confronte thèse, antithèse puis synthèse.'),
 ]);
 
-// ══════════════════════════ SCIENCES PHYSIQUES (7e→Terminale) ══════════════════════════
+// ══════════════════════════ PHYSIQUE (7e→Terminale) ══════════════════════════
 
-add('États de la matière et mélanges', 'Sciences Physiques', '7e', [
+add('Mesures et états de la matière', 'Physique', '7e', [
   Q('Quel est l\'état de l\'eau à température ambiante ?', ['Solide', 'Liquide', 'Gazeux', 'Plasma'], 1, 'À température ambiante, l\'eau est liquide.'),
   Q('Comment appelle-t-on le passage de l\'état liquide à l\'état gazeux ?', ['Fusion', 'Solidification', 'Vaporisation', 'Condensation'], 2, 'Le passage liquide → gaz s\'appelle la vaporisation.'),
-  Q('L\'eau salée est un mélange...', ['Hétérogène', 'Homogène', 'Solide', 'Gazeux'], 1, 'On ne distingue pas le sel dans l\'eau : c\'est un mélange homogène.'),
   Q('À quelle température l\'eau gèle-t-elle (à pression normale) ?', ['0°C', '10°C', '-10°C', '100°C'], 0, 'L\'eau gèle à 0°C.'),
-  Q('Comment sépare-t-on le sable de l\'eau ?', ['Distillation', 'Filtration', 'Évaporation seule', 'Aimantation'], 1, 'La filtration retient le sable et laisse passer l\'eau.'),
+  Q('Quel instrument mesure la masse d\'un objet ?', ['Le thermomètre', 'La balance', 'Le chronomètre', 'Le mètre ruban'], 1, 'La balance mesure la masse.'),
+  Q('Quelle unité mesure la température ?', ['Le kilogramme', 'Le degré Celsius', 'Le mètre', 'La seconde'], 1, 'La température se mesure en degrés Celsius (°C).'),
 ]);
 
-add('Électricité et énergie', 'Sciences Physiques', '8e', [
+add('Électricité de base', 'Physique', '8e', [
   Q('Dans un circuit en série, si une lampe grille, les autres...', ['Restent allumées', 'S\'éteignent aussi', 'Brillent plus fort', 'Explosent'], 1, 'En série, le circuit est coupé en un seul point : tout s\'éteint.'),
   Q('Quel appareil mesure l\'intensité du courant ?', ['Voltmètre', 'Ampèremètre', 'Thermomètre', 'Baromètre'], 1, 'L\'ampèremètre mesure l\'intensité en ampères.'),
-  Q('Quelle est l\'unité de l\'énergie électrique facturée par les compteurs ?', ['Le watt', 'Le kilowattheure', 'L\'ampère', 'Le volt'], 1, 'L\'énergie consommée se mesure en kilowattheures (kWh).'),
   Q('Un générateur sert à...', ['Consommer de l\'énergie', 'Produire une tension électrique', 'Mesurer une résistance', 'Isoler un circuit'], 1, 'Le générateur fournit l\'énergie électrique au circuit.'),
   Q('Quel matériau est un bon isolant électrique ?', ['Le cuivre', 'Le fer', 'Le plastique', 'L\'aluminium'], 2, 'Le plastique ne laisse pas passer le courant : c\'est un isolant.'),
+  Q('Dans un circuit en parallèle, si une branche est coupée...', ['Tout le circuit s\'arrête', 'Les autres branches fonctionnent toujours', 'Le courant augmente à l\'infini', 'Rien ne change'], 1, 'Chaque branche en parallèle est indépendante.'),
 ]);
 
-add('Forces, densité et circuits', 'Sciences Physiques', '9e', [
+add('Forces, poids et densité', 'Physique', '9e', [
   Q('Quelle est l\'unité de la force dans le Système International ?', ['Le kilogramme', 'Le newton', 'Le watt', 'Le joule'], 1, 'La force se mesure en newtons (N).'),
   Q('Un objet flotte sur l\'eau si sa densité est...', ['Supérieure à 1', 'Égale à 1', 'Inférieure à 1', 'Négative'], 2, 'Un objet moins dense que l\'eau (densité < 1) flotte.'),
-  Q('Dans un circuit en parallèle, si une branche est coupée...', ['Tout le circuit s\'arrête', 'Les autres branches fonctionnent toujours', 'Le courant augmente à l\'infini', 'Rien ne change'], 1, 'Chaque branche en parallèle est indépendante.'),
-  Q('Quelle grandeur mesure la "quantité de matière" contenue dans un volume ?', ['La masse volumique', 'La vitesse', 'La force', 'La tension'], 0, 'La masse volumique (densité) relie masse et volume.'),
   Q('Que représente le poids d\'un objet ?', ['Sa masse', 'La force exercée par la gravité sur lui', 'Son volume', 'Sa vitesse'], 1, 'Le poids est une force due à la gravité, contrairement à la masse.'),
+  Q('Quelle grandeur mesure la "quantité de matière" contenue dans un volume ?', ['La masse volumique', 'La vitesse', 'La force', 'La tension'], 0, 'La masse volumique (densité) relie masse et volume.'),
+  Q('L\'unité de la masse dans le Système International est...', ['Le newton', 'Le kilogramme', 'Le litre', 'Le mètre'], 1, 'La masse se mesure en kilogrammes (kg).'),
 ]);
 
-add('Optique et notions de chimie', 'Sciences Physiques', '10e', [
+add('Optique : la lumière', 'Physique', '10e', [
   Q('La lumière se propage en ligne...', ['Courbe', 'Droite', 'Circulaire', 'Aléatoire'], 1, 'Dans un milieu homogène, la lumière se propage en ligne droite.'),
-  Q('Quelle est la plus petite unité de matière qui garde les propriétés d\'un élément ?', ['La molécule', 'L\'atome', 'Le noyau', 'L\'électron'], 1, 'L\'atome est l\'unité de base d\'un élément chimique.'),
-  Q('Une molécule d\'eau est composée de...', ['1 oxygène et 1 hydrogène', '2 oxygènes et 1 hydrogène', '2 hydrogènes et 1 oxygène', '2 hydrogènes et 2 oxygènes'], 2, 'La formule de l\'eau est H₂O : 2 hydrogènes, 1 oxygène.'),
   Q('Un miroir plan donne une image...', ['Réelle et agrandie', 'Virtuelle et de même taille', 'Floue', 'Inversée en taille'], 1, 'L\'image dans un miroir plan est virtuelle, droite et de même taille.'),
-  Q('Quel est le symbole chimique du carbone ?', ['Ca', 'C', 'Cb', 'Co'], 1, 'Le symbole du carbone est C.'),
+  Q('Un objet opaque placé devant une source de lumière crée...', ['Un reflet', 'Une ombre', 'Un arc-en-ciel', 'Rien du tout'], 1, 'La lumière bloquée par l\'objet forme une ombre.'),
+  Q('Que fait une lentille convergente aux rayons lumineux parallèles ?', ['Elle les disperse', 'Elle les fait converger vers un point', 'Elle les arrête', 'Elle les colore'], 1, 'Une lentille convergente concentre les rayons vers un point focal.'),
+  Q('La vitesse de la lumière dans le vide est...', ['Infinie', 'Environ 300 000 km/s', 'Environ 300 km/s', 'Nulle'], 1, 'La lumière voyage à environ 300 000 km/s dans le vide.'),
 ]);
 
-add('Mécanique et réactions chimiques', 'Sciences Physiques', '11e', [
+add('Mécanique : vitesse et mouvement', 'Physique', '11e', [
   Q('La vitesse moyenne se calcule par...', ['Distance × temps', 'Distance ÷ temps', 'Temps ÷ distance', 'Distance + temps'], 1, 'Vitesse = distance parcourue / temps mis.'),
-  Q('Une réaction chimique conserve toujours...', ['Le volume', 'La masse totale', 'La couleur', 'La température'], 1, 'La loi de conservation de la masse (Lavoisier) : rien ne se perd, rien ne se crée.'),
   Q('Quelle grandeur reste constante dans un mouvement rectiligne uniforme ?', ['L\'accélération', 'La vitesse', 'La position', 'La force'], 1, 'Dans un mouvement uniforme, la vitesse est constante.'),
-  Q('Le pH d\'une solution acide est...', ['Supérieur à 7', 'Égal à 7', 'Inférieur à 7', 'Négatif'], 2, 'Une solution acide a un pH inférieur à 7.'),
   Q('Quelle force s\'oppose au mouvement d\'un objet sur une surface ?', ['La poussée', 'Le frottement', 'La gravité', 'La tension'], 1, 'Le frottement s\'oppose au mouvement relatif entre deux surfaces.'),
+  Q('Un mouvement est dit accéléré quand...', ['La vitesse diminue', 'La vitesse augmente', 'La vitesse est nulle', 'La position ne change pas'], 1, 'Un mouvement accéléré correspond à une vitesse qui augmente.'),
+  Q('Quelle est l\'unité de la vitesse dans le Système International ?', ['km/h', 'm/s', 'm/s²', 'N'], 1, 'L\'unité officielle de la vitesse est le mètre par seconde (m/s).'),
 ]);
 
-add('Électricité avancée et thermodynamique', 'Sciences Physiques', '12e', [
+add('Électricité avancée et thermodynamique', 'Physique', '12e', [
   Q('La loi d\'Ohm s\'écrit :', ['U = R + I', 'U = R × I', 'U = R ÷ I', 'U = R - I'], 1, 'La loi d\'Ohm : Tension = Résistance × Intensité.'),
   Q('Quelle est l\'unité de la résistance électrique ?', ['Le volt', 'L\'ampère', 'L\'ohm', 'Le watt'], 2, 'La résistance se mesure en ohms (Ω).'),
   Q('La chaleur se propage par conduction, convection et...', ['Réflexion', 'Rayonnement', 'Réfraction', 'Diffusion'], 1, 'Les trois modes de transfert de chaleur sont conduction, convection, rayonnement.'),
@@ -268,12 +268,70 @@ add('Électricité avancée et thermodynamique', 'Sciences Physiques', '12e', [
   Q('Un système isolé thermiquement n\'échange pas de chaleur avec...', ['Lui-même', 'L\'extérieur', 'Ses molécules', 'Rien, il échange toujours'], 1, 'Un système isolé n\'a pas d\'échange thermique avec l\'extérieur.'),
 ]);
 
-add('Mécanique newtonienne et chimie organique', 'Sciences Physiques', 'terminale', [
+add('Mécanique newtonienne', 'Physique', 'terminale', [
   Q('La première loi de Newton stipule qu\'un objet au repos...', ['Accélère toujours', 'Reste au repos sauf force extérieure', 'Se met toujours en mouvement', 'Perd sa masse'], 1, 'Principe d\'inertie : sans force extérieure, l\'état de repos ou de mouvement uniforme est conservé.'),
   Q('La deuxième loi de Newton s\'écrit :', ['F = m × a', 'F = m ÷ a', 'F = m + a', 'F = a ÷ m'], 0, 'F = m × a (force = masse × accélération).'),
-  Q('Un composé organique contient obligatoirement l\'élément...', ['Oxygène', 'Azote', 'Carbone', 'Hydrogène'], 2, 'La chimie organique est basée sur le carbone.'),
   Q('Quelle est l\'unité de l\'énergie dans le Système International ?', ['Le watt', 'Le joule', 'Le newton', 'Le volt'], 1, 'L\'énergie se mesure en joules (J).'),
   Q('La troisième loi de Newton (action-réaction) dit que...', ['Les forces s\'additionnent toujours', 'Toute action entraîne une réaction égale et opposée', 'Les objets lourds tombent plus vite', 'L\'énergie se perd toujours'], 1, 'À toute action correspond une réaction de même intensité, de sens opposé.'),
+  Q('L\'énergie cinétique d\'un objet dépend de...', ['Sa couleur', 'Sa masse et sa vitesse', 'Sa température uniquement', 'Rien du tout'], 1, 'L\'énergie cinétique augmente avec la masse et le carré de la vitesse.'),
+]);
+
+// ══════════════════════════ CHIMIE (7e→Terminale) ══════════════════════════
+
+add('Mélanges et séparation', 'Chimie', '7e', [
+  Q('L\'eau salée est un mélange...', ['Hétérogène', 'Homogène', 'Solide', 'Gazeux'], 1, 'On ne distingue pas le sel dans l\'eau : c\'est un mélange homogène.'),
+  Q('Comment sépare-t-on le sable de l\'eau ?', ['Distillation', 'Filtration', 'Évaporation seule', 'Aimantation'], 1, 'La filtration retient le sable et laisse passer l\'eau.'),
+  Q('Un mélange hétérogène est un mélange dans lequel...', ['On ne voit qu\'un seul composant', 'On distingue les différents composants', 'Il n\'y a qu\'un seul liquide', 'Rien n\'est mélangé'], 1, 'Dans un mélange hétérogène, les composants restent visibles séparément.'),
+  Q('Que devient le sel ajouté à de l\'eau ?', ['Il flotte', 'Il se dissout', 'Il coule sans changer', 'Il devient un gaz'], 1, 'Le sel se dissout dans l\'eau, formant une solution homogène.'),
+  Q('Comment sépare-t-on l\'eau et l\'alcool, deux liquides miscibles ?', ['Filtration', 'Distillation', 'Aimantation', 'Décantation'], 1, 'La distillation sépare des liquides miscibles grâce à leurs températures d\'ébullition différentes.'),
+]);
+
+add('Atomes et molécules', 'Chimie', '8e', [
+  Q('Quelle est la plus petite unité de matière qui garde les propriétés d\'un élément ?', ['La molécule', 'L\'atome', 'Le noyau', 'L\'électron'], 1, 'L\'atome est l\'unité de base d\'un élément chimique.'),
+  Q('Une molécule d\'eau est composée de...', ['1 oxygène et 1 hydrogène', '2 oxygènes et 1 hydrogène', '2 hydrogènes et 1 oxygène', '2 hydrogènes et 2 oxygènes'], 2, 'La formule de l\'eau est H₂O : 2 hydrogènes, 1 oxygène.'),
+  Q('Quel est le symbole chimique du carbone ?', ['Ca', 'C', 'Cb', 'Co'], 1, 'Le symbole du carbone est C.'),
+  Q('Quel est le symbole chimique de l\'oxygène ?', ['Ox', 'O', 'Og', 'Oy'], 1, 'Le symbole de l\'oxygène est O.'),
+  Q('Une molécule est formée par...', ['Un seul atome toujours', 'L\'assemblage de plusieurs atomes', 'Un mélange de liquides', 'Une réaction nucléaire'], 1, 'Une molécule résulte de l\'association de deux atomes ou plus.'),
+]);
+
+add('Éléments et tableau périodique', 'Chimie', '9e', [
+  Q('Quel est le symbole chimique de l\'hydrogène ?', ['Hy', 'H', 'Hg', 'He'], 1, 'Le symbole de l\'hydrogène est H.'),
+  Q('Le tableau périodique classe les éléments chimiques par...', ['Couleur', 'Numéro atomique', 'Ordre alphabétique uniquement', 'Prix'], 1, 'Les éléments sont classés selon leur numéro atomique (nombre de protons).'),
+  Q('Quel est le symbole chimique du fer ?', ['F', 'Fe', 'Fr', 'Fi'], 1, 'Le symbole du fer est Fe (du latin "ferrum").'),
+  Q('L\'air que nous respirons est composé majoritairement de...', ['Oxygène uniquement', 'Azote et oxygène', 'Dioxyde de carbone uniquement', 'Hydrogène'], 1, 'L\'air est composé d\'environ 78% d\'azote et 21% d\'oxygène.'),
+  Q('Un élément chimique est caractérisé par son...', ['Nombre de protons', 'Sa couleur', 'Son odeur', 'Son prix'], 0, 'Le nombre de protons (numéro atomique) définit un élément chimique.'),
+]);
+
+add('Solutions acides et basiques', 'Chimie', '10e', [
+  Q('Le pH d\'une solution acide est...', ['Supérieur à 7', 'Égal à 7', 'Inférieur à 7', 'Négatif'], 2, 'Une solution acide a un pH inférieur à 7.'),
+  Q('Le pH d\'une solution neutre comme l\'eau pure est...', ['0', '7', '14', '-7'], 1, 'L\'eau pure a un pH neutre égal à 7.'),
+  Q('Une solution basique (comme la soude) a un pH...', ['Inférieur à 7', 'Égal à 7', 'Supérieur à 7', 'Négatif'], 2, 'Une base a un pH supérieur à 7.'),
+  Q('Quel instrument permet de mesurer le pH d\'une solution ?', ['Le thermomètre', 'Le pH-mètre (ou papier pH)', 'La balance', 'Le baromètre'], 1, 'Le pH-mètre ou le papier indicateur mesure le pH.'),
+  Q('Le jus de citron est plutôt...', ['Acide', 'Basique', 'Neutre', 'Ni acide ni basique'], 0, 'Le jus de citron a un pH bas : il est acide.'),
+]);
+
+add('Réactions chimiques', 'Chimie', '11e', [
+  Q('Une réaction chimique conserve toujours...', ['Le volume', 'La masse totale', 'La couleur', 'La température'], 1, 'La loi de conservation de la masse (Lavoisier) : rien ne se perd, rien ne se crée.'),
+  Q('Dans une réaction chimique, les réactifs sont...', ['Le résultat de la réaction', 'Les substances de départ', 'Toujours des gaz', 'Toujours de l\'eau'], 1, 'Les réactifs sont les substances présentes avant la réaction.'),
+  Q('Le résultat d\'une réaction chimique s\'appelle...', ['Le réactif', 'Le produit', 'Le catalyseur', 'Le solvant'], 1, 'Les produits sont les nouvelles substances formées par la réaction.'),
+  Q('Qui a énoncé la loi de conservation de la masse ?', ['Newton', 'Lavoisier', 'Einstein', 'Pasteur'], 1, 'Antoine Lavoisier a établi cette loi fondamentale de la chimie.'),
+  Q('La combustion du bois est un exemple de...', ['Mélange physique', 'Réaction chimique', 'Changement d\'état uniquement', 'Dilution'], 1, 'La combustion transforme chimiquement le bois en cendres, CO₂ et eau.'),
+]);
+
+add('Solutions, concentration et oxydoréduction', 'Chimie', '12e', [
+  Q('La concentration d\'une solution mesure...', ['Sa couleur', 'La quantité de soluté dissous dans un volume', 'Sa température', 'Son poids total uniquement'], 1, 'La concentration exprime la quantité de substance dissoute par unité de volume.'),
+  Q('Dans une solution, le solvant est...', ['La substance dissoute', 'Le liquide qui dissout', 'Toujours de l\'huile', 'Un solide'], 1, 'Le solvant est le liquide (souvent l\'eau) qui dissout le soluté.'),
+  Q('Une réaction d\'oxydation correspond à...', ['Une perte d\'électrons', 'Un gain d\'électrons', 'Une perte de masse', 'Un changement de couleur uniquement'], 0, 'L\'oxydation est une perte d\'électrons par une espèce chimique.'),
+  Q('La rouille du fer est un exemple de...', ['Réaction acide-base', 'Réaction d\'oxydation', 'Changement d\'état', 'Dilution'], 1, 'La rouille résulte de l\'oxydation du fer au contact de l\'oxygène et de l\'humidité.'),
+  Q('Diluer une solution, c\'est...', ['Ajouter du soluté', 'Ajouter du solvant pour diminuer la concentration', 'La chauffer', 'La congeler'], 1, 'Diluer consiste à ajouter du solvant, ce qui réduit la concentration.'),
+]);
+
+add('Chimie organique', 'Chimie', 'terminale', [
+  Q('Un composé organique contient obligatoirement l\'élément...', ['Oxygène', 'Azote', 'Carbone', 'Hélium'], 2, 'La chimie organique est basée sur le carbone.'),
+  Q('Quelle famille de composés organiques est à la base du pétrole ?', ['Les hydrocarbures', 'Les métaux', 'Les sels minéraux', 'Les gaz rares'], 0, 'Le pétrole est principalement composé d\'hydrocarbures (carbone et hydrogène).'),
+  Q('Le glucose, une molécule organique importante, est un type de...', ['Protéine', 'Sucre (glucide)', 'Métal', 'Gaz'], 1, 'Le glucose est un sucre simple, essentiel à l\'énergie des cellules.'),
+  Q('Une chaîne carbonée désigne...', ['Un métal précieux', 'Un enchaînement d\'atomes de carbone liés entre eux', 'Un type de roche', 'Un gaz rare'], 1, 'Les atomes de carbone peuvent se lier entre eux pour former des chaînes.'),
+  Q('Quel est le pH d\'un acide fort par rapport à un acide faible, à concentration égale ?', ['Plus élevé', 'Plus bas', 'Identique', 'Négatif'], 1, 'Un acide fort se dissocie davantage, ce qui donne un pH plus bas.'),
 ]);
 
 // ══════════════════════════ BIOLOGIE (SVT, 7e→Terminale) ══════════════════════════
@@ -448,56 +506,6 @@ add('Enjeux environnementaux et développement durable', 'Géographie', 'termina
   Q('Qu\'est-ce que l\'érosion côtière ?', ['La formation de nouvelles côtes', 'Le recul du littoral sous l\'effet de la mer', 'La construction de ports', 'La pêche intensive'], 1, 'L\'érosion côtière désigne le recul progressif du trait de côte.'),
   Q('Les énergies renouvelables comprennent notamment...', ['Le charbon et le pétrole', 'Le solaire, l\'éolien et l\'hydraulique', 'Le gaz naturel uniquement', 'Le nucléaire uniquement'], 1, 'Solaire, éolien, hydraulique sont des sources d\'énergie renouvelables.'),
   Q('Pourquoi la déforestation en Guinée forestière est-elle préoccupante ?', ['Elle n\'a aucun impact', 'Elle menace la biodiversité et les sols', 'Elle augmente la pluie', 'Elle refroidit le climat local'], 1, 'La déforestation entraîne perte de biodiversité, érosion des sols et dérèglement climatique local.'),
-]);
-
-// ══════════════════════════ SCIENCES PHYSIQUES (éveil, primaire) ══════════════════════════
-
-add('Solide, liquide et chaud-froid', 'Sciences Physiques', 'cp1', [
-  Q('Une pierre est un objet...', ['Liquide', 'Solide', 'Gazeux', 'Invisible'], 1, 'Une pierre garde toujours sa forme : c\'est un solide.'),
-  Q('L\'eau que l\'on boit est...', ['Solide', 'Liquide', 'Gazeuse', 'Dure'], 1, 'L\'eau qu\'on boit est liquide.'),
-  Q('Que se passe-t-il quand on touche de la glace ?', ['Elle est chaude', 'Elle est froide', 'Elle brûle', 'Elle sent bon'], 1, 'La glace est froide au toucher.'),
-  Q('Une pierre jetée dans l\'eau...', ['Flotte', 'Coule', 'Vole', 'Disparaît'], 1, 'Une pierre est lourde et coule dans l\'eau.'),
-  Q('Un morceau de bois posé sur l\'eau...', ['Coule', 'Flotte', 'Fond', 'Explose'], 1, 'Le bois est léger et flotte sur l\'eau.'),
-]);
-
-add('La lumière, l\'ombre et les aimants', 'Sciences Physiques', 'cp2', [
-  Q('D\'où vient la lumière du jour ?', ['De la lune', 'Du soleil', 'Des étoiles', 'Des nuages'], 1, 'Le soleil est la principale source de lumière le jour.'),
-  Q('Quand tu te mets devant une lampe, tu vois apparaître ton...', ['Reflet', 'Ombre', 'Jumeau', 'Écho'], 1, 'La lumière bloquée par ton corps forme une ombre.'),
-  Q('Un aimant attire surtout...', ['Le bois', 'Le plastique', 'Le fer', 'Le papier'], 2, 'Les aimants attirent les objets en fer ou en métal.'),
-  Q('La nuit, il y a...', ['Beaucoup de soleil', 'Peu ou pas de lumière du soleil', 'Toujours de la pluie', 'Toujours du vent'], 1, 'La nuit, le soleil ne brille pas sur notre partie de la Terre.'),
-  Q('Une ombre change de taille selon...', ['La couleur du ciel', 'La position de la lumière', 'Le bruit', 'Le goût'], 1, 'Selon où se trouve la lumière, l\'ombre est plus grande ou plus petite.'),
-]);
-
-add('Les états de l\'eau et le son', 'Sciences Physiques', 'ce1', [
-  Q('Comment s\'appelle l\'eau à l\'état solide ?', ['La vapeur', 'La glace', 'La pluie', 'La rosée'], 1, 'L\'eau gelée devient de la glace, un solide.'),
-  Q('Quand on fait bouillir de l\'eau, elle se transforme en...', ['Glace', 'Vapeur', 'Pierre', 'Sable'], 1, 'L\'eau chauffée se transforme en vapeur (gaz).'),
-  Q('Le son est produit par...', ['La lumière', 'Une vibration', 'La couleur', 'Le froid'], 1, 'Tout son vient d\'une vibration (corde, voix, tambour...).'),
-  Q('Un tambour fait du bruit quand on le...', ['Regarde', 'Frappe', 'Sent', 'Goûte'], 1, 'Frapper le tambour fait vibrer sa peau, ce qui produit un son.'),
-  Q('Peut-on entendre un son sous l\'eau ?', ['Non, jamais', 'Oui, le son se propage aussi dans l\'eau', 'Seulement la nuit', 'Seulement en hiver'], 1, 'Le son voyage aussi dans l\'eau, un peu différemment que dans l\'air.'),
-]);
-
-add('Mélanges et petite électricité', 'Sciences Physiques', 'ce2', [
-  Q('Si on mélange du sable et de l\'eau, on obtient...', ['Un mélange homogène invisible', 'Un mélange où l\'on voit le sable', 'De l\'huile', 'Du sucre'], 1, 'Le sable ne se dissout pas : on le voit toujours dans l\'eau.'),
-  Q('Pour allumer une ampoule avec une pile, il faut...', ['Rien de plus', 'Un fil qui relie la pile à l\'ampoule', 'De l\'eau', 'Du feu'], 1, 'Un circuit fermé avec des fils permet au courant de circuler.'),
-  Q('Le sel, lui, quand on le mélange à l\'eau...', ['Reste visible comme le sable', 'Se dissout et devient invisible', 'Flotte à la surface', 'Explose'], 1, 'Le sel se dissout dans l\'eau : le mélange devient homogène.'),
-  Q('Une pile sert à...', ['Éclairer directement', 'Fournir de l\'énergie électrique à un circuit', 'Faire du bruit', 'Refroidir l\'air'], 1, 'La pile est la source d\'énergie électrique du circuit.'),
-  Q('Si le fil électrique est coupé, l\'ampoule...', ['Reste allumée', 'S\'éteint', 'Devient plus forte', 'Change de couleur'], 1, 'Un circuit coupé ne laisse plus passer le courant : l\'ampoule s\'éteint.'),
-]);
-
-add('La balance et la météo', 'Sciences Physiques', 'cm1', [
-  Q('Une balance sert à mesurer...', ['La longueur', 'La masse (le poids)', 'La couleur', 'Le temps'], 1, 'La balance mesure la masse d\'un objet.'),
-  Q('Sur une balance à plateaux, l\'objet le plus lourd fait le plateau...', ['Monter', 'Descendre', 'Rester immobile', 'Se casser'], 1, 'Le plateau avec l\'objet le plus lourd descend.'),
-  Q('En saison des pluies, on observe surtout...', ['Beaucoup de vent froid', 'Beaucoup de précipitations', 'De la neige', 'La sécheresse totale'], 1, 'La saison des pluies apporte de nombreuses précipitations.'),
-  Q('Le vent est de l\'air...', ['Immobile', 'En mouvement', 'Solide', 'Invisible et sans effet'], 1, 'Le vent est simplement de l\'air qui se déplace.'),
-  Q('Un levier permet de...', ['Voler', 'Soulever plus facilement une charge', 'Faire de la lumière', 'Produire du son'], 1, 'Le levier facilite le soulèvement d\'objets lourds.'),
-]);
-
-add('Circuits électriques et flottaison', 'Sciences Physiques', 'cm2', [
-  Q('Dans un circuit électrique en série, si on ajoute une pile, la lumière de l\'ampoule...', ['Diminue', 'Augmente', 'Ne change jamais', 'Disparaît'], 1, 'Plus de piles apportent plus d\'énergie, la lumière est plus forte.'),
-  Q('Un objet flotte quand il est...', ['Plus lourd que l\'eau qu\'il déplace', 'Plus léger que l\'eau qu\'il déplace', 'Toujours en métal', 'Toujours en bois'], 1, 'Un objet flotte si son poids est inférieur à la poussée de l\'eau (principe d\'Archimède simplifié).'),
-  Q('Un bateau en métal flotte car...', ['Le métal est toujours léger', 'Sa forme creuse déplace beaucoup d\'eau', 'Il n\'y a pas d\'eau autour', 'Il est attaché à la terre'], 1, 'La forme creuse du bateau déplace un grand volume d\'eau, ce qui le fait flotter.'),
-  Q('Quel matériau conduit bien l\'électricité ?', ['Le bois', 'Le plastique', 'Le métal', 'Le caoutchouc'], 2, 'Le métal est un bon conducteur électrique.'),
-  Q('Pourquoi les fils électriques sont-ils recouverts de plastique ?', ['Pour la couleur', 'Pour isoler et éviter les chocs électriques', 'Pour les rendre plus lourds', 'Pour les rendre visibles la nuit'], 1, 'Le plastique isole et protège des chocs électriques.'),
 ]);
 
 // ══════════════════════════ BIOLOGIE (découverte du vivant, primaire) ══════════════════════════

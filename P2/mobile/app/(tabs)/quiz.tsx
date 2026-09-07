@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { quizApi } from '@/lib/api';
-import { Colors, MATIERES, CYCLES, niveauxDuCycle, niveauLabel } from '@/lib/constants';
+import { Colors, CYCLES, niveauxDuCycle, niveauLabel, matieresDuCycle } from '@/lib/constants';
 import type { QuizSummary, Niveau, Cycle } from '@/types';
 
 export default function QuizListScreen() {
@@ -75,7 +75,7 @@ export default function QuizListScreen() {
         </View>
         <FlatList
           horizontal showsHorizontalScrollIndicator={false}
-          data={[{ value: null, label: 'Toutes matières' }, ...MATIERES.map(m => ({ value: m, label: m }))]}
+          data={[{ value: null, label: 'Toutes matières' }, ...matieresDuCycle(cycle!).map(m => ({ value: m, label: m }))]}
           keyExtractor={item => item.label}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => setMatiere(item.value)}

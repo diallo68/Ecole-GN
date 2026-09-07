@@ -1,6 +1,14 @@
 import type { Niveau, Cycle } from '@/types';
 
-export const MATIERES = ['Mathématiques', 'Français', 'Sciences Physiques', 'Biologie', 'Histoire', 'Géographie'];
+// Le primaire n'a pas "Sciences Physiques" en tant que matière séparée, et
+// utilise "Calcul & Problèmes" plutôt que "Mathématiques". Le secondaire
+// distingue Physique et Chimie plutôt qu'une matière fusionnée.
+export const MATIERES_PRIMAIRE = ['Calcul & Problèmes', 'Français', 'Biologie', 'Histoire', 'Géographie'];
+export const MATIERES_SECONDAIRE = ['Mathématiques', 'Français', 'Physique', 'Chimie', 'Biologie', 'Histoire', 'Géographie'];
+// Liste globale (union) pour les contextes sans cycle précis (profil enseignant, icônes...).
+export const MATIERES = ['Mathématiques', 'Calcul & Problèmes', 'Français', 'Physique', 'Chimie', 'Biologie', 'Histoire', 'Géographie'];
+
+export const matieresDuCycle = (cycle: Cycle) => cycle === 'primaire' ? MATIERES_PRIMAIRE : MATIERES_SECONDAIRE;
 
 // Référentiel des classes selon le système éducatif guinéen — le secondaire
 // continue le compte du primaire (7ème après le CM2), contrairement au

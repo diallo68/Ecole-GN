@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { quizApi } from '@/lib/api';
-import { MATIERES, NIVEAUX } from '@/lib/constants';
+import { NIVEAUX, matieresDuCycle } from '@/lib/constants';
 import type { Niveau } from '@/types';
 
 interface DraftQuestion {
@@ -19,10 +19,19 @@ const emptyQuestion = (): DraftQuestion => ({ question: '', choix: ['', '', '', 
 export default function NouveauQuizPage() {
   const router = useRouter();
   const [titre, setTitre] = useState('');
-  const [matiere, setMatiere] = useState(MATIERES[0]);
   const [niveau, setNiveau] = useState<Niveau>('7e');
+  const cycle = NIVEAUX.find(n => n.value === niveau)?.cycle || 'college';
+  const matieresDisponibles = matieresDuCycle(cycle);
+  const [matiere, setMatiere] = useState(matieresDisponibles[0]);
   const [questions, setQuestions] = useState<DraftQuestion[]>([emptyQuestion()]);
   const [loading, setLoading] = useState(false);
+
+  const changerNiveau = (v: Niveau) => {
+    setNiveau(v);
+    const nouveauCycle = NIVEAUX.find(n => n.value === v)?.cycle || 'college';
+    const options = matieresDuCycle(nouveauCycle);
+    if (!options.includes(matiere)) setMatiere(options[0]);
+  };
 
   const updateQuestion = (i: number, patch: Partial<DraftQuestion>) => {
     setQuestions(prev => prev.map((q, idx) => (idx === i ? { ...q, ...patch } : q)));
@@ -58,11 +67,11 @@ export default function NouveauQuizPage() {
       <div className="bg-white rounded-xl border border-ink/10 p-4 mb-6 space-y-3">
         <input placeholder="Titre du quiz" value={titre} onChange={e => setTitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2" />
         <div className="flex gap-3">
-          <select value={matiere} onChange={e => setMatiere(e.target.value)} className="flex-1 border border-ink/15 rounded-lg px-3 py-2">
-            {MATIERES.map(m => <option key={m} value={m}>{m}</option>)}
-          </select>
-          <select value={niveau} onChange={e => setNiveau(e.target.value as Niveau)} className="flex-1 border border-ink/15 rounded-lg px-3 py-2">
+          <select value={niveau} onChange={e => changerNiveau(e.target.value as Niveau)} className="flex-1 border border-ink/15 rounded-lg px-3 py-2">
             {NIVEAUX.map(n => <option key={n.value} value={n.value}>{n.label}</option>)}
+          </select>
+          <select value={matiere} onChange={e => setMatiere(e.target.value)} className="flex-1 border border-ink/15 rounded-lg px-3 py-2">
+            {matieresDisponibles.map(m => <option key={m} value={m}>{m}</option>)}
           </select>
         </div>
       </div>
