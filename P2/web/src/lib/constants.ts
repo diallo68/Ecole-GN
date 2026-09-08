@@ -16,12 +16,13 @@ export const DISPONIBILITES: Array<{ value: Disponibilite; label: string }> = [
 export const tarifLabel = (t?: { montant: number; periode: TarifPeriode }): string =>
   t?.montant ? `${t.montant.toLocaleString('fr-FR')} GNF ${TARIF_PERIODES.find(p => p.value === t.periode)?.label || ''}` : '';
 
-// Programme officiel guinéen — le primaire n'a pas "Sciences Physiques" en
-// tant que matière séparée et utilise "Calcul & Problèmes" plutôt que
-// "Mathématiques". Au collège, matières communes à tous. Au lycée, chaque
-// série (filière) a son propre programme — ce ne sont PAS les mêmes matières
-// d'une série à l'autre (ex : pas de Physique/Chimie en Sciences Sociales).
-export const MATIERES_PRIMAIRE = ['Calcul & Problèmes', 'Français', 'Biologie', 'Histoire', 'Géographie'];
+// Programme officiel guinéen — le primaire a son propre programme, distinct
+// du collège/lycée (pas de matières scientifiques séparées, le français est
+// décomposé en Lecture/Langage/Écriture). Au collège, matières communes à
+// tous. Au lycée, chaque série (filière) a son propre programme — ce ne sont
+// PAS les mêmes matières d'une série à l'autre (ex : pas de Physique/Chimie
+// en Sciences Sociales).
+export const MATIERES_PRIMAIRE = ['Lecture', 'Langage', 'Écriture', 'Calcul', 'Dessin', 'Récitation', 'Chant'];
 export const MATIERES_COLLEGE = ['Mathématiques', 'Physique', 'Chimie', 'Français', 'Histoire', 'Géographie', 'Biologie', 'Éducation civique et Morale', 'Anglais'];
 export const MATIERES_LYCEE_SM = ['Mathématiques', 'Physique', 'Chimie', 'Français', 'Philosophie', 'Anglais', 'Économie'];
 export const MATIERES_LYCEE_SS = ['Français', 'Philosophie', 'Économie', 'Mathématiques', 'Anglais', 'Géographie', 'Histoire'];
