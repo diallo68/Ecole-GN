@@ -83,7 +83,7 @@ export default function HomePage() {
           <div className="w-full lg:w-[45%] relative h-[260px] lg:h-[340px] hidden md:block">
             <div className="absolute top-1/2 -left-6 w-20 h-20 bg-accent/10 rounded-full blur-xl -translate-y-1/2" />
             <div className="absolute inset-0 rounded-[2.5rem_0.75rem_2.5rem_0.75rem] overflow-hidden shadow-xl bg-ink/5">
-              <img src="/accueil/hero.jpeg" alt="Séance de soutien scolaire Gandal en Guinée" className="w-full h-full object-cover" />
+              <img src="/accueil/hero.jpeg" alt="Séance de soutien scolaire Gandal à Fria, Guinée" className="w-full h-full object-cover" />
             </div>
             <div className="absolute -bottom-5 -left-5 bg-white/95 backdrop-blur-md border border-white p-4 rounded-2xl shadow-lg flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-brand-light text-brand-dark grid place-items-center shrink-0 font-bold">✓</div>
@@ -202,7 +202,7 @@ export default function HomePage() {
       <section>
         <div className="text-center max-w-xl mx-auto mb-6">
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">On était sur le terrain</h2>
-          <p className="text-ink/50 text-sm mt-1">Premières séances Gandal, en direct des salles de classe en Guinée.</p>
+          <p className="text-ink/50 text-sm mt-1">Premières séances Gandal, en direct des salles de classe de Fria.</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="col-span-2 row-span-2 rounded-2xl overflow-hidden bg-ink/5 aspect-square md:aspect-auto">
@@ -210,7 +210,7 @@ export default function HomePage() {
           </div>
           {['classe-1', 'classe-2', 'classe-3', 'classe-4', 'classe-5', 'classe-6'].map(photo => (
             <div key={photo} className="rounded-2xl overflow-hidden bg-ink/5 aspect-square">
-              <img src={`/accueil/${photo}.jpeg`} alt="Séance de soutien scolaire Gandal en Guinée" className="w-full h-full object-cover hover:scale-105 transition-transform" />
+              <img src={`/accueil/${photo}.jpeg`} alt="Séance de soutien scolaire Gandal à Fria, Guinée" className="w-full h-full object-cover hover:scale-105 transition-transform" />
             </div>
           ))}
         </div>
