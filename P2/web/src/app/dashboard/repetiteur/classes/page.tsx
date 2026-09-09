@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import Button from '@/components/Button';
 import { classeVirtuelleApi, reservationApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { NIVEAUX, niveauLabel, matieresDuNiveau } from '@/lib/constants';
@@ -62,9 +63,7 @@ export default function RepetiteurClassesPage() {
             {matieresDisponibles.map(m => <option key={m} value={m}>{m}</option>)}
           </select>
           <input type="datetime-local" value={dateHeure} onChange={e => setDateHeure(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
-          <button onClick={planifier} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 text-sm font-semibold hover:bg-brand-dark disabled:opacity-50">
-            {loading ? 'Création...' : 'Planifier (lien visio généré auto.)'}
-          </button>
+          <Button onClick={planifier} fullWidth size="sm" loading={loading} loadingLabel="Création...">Planifier (lien visio généré auto.)</Button>
         </div>
       </div>
 

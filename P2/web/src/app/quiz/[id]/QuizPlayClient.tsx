@@ -9,6 +9,7 @@ import { quizApi, ApiError } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { niveauLabel } from '@/lib/constants';
 import ErrorState from '@/components/ErrorState';
+import Button from '@/components/Button';
 import type { QuizDetail, QuizCorrection } from '@/types';
 
 const ESSAI_GRATUIT_KEY = 'gandal_essai_gratuit_utilise';
@@ -92,9 +93,7 @@ export default function QuizPlayClient() {
         <p className="text-sm text-ink-muted mb-6">
           Sans inscription, un seul quiz d'essai est disponible. Crée un compte gratuit pour continuer à t'entraîner à volonté.
         </p>
-        <Link href="/register" className="inline-flex items-center justify-center gap-2 bg-brand text-white rounded-full px-6 py-3 font-semibold hover:bg-brand-dark transition-colors">
-          Créer mon compte gratuit
-        </Link>
+        <Button href="/register" size="lg">Créer mon compte gratuit</Button>
       </div>
     );
   }
@@ -166,21 +165,18 @@ export default function QuizPlayClient() {
               "Précédent" et "Valider mes réponses" risquaient de se
               comprimer l'une contre l'autre à 320px. */}
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between mt-6">
-            <button onClick={() => setCurrentIndex(i => Math.max(0, i - 1))} disabled={currentIndex === 0}
-              className="flex items-center justify-center gap-1.5 text-sm font-semibold text-ink-muted hover:text-ink disabled:opacity-30">
-              <ArrowLeft size={15} /> Précédent
-            </button>
+            <Button variant="ghost" size="sm" onClick={() => setCurrentIndex(i => Math.max(0, i - 1))} disabled={currentIndex === 0} icon={ArrowLeft} iconPosition="left">
+              Précédent
+            </Button>
 
             {currentIndex < quiz.questions.length - 1 ? (
-              <button onClick={() => setCurrentIndex(i => i + 1)} disabled={reponses[currentIndex] === null}
-                className="w-full sm:w-auto flex items-center justify-center gap-1.5 bg-brand text-white rounded-full px-6 py-2.5 font-semibold hover:bg-brand-dark disabled:opacity-40">
-                Suivant <ArrowRight size={15} />
-              </button>
+              <Button fullWidth className="sm:w-auto" onClick={() => setCurrentIndex(i => i + 1)} disabled={reponses[currentIndex] === null} icon={ArrowRight}>
+                Suivant
+              </Button>
             ) : (
-              <button onClick={soumettre} disabled={loading || reponses[currentIndex] === null}
-                className="w-full sm:w-auto bg-brand text-white rounded-full px-6 py-2.5 font-semibold hover:bg-brand-dark disabled:opacity-40">
-                {loading ? 'Correction...' : 'Valider mes réponses'}
-              </button>
+              <Button fullWidth className="sm:w-auto" onClick={soumettre} disabled={reponses[currentIndex] === null} loading={loading} loadingLabel="Correction...">
+                Valider mes réponses
+              </Button>
             )}
           </div>
         </>

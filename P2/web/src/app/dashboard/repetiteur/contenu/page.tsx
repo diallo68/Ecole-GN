@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import Button from '@/components/Button';
 import { ChevronDown } from 'lucide-react';
 import { contentApi, soumissionApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
@@ -122,9 +123,7 @@ export default function RepetiteurContenuPage() {
               </>
             )}
 
-            <button onClick={publier} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 text-sm font-semibold hover:bg-brand-dark disabled:opacity-50">
-              {loading ? 'Publication...' : 'Publier'}
-            </button>
+            <Button onClick={publier} fullWidth size="sm" loading={loading} loadingLabel="Publication...">Publier</Button>
           </div>
         </div>
 
@@ -233,9 +232,7 @@ function CopieRow({ soumission, onCorrigee }: { soumission: Soumission; onCorrig
             className="w-full sm:w-24 border border-ink/15 rounded-lg px-2.5 py-1.5 text-sm bg-white" />
           <input placeholder="Commentaire (optionnel)" value={commentaire} onChange={e => setCommentaire(e.target.value)}
             className="flex-1 border border-ink/15 rounded-lg px-2.5 py-1.5 text-sm bg-white" />
-          <button onClick={corriger} disabled={saving} className="bg-brand text-white rounded-lg px-3 py-1.5 text-xs font-semibold hover:bg-brand-dark disabled:opacity-50 shrink-0">
-            {saving ? '...' : 'Valider'}
-          </button>
+          <Button onClick={corriger} size="sm" loading={saving} loadingLabel="..." className="shrink-0">Valider</Button>
         </div>
       ) : (
         <button onClick={() => setEditing(true)} className="text-xs font-semibold text-brand hover:underline">Modifier la note</button>

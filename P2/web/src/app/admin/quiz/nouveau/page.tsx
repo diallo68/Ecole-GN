@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import Button from '@/components/Button';
 import { quizApi } from '@/lib/api';
 import { NIVEAUX, matieresDuNiveau } from '@/lib/constants';
 import type { Niveau } from '@/types';
@@ -112,12 +113,8 @@ export default function NouveauQuizPage() {
       </div>
 
       <div className="flex gap-3 mt-4">
-        <button onClick={() => setQuestions(prev => [...prev, emptyQuestion()])} className="flex-1 bg-white border border-ink/15 rounded-lg py-2 text-sm font-semibold hover:bg-sand">
-          + Ajouter une question
-        </button>
-        <button onClick={publier} disabled={loading} className="flex-1 bg-brand text-white rounded-lg py-2 text-sm font-semibold hover:bg-brand-dark disabled:opacity-50">
-          {loading ? 'Publication...' : 'Publier le quiz'}
-        </button>
+        <Button variant="secondary" size="sm" className="flex-1" onClick={() => setQuestions(prev => [...prev, emptyQuestion()])}>+ Ajouter une question</Button>
+        <Button size="sm" className="flex-1" onClick={publier} loading={loading} loadingLabel="Publication...">Publier le quiz</Button>
       </div>
     </div>
   );

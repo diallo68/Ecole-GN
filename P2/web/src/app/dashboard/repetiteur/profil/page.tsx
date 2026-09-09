@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import Button from '@/components/Button';
 import { repetiteurApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { MATIERES, CYCLES, niveauxDuCycle, TARIF_PERIODES, DISPONIBILITES } from '@/lib/constants';
@@ -135,9 +136,7 @@ export default function RepetiteurProfilPage() {
           Disponible pour de nouvelles réservations
         </label>
 
-        <button onClick={save} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
-          {loading ? 'Enregistrement...' : 'Enregistrer'}
-        </button>
+        <Button onClick={save} fullWidth loading={loading} loadingLabel="Enregistrement...">Enregistrer</Button>
       </div>
     </div>
   );

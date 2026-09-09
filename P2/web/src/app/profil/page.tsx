@@ -8,6 +8,7 @@ import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { ALL_CITIES, niveauLabel } from '@/lib/constants';
 import FileUploadField from '@/components/FileUploadField';
+import Button from '@/components/Button';
 import type { Enfant } from '@/types';
 
 const ROLE_LABELS: Record<string, string> = { eleve: 'Élève', parent: 'Parent', repetiteur: 'Enseignant', admin: 'Admin' };
@@ -57,7 +58,7 @@ export default function ProfilPage() {
     return (
       <div className="max-w-xl mx-auto text-center py-16">
         <p className="text-ink-muted mb-4">Connectez-vous pour accéder à votre profil.</p>
-        <Link href="/login" className="bg-brand text-white rounded-lg px-5 py-2.5 font-semibold hover:bg-brand-dark">Se connecter</Link>
+        <Button href="/login">Se connecter</Button>
       </div>
     );
   }
@@ -136,9 +137,7 @@ export default function ProfilPage() {
           <FileUploadField value={pieceIdentite} onChange={setPieceIdentite} accept="image/*,.pdf" label="Ajouter une pièce d'identité" />
         </div>
 
-        <button onClick={save} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2.5 font-semibold hover:bg-brand-dark disabled:opacity-50">
-          {loading ? 'Enregistrement...' : 'Enregistrer'}
-        </button>
+        <Button onClick={save} fullWidth loading={loading} loadingLabel="Enregistrement...">Enregistrer</Button>
       </div>
 
       {user.role === 'parent' && <MesEnfants />}
@@ -211,9 +210,7 @@ function MesEnfants() {
         <label htmlFor="email-enfant" className="sr-only">Email du compte élève de votre enfant</label>
         <input id="email-enfant" type="email" placeholder="Email du compte élève de votre enfant" value={email} onChange={e => setEmail(e.target.value)}
           className="flex-1 border border-ink/15 rounded-lg px-3 py-2 text-sm" />
-        <button onClick={ajouter} disabled={loading} className="flex items-center gap-1.5 bg-ink text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-stone-800 disabled:opacity-50">
-          <UserPlus size={15} /> Ajouter
-        </button>
+        <Button onClick={ajouter} loading={loading} icon={UserPlus} iconPosition="left">Ajouter</Button>
       </div>
       <p className="text-xs text-ink-muted mt-2">Votre enfant doit déjà avoir créé son propre compte élève sur Gandal.</p>
     </div>
