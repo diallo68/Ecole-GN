@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Flag } from 'lucide-react';
 import { repetiteurApi, reservationApi, messagingApi, authApi, ApiError } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { niveauLabel, tarifLabel, DISPONIBILITES } from '@/lib/constants';
@@ -69,6 +69,13 @@ export default function RepetiteurDetailPage() {
     }
   };
 
+  const signaler = () => {
+    if (!repetiteur) return;
+    const subject = encodeURIComponent(`Signalement profil Gandal — ${repetiteur.prenom} ${repetiteur.nom}`);
+    const body = encodeURIComponent(`Profil concerné : ${window.location.href}\n\nDécrivez le problème :\n`);
+    window.location.href = `mailto:support.yougouyougou@gmail.com?subject=${subject}&body=${body}`;
+  };
+
   const reserver = async () => {
     if (!isLoggedIn()) { router.push('/login'); return; }
     if (!matiere || !dateHeure) { toast.error('Choisis une matière et une date'); return; }
@@ -107,7 +114,19 @@ export default function RepetiteurDetailPage() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div className="md:col-span-2 bg-white rounded-xl border border-ink/10 p-6">
-        <h1 className="text-2xl font-bold">{repetiteur.prenom} {repetiteur.nom}</h1>
+        <div className="flex items-center gap-2 flex-wrap">
+          <h1 className="text-2xl font-bold">{repetiteur.prenom} {repetiteur.nom}</h1>
+          {repetiteur.repetiteur.valide ? (
+            <span title="Un membre de l'équipe Gandal a examiné ce profil (coordonnées, pièce d'identité si fournie) avant sa mise en ligne."
+              className="inline-flex items-center gap-1 bg-brand-light text-brand-dark text-xs font-semibold px-2 py-1 rounded-full">
+              ✓ Profil vérifié par Gandal
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-700 text-xs font-semibold px-2 py-1 rounded-full">
+              En attente de vérification
+            </span>
+          )}
+        </div>
         <p className="text-ink/60">{repetiteur.city}</p>
         {repetiteur.repetiteur.ratingCount > 0 && (
           <p className="text-amber-500 mt-1">★ {repetiteur.repetiteur.avgRating} ({repetiteur.repetiteur.ratingCount} avis)</p>
@@ -128,9 +147,18 @@ export default function RepetiteurDetailPage() {
             ))}
           </div>
         )}
-        <button onClick={contacter} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand-dark">
-          <MessageCircle size={16} /> Contacter {repetiteur.prenom}
-        </button>
+        <div className="mt-4 flex items-center gap-4 flex-wrap">
+          <button onClick={contacter} className="inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand-dark">
+            <MessageCircle size={16} /> Contacter {repetiteur.prenom}
+          </button>
+          {/* Adresse de contact réelle (déjà utilisée dans le footer) — pas de
+              nouvelle adresse "gandal.net" fabriquée qui n'existerait pas
+              vraiment. Calculé au clic (pas au rendu) pour éviter tout écart
+              serveur/client sur window.location. */}
+          <button onClick={signaler} className="inline-flex items-center gap-2 text-sm font-semibold text-ink/40 hover:text-ink/70">
+            <Flag size={14} /> Signaler ce profil
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl border border-ink/10 p-6 h-fit">

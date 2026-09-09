@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, Leaf, Landmark, Map, HelpCircle } from 'lucide-react';
+import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, Leaf, Landmark, Map, HelpCircle, Search, CalendarCheck } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { repetiteurApi, quizApi } from '@/lib/api';
 import AssistantWidget from '@/components/AssistantWidget';
@@ -76,7 +76,7 @@ export default function HomePage() {
             </h1>
 
             <p className="text-base md:text-lg text-ink/60 leading-relaxed max-w-xl">
-              Connectez-vous avec les meilleurs enseignants(es) de la Guinée. Séances à domicile ou en ligne, adaptées au rythme de chaque élève pour garantir sa réussite.
+              Connectez-vous avec des enseignants de la Guinée, dont le profil est vérifié par notre équipe avant publication. Séances à domicile ou en ligne, adaptées au rythme de chaque élève.
             </p>
 
             <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 mt-1">
@@ -99,11 +99,36 @@ export default function HomePage() {
             <div className="absolute -bottom-5 -left-5 bg-white/95 backdrop-blur-md border border-white p-4 rounded-2xl shadow-lg flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-brand-light text-brand-dark grid place-items-center shrink-0 font-bold">✓</div>
               <div>
-                <p className="text-[11px] text-ink/50 uppercase tracking-wider font-semibold">Garantie</p>
-                <p className="text-sm font-bold text-ink leading-none mt-1">100% Qualifié</p>
+                <p className="text-[11px] text-ink/50 uppercase tracking-wider font-semibold">Vérification</p>
+                <p className="text-sm font-bold text-ink leading-none mt-1">Profil vérifié par Gandal</p>
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Comment ça marche — le parcours réel : recherche, échange par
+          message, demande de séance que l'enseignant confirme. Pas de
+          paiement en ligne sur la plateforme à ce stade, donc on ne
+          l'évoque pas ici. */}
+      <section>
+        <div className="text-center max-w-xl mx-auto mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Comment ça marche</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            { icon: Search, titre: 'Cherchez', texte: 'Filtrez par matière, classe et ville pour trouver un enseignant vérifié.' },
+            { icon: MessageCircle, titre: 'Échangez', texte: 'Discutez directement avec l\'enseignant pour préciser vos besoins.' },
+            { icon: CalendarCheck, titre: 'Réservez', texte: 'Demandez une séance, présentielle ou en ligne — l\'enseignant la confirme.' },
+          ].map(({ icon: Icon, titre, texte }) => (
+            <div key={titre} className="bg-white rounded-2xl border border-ink/10 p-5 text-center">
+              <div className="w-11 h-11 mx-auto rounded-xl bg-brand-light text-brand-dark grid place-items-center mb-3">
+                <Icon size={20} strokeWidth={1.75} />
+              </div>
+              <p className="font-bold text-ink mb-1">{titre}</p>
+              <p className="text-sm text-ink/50">{texte}</p>
+            </div>
+          ))}
         </div>
       </section>
 
