@@ -95,9 +95,14 @@ const authController = {
 
       await user.save();
       const { accessToken, refreshToken } = await generateTokens(user);
+      // Même forme que la réponse de login() — sinon la personnalisation par
+      // niveau (ex: présélection sur l'accueil) manque juste après
+      // l'inscription, le temps que l'utilisateur se reconnecte.
       const safeUser = {
         _id: user._id, prenom: user.prenom, nom: user.nom, age: user.age, phone: user.phone,
         photo: user.photo, email: user.email, city: user.city, role: user.role, verified: user.verified,
+        repetiteur: user.role === 'repetiteur' ? user.repetiteur : undefined,
+        eleve: user.role === 'eleve' ? user.eleve : undefined,
       };
       res.json({ success: true, token: accessToken, refreshToken, user: safeUser });
     } catch (err) {

@@ -27,7 +27,6 @@ export default function RegisterPage() {
 
   const [accountType, setAccountType] = useState<AccountChoice>('');
   const [subRole, setSubRole] = useState<SubRole>('');
-  const [fullName, setFullName] = useState('');
   const [prenom, setPrenom] = useState('');
   const [nom, setNom] = useState('');
   const [phone, setPhone] = useState('');
@@ -38,18 +37,19 @@ export default function RegisterPage() {
   const [cycle, setCycle] = useState<Cycle | ''>('');
   const [niveau, setNiveau] = useState<Niveau | ''>('');
   const [code, setCode] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
   const [photo, setPhoto] = useState('');
   const [pieceIdentite, setPieceIdentite] = useState('');
+  const [documentsError, setDocumentsError] = useState(false);
 
   const answerRef = useRef<HTMLInputElement & HTMLSelectElement>(null);
   const advancing = useRef(false);
 
-  const handleFullNameChange = (v: string) => {
-    setFullName(v);
-    const parts = v.trim().split(/\s+/);
-    setPrenom(parts[0] || '');
-    setNom(parts.slice(1).join(' '));
-  };
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setInterval(() => setResendCooldown(s => Math.max(0, s - 1)), 1000);
+    return () => clearInterval(t);
+  }, [resendCooldown]);
 
   // Rôle réellement envoyé au backend
   const role: Role | '' = accountType === 'repetiteur' ? 'repetiteur' : subRole;
@@ -63,7 +63,10 @@ export default function RegisterPage() {
   }, [accountType, role]);
 
   const q = questions[Math.min(qIndex, questions.length - 1)];
-  const progress = Math.round(((qIndex + 1) / questions.length) * 100);
+  // Sur (questions.length + 2), pas juste questions.length : il reste encore
+  // le code de vérification et les documents après ce formulaire — la barre
+  // ne doit pas donner l'impression que tout est fini à la dernière question.
+  const progress = Math.round(((qIndex + 1) / (questions.length + 2)) * 100);
   const pwMatch = password && password2 ? password === password2 : null;
 
   useEffect(() => {
@@ -75,7 +78,7 @@ export default function RegisterPage() {
     switch (q.id) {
       case 'nameCombo': return prenom.trim() ? null : 'Le prénom est obligatoire';
       case 'phone':     return phone.trim().length >= 6 ? null : 'Entrez un numéro de téléphone valide';
-      case 'email':     return email.trim() ? null : 'Entrez votre adresse email';
+      case 'email':     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ? null : 'Entrez une adresse email valide (ex : nom@exemple.com)';
       case 'password':  return password.length >= 8 ? null : 'Mot de passe trop court (8 caractères min.)';
       case 'password2': return password === password2 ? null : 'Les mots de passe ne correspondent pas';
       case 'city':      return city ? null : 'Choisissez votre ville';
@@ -84,6 +87,7 @@ export default function RegisterPage() {
   };
 
   const sendCode = async () => {
+    if (resendCooldown > 0) return;
     setLoading(true);
     try {
       const res = await authApi.sendCode({ email, prenom });
@@ -93,6 +97,7 @@ export default function RegisterPage() {
       }
       toast.success('Code envoyé par email !');
       setStep('otp');
+      setResendCooldown(30);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erreur');
     } finally {
@@ -155,18 +160,21 @@ export default function RegisterPage() {
   };
 
   const finishDocuments = async () => {
-    if (photo || pieceIdentite) {
-      setLoading(true);
-      try {
-        const { user } = await authApi.updateMe({ photo: photo || undefined, pieceIdentite: pieceIdentite || undefined });
-        setUser(user);
-      } catch (err) {
-        toast.error(err instanceof Error ? err.message : 'Erreur');
-      } finally {
-        setLoading(false);
-      }
+    if (!photo && !pieceIdentite) { router.push('/dashboard'); return; }
+    setLoading(true);
+    setDocumentsError(false);
+    try {
+      const { user } = await authApi.updateMe({ photo: photo || undefined, pieceIdentite: pieceIdentite || undefined });
+      setUser(user);
+      router.push('/dashboard');
+    } catch (err) {
+      // Ne redirige plus comme si c'était enregistré — reste sur l'étape et
+      // propose explicitement de réessayer ou de continuer sans ces documents.
+      setDocumentsError(true);
+      toast.error(err instanceof Error ? err.message : "L'envoi a échoué");
+    } finally {
+      setLoading(false);
     }
-    router.push('/dashboard');
   };
 
   if (step === 'documents') {
@@ -174,20 +182,32 @@ export default function RegisterPage() {
       <div className="max-w-sm mx-auto bg-white rounded-2xl border border-ink/10 p-6 space-y-5">
         <div className="text-center">
           <div className="text-4xl mb-2">🪪</div>
-          <p className="font-bold text-ink">Complète ton profil</p>
-          <p className="text-sm text-ink/60 mt-1">Une photo et une pièce d'identité — facultatif pour le moment.</p>
+          <p className="text-xs font-bold text-ink/40 uppercase tracking-wide">Étape 3 sur 3</p>
+          <p className="font-bold text-ink mt-1">Complète ton profil</p>
+          <p className="text-sm text-ink/60 mt-1">
+            {role === 'repetiteur'
+              ? "Une photo et une pièce d'identité — utilisées par notre équipe pour vérifier ton profil avant sa mise en ligne."
+              : "Une photo de profil — facultatif."}
+          </p>
         </div>
         <div className="space-y-2">
           <label className="block text-xs font-semibold text-ink/50">Photo (optionnel)</label>
           <FileUploadField value={photo} onChange={setPhoto} accept="image/*" label="Ajouter une photo" />
         </div>
-        <div className="space-y-2">
-          <label className="block text-xs font-semibold text-ink/50">Pièce d'identité (optionnel)</label>
-          <FileUploadField value={pieceIdentite} onChange={setPieceIdentite} accept="image/*,.pdf" label="Ajouter une pièce d'identité" />
-        </div>
+        {role === 'repetiteur' && (
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold text-ink/50">Pièce d'identité (optionnel pour le moment)</label>
+            <FileUploadField value={pieceIdentite} onChange={setPieceIdentite} accept="image/*,.pdf" label="Ajouter une pièce d'identité" />
+          </div>
+        )}
         <button onClick={finishDocuments} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
-          {loading ? 'Envoi...' : (photo || pieceIdentite) ? 'Continuer' : 'Passer cette étape'}
+          {loading ? 'Envoi...' : documentsError ? 'Réessayer' : (photo || pieceIdentite) ? 'Continuer' : 'Passer cette étape'}
         </button>
+        {documentsError && (
+          <button onClick={() => router.push('/dashboard')} className="w-full text-center text-sm text-ink/50 hover:underline">
+            Continuer sans enregistrer ces documents
+          </button>
+        )}
       </div>
     );
   }
@@ -197,10 +217,12 @@ export default function RegisterPage() {
       <div className="max-w-sm mx-auto bg-white rounded-2xl border border-ink/10 p-6 space-y-5">
         <div className="text-center">
           <div className="text-4xl mb-2">📧</div>
-          <p className="font-bold text-ink">Code de vérification</p>
+          <p className="text-xs font-bold text-ink/40 uppercase tracking-wide">Étape 2 sur 3</p>
+          <p className="font-bold text-ink mt-1">Code de vérification</p>
           <p className="text-sm text-ink/60 mt-1">Envoyé à {email}</p>
         </div>
-        <input placeholder="Code à 6 chiffres" maxLength={6} value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
+        <input placeholder="Code à 6 chiffres" maxLength={6} inputMode="numeric" autoComplete="one-time-code"
+          value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
           className="w-full border border-ink/15 rounded-lg px-3 py-2 text-center text-lg tracking-widest" />
         <button onClick={verifyAndRegister} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
           {loading ? 'Vérification...' : 'Valider et créer mon compte'}
@@ -208,7 +230,9 @@ export default function RegisterPage() {
         <div className="text-center">
           <button onClick={() => { setStep('form'); setCode(''); }} className="text-sm text-ink/60 hover:underline">← Modifier mes infos</button>
           <span className="mx-2 text-ink/40">·</span>
-          <button onClick={sendCode} className="text-sm text-brand font-semibold hover:underline">Renvoyer le code</button>
+          <button onClick={sendCode} disabled={resendCooldown > 0} className="text-sm text-brand font-semibold hover:underline disabled:opacity-40 disabled:no-underline disabled:text-ink/40">
+            {resendCooldown > 0 ? `Renvoyer le code (${resendCooldown}s)` : 'Renvoyer le code'}
+          </button>
         </div>
       </div>
     );
@@ -217,10 +241,10 @@ export default function RegisterPage() {
   return (
     <div className="max-w-sm mx-auto bg-white rounded-2xl border border-ink/10 p-6">
       <div className="flex flex-col gap-2 mb-6">
-        <div className="h-1 rounded-full bg-ink/10 overflow-hidden">
+        <div className="h-1 rounded-full bg-ink/10 overflow-hidden" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
           <div className="h-full bg-brand rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
         </div>
-        <span className="text-[11px] font-bold text-ink/40">Question {qIndex + 1} sur {questions.length}</span>
+        <span className="text-[11px] font-bold text-ink/40">Étape 1 sur 3 — question {qIndex + 1} sur {questions.length}</span>
       </div>
 
       <div key={qIndex} className="flex flex-col gap-4 min-h-[280px] justify-center">
@@ -246,7 +270,21 @@ export default function RegisterPage() {
         )}
 
         {q.id === 'nameCombo' && (
-          <QuestionInput ref={answerRef} label="Quel est votre prénom et nom ?" value={fullName} onChange={handleFullNameChange} onEnter={handleEnter} placeholder="Mamadou Diallo" autoComplete="name" />
+          <div className="flex flex-col gap-5">
+            <h1 className="text-xl font-extrabold text-ink">Votre prénom et nom ?</h1>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="reg-prenom" className="text-xs font-semibold text-ink/40">Prénom</label>
+              <input id="reg-prenom" ref={answerRef} value={prenom} onChange={e => setPrenom(e.target.value)} onKeyDown={handleEnter}
+                placeholder="Mamadou" autoComplete="given-name"
+                className="text-xl font-semibold text-ink bg-transparent outline-none border-b-2 border-ink/15 focus:border-brand pb-2 placeholder:text-ink/40 placeholder:font-medium" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="reg-nom" className="text-xs font-semibold text-ink/40">Nom (optionnel)</label>
+              <input id="reg-nom" value={nom} onChange={e => setNom(e.target.value)} onKeyDown={handleEnter}
+                placeholder="Diallo" autoComplete="family-name"
+                className="text-xl font-semibold text-ink bg-transparent outline-none border-b-2 border-ink/15 focus:border-brand pb-2 placeholder:text-ink/40 placeholder:font-medium" />
+            </div>
+          </div>
         )}
 
         {q.id === 'phone' && (
