@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Search, SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, SlidersHorizontal, ChevronLeft, ChevronRight, SearchX } from 'lucide-react';
 import { repetiteurApi } from '@/lib/api';
 import { tarifLabel } from '@/lib/constants';
 import { useFiltreEnseignantStore } from '@/store/filtreEnseignantStore';
 import FiltreEnseignantBar from './FiltreEnseignantBar';
 import ErrorState from './ErrorState';
+import EmptyState from './EmptyState';
 import type { Repetiteur } from '@/types';
 
 // Bloc résultats de recherche d'enseignants — utilisé sur la page dédiée
@@ -16,7 +17,7 @@ import type { Repetiteur } from '@/types';
 // premiers profils étaient chargés puis filtrés dans le navigateur : un
 // enseignant hors de ce lot était introuvable par nom).
 export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' | 'h2' }) {
-  const { matiere, niveau, tarifMax, ville, disponibilite } = useFiltreEnseignantStore();
+  const { matiere, niveau, tarifMax, ville, disponibilite, reset } = useFiltreEnseignantStore();
   const [repetiteurs, setRepetiteurs] = useState<Repetiteur[]>([]);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -95,7 +96,9 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
       ) : error ? (
         <ErrorState message="Impossible de charger les enseignants." onRetry={() => setReloadKey(k => k + 1)} />
       ) : repetiteurs.length === 0 ? (
-        <p className="text-ink-muted text-sm">Aucun enseignant ne correspond à ces critères.</p>
+        <EmptyState icon={SearchX} message="Aucun enseignant ne correspond à ces critères. Essayez une autre matière ou élargissez la ville."
+          ctaLabel={search || matiere || niveau || tarifMax || ville || disponibilite ? 'Effacer les filtres' : undefined}
+          onCta={() => { reset(); setSearch(''); }} />
       ) : (
         <>
           <p className="text-xs text-ink-muted mb-3">{total} enseignant{total > 1 ? 's' : ''} trouvé{total > 1 ? 's' : ''}</p>

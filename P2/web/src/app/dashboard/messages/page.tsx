@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Send, MessageCircle } from 'lucide-react';
 import { messagingApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import EmptyState from '@/components/EmptyState';
 import type { Conversation, Message } from '@/types';
 
 export default function MessagesPage() {
@@ -67,7 +68,8 @@ export default function MessagesPage() {
         {loading ? (
           <p className="p-4 text-sm text-ink-muted">Chargement...</p>
         ) : conversations.length === 0 ? (
-          <p className="p-4 text-sm text-ink-muted">Aucune conversation. Contactez un enseignant depuis sa fiche pour démarrer une discussion.</p>
+          <EmptyState icon={MessageCircle} className="px-4" message="Vos échanges avec les enseignants apparaîtront ici."
+            ctaLabel="Trouver un enseignant" ctaHref="/repetiteurs" />
         ) : (
           conversations.map(c => {
             const other = c.participants.find(p => p._id !== user?._id) || c.participants[0];
@@ -92,7 +94,7 @@ export default function MessagesPage() {
         {!active ? (
           <div className="flex-1 flex flex-col items-center justify-center text-ink-muted gap-2">
             <MessageCircle size={32} strokeWidth={1.5} />
-            <p className="text-sm">Sélectionne une conversation</p>
+            <p className="text-sm">Sélectionnez une conversation</p>
           </div>
         ) : (
           <>
@@ -103,6 +105,9 @@ export default function MessagesPage() {
               </p>
             </div>
             <div className="flex-1 overflow-y-auto p-4 space-y-2">
+              {messages.length === 0 && (
+                <p className="text-center text-sm text-ink-muted py-8">Cette conversation est prête. Vous pouvez envoyer un premier message.</p>
+              )}
               {messages.map(m => {
                 const mine = m.senderId === user?._id;
                 return (

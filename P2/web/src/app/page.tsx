@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, Leaf, Landmark, Map, HelpCircle, Search, CalendarCheck } from 'lucide-react';
+import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, Leaf, Landmark, Map, HelpCircle, Search, CalendarCheck, GraduationCap } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { repetiteurApi, quizApi } from '@/lib/api';
 import ErrorState from '@/components/ErrorState';
+import EmptyState from '@/components/EmptyState';
 import Button from '@/components/Button';
 import { niveauLabel, tarifLabel, CYCLES, niveauxDuCycle } from '@/lib/constants';
 import { useAuthStore } from '@/store/authStore';
@@ -157,7 +158,7 @@ export default function HomePage() {
         {repetiteursError ? (
           <ErrorState message="Impossible de charger les enseignants." onRetry={chargerRepetiteurs} />
         ) : repetiteurs.length === 0 ? (
-          <p className="text-ink-muted text-sm">Aucun enseignant disponible pour le moment.</p>
+          <EmptyState icon={GraduationCap} message="Aucun profil enseignant n'est actuellement proposé." ctaLabel="Découvrir les quiz" ctaHref="/quiz" />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {repetiteurs.map(r => (
@@ -212,7 +213,7 @@ export default function HomePage() {
         {quizzesError ? (
           <ErrorState message="Impossible de charger les quiz." onRetry={chargerQuizzes} />
         ) : quizzes.length === 0 ? (
-          <p className="text-ink-muted text-sm text-center">Aucun quiz publié pour le moment.</p>
+          <EmptyState icon={HelpCircle} message="Aucun quiz n'est publié pour le moment." />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {quizzes.map(q => {

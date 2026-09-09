@@ -46,7 +46,7 @@ export default function AdminQuizPage() {
       {loading ? (
         <p className="text-ink-muted">Chargement...</p>
       ) : quizzes.length === 0 ? (
-        <p className="text-ink-muted">Aucun quiz créé pour l'instant.</p>
+        <p className="text-ink-muted">Aucun quiz créé.</p>
       ) : (
         <div className="space-y-3">
           {quizzes.map(q => (

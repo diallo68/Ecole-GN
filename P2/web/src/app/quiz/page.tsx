@@ -3,8 +3,11 @@
 import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { HelpCircle } from 'lucide-react';
 import { quizApi } from '@/lib/api';
 import { CYCLES, niveauxDuCycle, niveauLabel, matieresDuNiveau } from '@/lib/constants';
+import ErrorState from '@/components/ErrorState';
+import EmptyState from '@/components/EmptyState';
 import type { QuizSummary, Cycle, Niveau } from '@/types';
 
 export default function QuizListPage() {
@@ -23,11 +26,16 @@ function QuizListContent() {
 
   const [quizzes, setQuizzes] = useState<QuizSummary[]>([]);
   const [matiere, setMatiere] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  const charger = () => {
     if (!niveau) return;
-    quizApi.list({ matiere: matiere || undefined, niveau }).then(d => setQuizzes(d.quizzes)).catch(() => {});
-  }, [matiere, niveau]);
+    setLoading(true);
+    setError(false);
+    quizApi.list({ matiere: matiere || undefined, niveau }).then(d => setQuizzes(d.quizzes)).catch(() => setError(true)).finally(() => setLoading(false));
+  };
+  useEffect(charger, [matiere, niveau]);
 
   // ── Étape 1 : choix du cycle ─────────────────────────────────────────
   if (!cycle) {
@@ -83,8 +91,13 @@ function QuizListContent() {
         {matieresDuNiveau(niveau).map(m => <FilterPill key={m} active={matiere === m} onClick={() => setMatiere(m)} label={m} />)}
       </div>
 
-      {quizzes.length === 0 ? (
-        <p className="text-ink-muted">Aucun quiz disponible pour ces critères.</p>
+      {loading ? (
+        <p className="text-ink-muted">Chargement...</p>
+      ) : error ? (
+        <ErrorState message="Impossible de charger les quiz." onRetry={charger} />
+      ) : quizzes.length === 0 ? (
+        <EmptyState icon={HelpCircle} message="Aucun quiz disponible pour cette sélection."
+          ctaLabel={matiere ? 'Voir les autres matières' : undefined} onCta={() => setMatiere('')} />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {quizzes.map(q => (

@@ -47,7 +47,7 @@ export default function AdminRepetiteursPage() {
       {loading ? (
         <p className="text-ink-muted">Chargement...</p>
       ) : repetiteurs.length === 0 ? (
-        <p className="text-ink-muted">Aucun enseignant dans cette catégorie.</p>
+        <p className="text-ink-muted">{filtre === 'en_attente' ? 'Aucun profil en attente de validation.' : 'Aucun enseignant dans cette catégorie.'}</p>
       ) : (
         <div className="space-y-3">
           {repetiteurs.map(r => (

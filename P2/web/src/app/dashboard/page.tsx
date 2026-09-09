@@ -90,7 +90,7 @@ function EnseignantHome({ user, aVenir, prochaine }: { user: User; reservations:
         <QuickAction href="/dashboard/repetiteur/classes" icon={Video} label="Classes virtuelles" desc="Planifier une séance" />
       </div>
 
-      <AgendaSection title="Mon agenda" prochaine={prochaine} aVenir={aVenir} emptyLabel="Aucune session programmée pour l'instant." />
+      <AgendaSection title="Mon agenda" prochaine={prochaine} aVenir={aVenir} emptyLabel="Aucune séance programmée." />
     </>
   );
 }
@@ -113,7 +113,7 @@ function EleveHome({ aVenir, prochaine, tentatives }: { user: User; reservations
         <QuickAction href="/quiz" icon={ClipboardList} label="Faire un quiz" desc="Testez vos connaissances" />
       </div>
 
-      <AgendaSection title="Mes réservations" prochaine={prochaine} aVenir={aVenir} emptyLabel="Aucune réservation pour l'instant." />
+      <AgendaSection title="Mes réservations" prochaine={prochaine} aVenir={aVenir} emptyLabel="Tu n'as pas encore demandé de séance." />
 
       {tentatives.length > 0 && (
         <div className="bg-white rounded-2xl border border-ink/10 p-4">
@@ -145,7 +145,7 @@ function ParentHome({ aVenir, prochaine, enfants }: { aVenir: Reservation[]; pro
         <QuickAction href="/profil" icon={Users} label="Mes enfants" desc={enfants.length === 0 ? 'Lier le compte de votre enfant' : 'Gérer les comptes liés'} />
       </div>
 
-      <AgendaSection title="Réservations" prochaine={prochaine} aVenir={aVenir} emptyLabel="Aucune réservation pour l'instant." />
+      <AgendaSection title="Réservations" prochaine={prochaine} aVenir={aVenir} emptyLabel="Vous n'avez pas encore demandé de séance pour votre enfant." />
     </>
   );
 }
@@ -205,7 +205,7 @@ function MessagesPreview({ conversations }: { conversations: Conversation[] }) {
         <Link href="/dashboard/messages" className="text-xs font-semibold text-brand hover:text-brand-dark">Tout voir →</Link>
       </div>
       {conversations.length === 0 ? (
-        <p className="text-sm text-ink-muted">Aucune conversation pour l'instant.</p>
+        <p className="text-sm text-ink-muted">Vos échanges avec les enseignants apparaîtront ici.</p>
       ) : (
         <div className="space-y-1">
           {conversations.slice(0, 3).map(c => (
