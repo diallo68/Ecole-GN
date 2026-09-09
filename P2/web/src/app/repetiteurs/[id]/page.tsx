@@ -5,9 +5,10 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { MessageCircle } from 'lucide-react';
-import { repetiteurApi, reservationApi, messagingApi, authApi } from '@/lib/api';
+import { repetiteurApi, reservationApi, messagingApi, authApi, ApiError } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { niveauLabel, tarifLabel, DISPONIBILITES } from '@/lib/constants';
+import ErrorState from '@/components/ErrorState';
 import type { Repetiteur, Enfant } from '@/types';
 
 export default function RepetiteurDetailPage() {
@@ -16,6 +17,12 @@ export default function RepetiteurDetailPage() {
   const { user, isLoggedIn } = useAuthStore();
 
   const [repetiteur, setRepetiteur] = useState<Repetiteur | null>(null);
+  // Distingue "pas encore chargé" de deux impasses possibles : ressource
+  // absente (404 — pas la peine de proposer Réessayer) et panne réelle
+  // (réseau/5xx — Réessayer a du sens). Avant ce fix, un échec laissait la
+  // page bloquée indéfiniment sur "Chargement...".
+  const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [matiere, setMatiere] = useState('');
   const [niveau, setNiveau] = useState('');
   const [mode, setMode] = useState<'presentiel' | 'en_ligne'>('en_ligne');
@@ -29,13 +36,20 @@ export default function RepetiteurDetailPage() {
   const [enfantsLoaded, setEnfantsLoaded] = useState(false);
   const [eleveId, setEleveId] = useState('');
 
-  useEffect(() => {
+  const chargerRepetiteur = () => {
+    setNotFound(false);
+    setLoadError(false);
     repetiteurApi.getById(id).then(d => {
       setRepetiteur(d.repetiteur);
       setMatiere(d.repetiteur.repetiteur.matieres?.[0] || '');
       setNiveau(d.repetiteur.repetiteur.niveaux?.[0] || '');
-    }).catch(() => toast.error('Enseignant introuvable'));
-  }, [id]);
+    }).catch(err => {
+      if (err instanceof ApiError && err.status === 404) setNotFound(true);
+      else setLoadError(true);
+    });
+  };
+
+  useEffect(chargerRepetiteur, [id]);
 
   useEffect(() => {
     if (user?.role !== 'parent') return;
@@ -79,6 +93,15 @@ export default function RepetiteurDetailPage() {
   // on l'oriente directement vers l'endroit où lier un compte élève.
   const parentSansEnfant = user?.role === 'parent' && enfantsLoaded && enfants.length === 0;
 
+  if (notFound) {
+    return (
+      <div className="max-w-md mx-auto text-center py-12">
+        <p className="text-ink/60 mb-4">Ce profil enseignant n&apos;est plus disponible.</p>
+        <Link href="/repetiteurs" className="text-sm font-semibold text-brand hover:underline">← Retour aux résultats</Link>
+      </div>
+    );
+  }
+  if (loadError) return <ErrorState message="Impossible de charger ce profil enseignant." onRetry={chargerRepetiteur} />;
   if (!repetiteur) return <p className="text-ink/60">Chargement...</p>;
 
   return (

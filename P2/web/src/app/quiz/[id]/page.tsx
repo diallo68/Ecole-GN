@@ -5,9 +5,10 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { Lock, Sparkles, ArrowLeft, ArrowRight } from 'lucide-react';
-import { quizApi } from '@/lib/api';
+import { quizApi, ApiError } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { niveauLabel } from '@/lib/constants';
+import ErrorState from '@/components/ErrorState';
 import type { QuizDetail, QuizCorrection } from '@/types';
 
 const ESSAI_GRATUIT_KEY = 'gandal_essai_gratuit_utilise';
@@ -21,6 +22,23 @@ export default function QuizPlayPage() {
   const [loading, setLoading] = useState(false);
   const [essaiEpuise, setEssaiEpuise] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  // Avant ce fix, un échec de chargement (quiz supprimé, panne réseau...)
+  // laissait la page bloquée indéfiniment sur "Chargement..." — le seul
+  // signe visible était un toast déjà disparu.
+  const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+
+  const chargerQuiz = () => {
+    setNotFound(false);
+    setLoadError(false);
+    quizApi.getById(id).then(d => {
+      setQuiz(d.quiz);
+      setReponses(new Array(d.quiz.questions.length).fill(null));
+    }).catch(err => {
+      if (err instanceof ApiError && err.status === 404) setNotFound(true);
+      else setLoadError(true);
+    });
+  };
 
   useEffect(() => {
     // Un visiteur non inscrit n'a droit qu'à un seul quiz d'essai (côté client) —
@@ -29,10 +47,7 @@ export default function QuizPlayPage() {
       setEssaiEpuise(true);
       return;
     }
-    quizApi.getById(id).then(d => {
-      setQuiz(d.quiz);
-      setReponses(new Array(d.quiz.questions.length).fill(null));
-    }).catch(() => toast.error('Quiz introuvable'));
+    chargerQuiz();
   }, [id, isLoggedIn]);
 
   const choisir = (qIndex: number, choixIndex: number) => {
@@ -70,6 +85,15 @@ export default function QuizPlayPage() {
     );
   }
 
+  if (notFound) {
+    return (
+      <div className="max-w-md mx-auto text-center py-12">
+        <p className="text-ink/60 mb-4">Ce quiz n&apos;est plus disponible.</p>
+        <Link href="/quiz" className="text-sm font-semibold text-brand hover:underline">← Retour au catalogue</Link>
+      </div>
+    );
+  }
+  if (loadError) return <ErrorState message="Impossible de charger ce quiz." onRetry={chargerQuiz} />;
   if (!quiz) return <p className="text-ink/60">Chargement...</p>;
 
   return (

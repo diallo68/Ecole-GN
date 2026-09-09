@@ -7,18 +7,38 @@ function getToken(): string | null {
   return localStorage.getItem('gandal_token');
 }
 
+// Étend Error (pas un simple objet) : tout code existant qui fait
+// `err instanceof Error` / `err.message` continue de fonctionner sans
+// changement — seul le code qui a besoin du statut HTTP (ex: distinguer un
+// 404 "ressource absente" d'une panne réseau/serveur) lit `err.status`.
+export class ApiError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+  }
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
-  const res = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...options.headers,
+      },
+    });
+  } catch {
+    // Échec réseau (hors ligne, DNS, CORS...) : pas de réponse HTTP du tout,
+    // donc pas de statut — on le distingue quand même d'une erreur serveur.
+    throw new ApiError('Impossible de joindre Gandal. Vérifiez votre connexion puis réessayez.', 0);
+  }
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || 'Erreur serveur');
+  if (!res.ok) throw new ApiError(data.error || 'Erreur serveur', res.status);
   return data;
 }
 

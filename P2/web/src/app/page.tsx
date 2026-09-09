@@ -6,6 +6,7 @@ import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, L
 import type { LucideIcon } from 'lucide-react';
 import { repetiteurApi, quizApi } from '@/lib/api';
 import AssistantWidget from '@/components/AssistantWidget';
+import ErrorState from '@/components/ErrorState';
 import { niveauLabel, tarifLabel, CYCLES, niveauxDuCycle } from '@/lib/constants';
 import { useAuthStore } from '@/store/authStore';
 import type { Repetiteur, QuizSummary, Cycle, Niveau } from '@/types';
@@ -28,10 +29,17 @@ export default function HomePage() {
   const [quizzes, setQuizzes] = useState<QuizSummary[]>([]);
   const [cycle, setCycle] = useState<Cycle | ''>('');
   const [niveau, setNiveau] = useState<Niveau | ''>('');
+  // Une panne d'API ne doit pas ressembler à "aucune offre" — sans ceci, un
+  // visiteur qui tombe sur un accueil vide pendant une panne réelle en
+  // conclut à tort que Gandal n'a ni enseignant ni quiz.
+  const [repetiteursError, setRepetiteursError] = useState(false);
+  const [quizzesError, setQuizzesError] = useState(false);
 
-  useEffect(() => {
-    repetiteurApi.list({}).then(d => setRepetiteurs(d.repetiteurs.slice(0, 4))).catch(() => {});
-  }, []);
+  const chargerRepetiteurs = () => {
+    setRepetiteursError(false);
+    repetiteurApi.list({}).then(d => setRepetiteurs(d.repetiteurs.slice(0, 4))).catch(() => setRepetiteursError(true));
+  };
+  useEffect(chargerRepetiteurs, []);
 
   // Pré-sélectionne le niveau de l'élève connecté, sans l'imposer (il peut changer).
   useEffect(() => {
@@ -41,9 +49,11 @@ export default function HomePage() {
     }
   }, [user]);
 
-  useEffect(() => {
-    quizApi.list({ niveau: niveau || undefined }).then(d => setQuizzes(d.quizzes.slice(0, 6))).catch(() => {});
-  }, [niveau]);
+  const chargerQuizzes = () => {
+    setQuizzesError(false);
+    quizApi.list({ niveau: niveau || undefined }).then(d => setQuizzes(d.quizzes.slice(0, 6))).catch(() => setQuizzesError(true));
+  };
+  useEffect(chargerQuizzes, [niveau]);
 
   return (
     <>
@@ -108,7 +118,9 @@ export default function HomePage() {
             Voir tout <ArrowRight size={14} />
           </Link>
         </div>
-        {repetiteurs.length === 0 ? (
+        {repetiteursError ? (
+          <ErrorState message="Impossible de charger les enseignants." onRetry={chargerRepetiteurs} />
+        ) : repetiteurs.length === 0 ? (
           <p className="text-ink/50 text-sm">Aucun enseignant disponible pour le moment.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -161,7 +173,9 @@ export default function HomePage() {
           )}
         </div>
 
-        {quizzes.length === 0 ? (
+        {quizzesError ? (
+          <ErrorState message="Impossible de charger les quiz." onRetry={chargerQuizzes} />
+        ) : quizzes.length === 0 ? (
           <p className="text-ink/50 text-sm text-center">Aucun quiz publié pour le moment.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

@@ -10,15 +10,22 @@ import type { LucideIcon } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { adminApi } from '@/lib/api';
 import StatCard from '@/components/StatCard';
+import ErrorState from '@/components/ErrorState';
 import type { AdminStats } from '@/types';
 
 export default function AdminOverviewPage() {
   const { user } = useAuthStore();
   const [stats, setStats] = useState<AdminStats | null>(null);
+  // Avant ce fix, une panne laissait "Chargement des statistiques..."
+  // affiché indéfiniment, sans distinction avec un chargement normal.
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
-    adminApi.stats().then(setStats).catch(() => {});
-  }, []);
+  const charger = () => {
+    setError(false);
+    adminApi.stats().then(setStats).catch(() => setError(true));
+  };
+
+  useEffect(charger, []);
 
   return (
     <div className="space-y-6">
@@ -27,7 +34,9 @@ export default function AdminOverviewPage() {
         <p className="text-ink/50 text-sm">Aperçu de la plateforme Gandal</p>
       </div>
 
-      {!stats ? (
+      {error ? (
+        <ErrorState message="Impossible de charger les statistiques." onRetry={charger} />
+      ) : !stats ? (
         <p className="text-sm text-ink/50">Chargement des statistiques...</p>
       ) : (
         <>
