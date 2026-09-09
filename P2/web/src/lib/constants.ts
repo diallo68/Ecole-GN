@@ -18,11 +18,14 @@ export const tarifLabel = (t?: { montant: number; periode: TarifPeriode }): stri
 
 // Programme officiel guinéen — le primaire a son propre programme, distinct
 // du collège/lycée (pas de matières scientifiques séparées, le français est
-// décomposé en Lecture/Langage/Écriture). Au collège, matières communes à
+// décomposé en Lecture/Langage/Écriture). CM1/CM2 (fin du primaire) ajoutent
+// l'éveil scientifique et social — Sciences, Histoire, Géographie — absent
+// des classes précédentes (CP1 à CE2). Au collège, matières communes à
 // tous. Au lycée, chaque série (filière) a son propre programme — ce ne sont
 // PAS les mêmes matières d'une série à l'autre (ex : pas de Physique/Chimie
 // en Sciences Sociales).
 export const MATIERES_PRIMAIRE = ['Lecture', 'Langage', 'Écriture', 'Calcul', 'Dessin', 'Récitation', 'Chant'];
+export const MATIERES_PRIMAIRE_CM = [...MATIERES_PRIMAIRE, 'Sciences', 'Histoire', 'Géographie'];
 export const MATIERES_COLLEGE = ['Mathématiques', 'Physique', 'Chimie', 'Français', 'Histoire', 'Géographie', 'Biologie', 'Éducation civique et Morale', 'Anglais'];
 export const MATIERES_LYCEE_SM = ['Mathématiques', 'Physique', 'Chimie', 'Français', 'Philosophie', 'Anglais', 'Économie'];
 export const MATIERES_LYCEE_SS = ['Français', 'Philosophie', 'Économie', 'Mathématiques', 'Anglais', 'Géographie', 'Histoire'];
@@ -30,26 +33,28 @@ export const MATIERES_LYCEE_SE = ['Français', 'Biologie', 'Mathématiques', 'Ph
 // Liste globale (union, dédupliquée) pour les contextes sans niveau précis
 // (matières enseignées par un enseignant, icônes...).
 export const MATIERES = Array.from(new Set([
-  ...MATIERES_PRIMAIRE, ...MATIERES_COLLEGE, ...MATIERES_LYCEE_SM, ...MATIERES_LYCEE_SS, ...MATIERES_LYCEE_SE,
+  ...MATIERES_PRIMAIRE_CM, ...MATIERES_COLLEGE, ...MATIERES_LYCEE_SM, ...MATIERES_LYCEE_SS, ...MATIERES_LYCEE_SE,
 ]));
 
 const MATIERES_LYCEE_PAR_FILIERE: Record<Filiere, string[]> = { sm: MATIERES_LYCEE_SM, ss: MATIERES_LYCEE_SS, se: MATIERES_LYCEE_SE };
 
 // À utiliser quand le niveau précis est connu (cas courant : le lycée a
-// besoin de la filière, pas seulement du cycle).
+// besoin de la filière, pas seulement du cycle ; le primaire a besoin de
+// distinguer CM1/CM2 du reste).
 export const matieresDuNiveau = (niveau: Niveau): string[] => {
   const n = NIVEAUX.find(x => x.value === niveau);
   if (!n) return MATIERES_COLLEGE;
-  if (n.cycle === 'primaire') return MATIERES_PRIMAIRE;
+  if (n.cycle === 'primaire') return (niveau === 'cm1' || niveau === 'cm2') ? MATIERES_PRIMAIRE_CM : MATIERES_PRIMAIRE;
   if (n.cycle === 'college') return MATIERES_COLLEGE;
   return MATIERES_LYCEE_PAR_FILIERE[n.filiere || 'sm'];
 };
 
 // Conservé pour les contextes qui n'ont que le cycle (primaire/collège
 // uniquement — le lycée doit passer par matieresDuNiveau ou matieresDuCycle
-// avec une filière explicite).
+// avec une filière explicite). Pour le primaire, renvoie le programme complet
+// CM1/CM2 (superset) faute de savoir quelle classe précise est visée.
 export const matieresDuCycle = (cycle: Cycle, filiere?: Filiere): string[] => {
-  if (cycle === 'primaire') return MATIERES_PRIMAIRE;
+  if (cycle === 'primaire') return MATIERES_PRIMAIRE_CM;
   if (cycle === 'college') return MATIERES_COLLEGE;
   return MATIERES_LYCEE_PAR_FILIERE[filiere || 'sm'];
 };

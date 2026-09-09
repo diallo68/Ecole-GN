@@ -17,6 +17,7 @@ const MATIERE_ICONS: Record<string, LucideIcon> = {
   'Physique': Atom,
   'Chimie': FlaskConical,
   'Biologie': Leaf,
+  'Sciences': Leaf,
   'Histoire': Landmark,
   'Géographie': Map,
 };
