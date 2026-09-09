@@ -4,28 +4,36 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   Star, Wallet, CalendarCheck, ToggleLeft, ToggleRight, MessageCircle,
-  ArrowRight, Video, BookOpen, UserCog, GraduationCap, ClipboardList,
+  ArrowRight, Video, BookOpen, UserCog, GraduationCap, ClipboardList, Users,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
-import { reservationApi, messagingApi, quizApi } from '@/lib/api';
+import { reservationApi, messagingApi, quizApi, authApi } from '@/lib/api';
 import { tarifLabel } from '@/lib/constants';
 import StatCard from '@/components/StatCard';
-import type { Reservation, Conversation, QuizAttempt, User } from '@/types';
+import type { Reservation, Conversation, QuizAttempt, User, Enfant } from '@/types';
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [tentatives, setTentatives] = useState<QuizAttempt[]>([]);
+  const [enfants, setEnfants] = useState<Enfant[]>([]);
 
   useEffect(() => {
     if (!user) return;
     const fetcher = user.role === 'repetiteur' ? reservationApi.agenda : reservationApi.mine;
     fetcher().then(d => setReservations(d.reservations)).catch(() => {});
     messagingApi.conversations().then(d => setConversations(d.conversations)).catch(() => {});
-    if (user.role !== 'repetiteur') {
+    // Les quiz et les enfants liés ne concernent respectivement que les
+    // élèves et les parents — un compte parent n'a jamais de tentative de
+    // quiz (ce n'est pas lui qui les passe), et cette stat vide n'a pas de
+    // sens à lui montrer.
+    if (user.role === 'eleve') {
       quizApi.mesTentatives().then(d => setTentatives(d.tentatives)).catch(() => {});
+    }
+    if (user.role === 'parent') {
+      authApi.mesEnfants().then(d => setEnfants(d.enfants)).catch(() => {});
     }
   }, [user]);
 
@@ -47,8 +55,13 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* Trois vues distinctes : un compte parent affichait jusqu'ici le
+          même tableau de bord qu'un élève (stats "Quiz complétés"/"Score
+          moyen quiz" toujours vides puisqu'un parent ne passe pas de quiz). */}
       {user.role === 'repetiteur' ? (
         <EnseignantHome user={user} reservations={reservations} aVenir={aVenir} prochaine={prochaine} />
+      ) : user.role === 'parent' ? (
+        <ParentHome aVenir={aVenir} prochaine={prochaine} enfants={enfants} />
       ) : (
         <EleveHome user={user} reservations={reservations} aVenir={aVenir} prochaine={prochaine} tentatives={tentatives} />
       )}
@@ -115,6 +128,24 @@ function EleveHome({ aVenir, prochaine, tentatives }: { user: User; reservations
           </div>
         </div>
       )}
+    </>
+  );
+}
+
+function ParentHome({ aVenir, prochaine, enfants }: { aVenir: Reservation[]; prochaine?: Reservation; enfants: Enfant[] }) {
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-3">
+        <StatCard icon={CalendarCheck} label="Sessions à venir" value={aVenir.length} />
+        <StatCard icon={Users} label="Enfants liés" value={enfants.length} tone={enfants.length === 0 ? 'flag' : 'brand'} />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <QuickAction href="/repetiteurs" icon={GraduationCap} label="Trouver un enseignant" desc="Réservez un cours pour votre enfant" />
+        <QuickAction href="/profil" icon={Users} label="Mes enfants" desc={enfants.length === 0 ? 'Lier le compte de votre enfant' : 'Gérer les comptes liés'} />
+      </div>
+
+      <AgendaSection title="Réservations" prochaine={prochaine} aVenir={aVenir} emptyLabel="Aucune réservation pour l'instant." />
     </>
   );
 }
