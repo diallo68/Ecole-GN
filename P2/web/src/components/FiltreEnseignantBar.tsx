@@ -12,9 +12,9 @@ const TARIF_MAX_OPTIONS = [
   { value: '300000', label: "Jusqu'à 300 000 GNF" },
 ];
 
-// Filtres de recherche d'enseignants — vivent dans la navbar (accessibles
-// sur toutes les pages) et pilotent le bloc de résultats TrouverEnseignant
-// via le store partagé useFiltreEnseignantStore.
+// Filtres de recherche d'enseignants — vivent dans TrouverEnseignant (donc
+// uniquement sur /repetiteurs, là où ils ont un effet visible) et pilotent
+// les résultats via le store partagé useFiltreEnseignantStore.
 export default function FiltreEnseignantBar({ vertical = false }: { vertical?: boolean }) {
   const { matiere, tarifMax, ville, disponibilite, setMatiere, setTarifMax, setVille, setDisponibilite } = useFiltreEnseignantStore();
 

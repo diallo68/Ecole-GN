@@ -2,21 +2,24 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Search } from 'lucide-react';
+import { Search, SlidersHorizontal } from 'lucide-react';
 import { repetiteurApi } from '@/lib/api';
 import { tarifLabel } from '@/lib/constants';
 import { useFiltreEnseignantStore } from '@/store/filtreEnseignantStore';
+import FiltreEnseignantBar from './FiltreEnseignantBar';
 import type { Repetiteur } from '@/types';
 
-// Bloc résultats de recherche d'enseignants — utilisé à la fois sur la page
-// dédiée /repetiteurs et directement sur l'accueil. Les filtres eux-mêmes
-// (matière/tarif/ville/disponibilité) vivent dans la navbar globale et sont
-// partagés via useFiltreEnseignantStore.
+// Bloc résultats de recherche d'enseignants — utilisé sur la page dédiée
+// /repetiteurs. Les filtres (matière/tarif/ville/disponibilité) vivent ici,
+// à l'endroit où ils ont un effet visible — ils vivaient auparavant dans la
+// navbar globale et apparaissaient donc aussi sur /login, /quiz, etc.
 export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' | 'h2' }) {
   const { matiere, tarifMax, ville, disponibilite } = useFiltreEnseignantStore();
   const [repetiteurs, setRepetiteurs] = useState<Repetiteur[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [filtresOpen, setFiltresOpen] = useState(false);
+  const filtresActifs = [matiere, tarifMax, ville, disponibilite].filter(Boolean).length;
 
   useEffect(() => {
     setLoading(true);
@@ -45,11 +48,29 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
     <div>
       <Titre className="text-2xl md:text-3xl font-bold tracking-tight text-ink mb-5">Trouver un enseignant</Titre>
 
-      <div className="relative sm:max-w-xs mb-8">
-        <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30" />
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Nom ou mot-clé..."
-          className="w-full border border-ink/10 rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none focus:border-brand bg-white" />
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
+        <div className="relative sm:max-w-xs">
+          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Nom ou mot-clé..."
+            className="w-full border border-ink/10 rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none focus:border-brand bg-white" />
+        </div>
+
+        {/* Desktop : filtres directement visibles */}
+        <div className="hidden lg:block">
+          <FiltreEnseignantBar />
+        </div>
+        {/* Mobile/tablette : bouton dépliable, avec le nombre de filtres actifs */}
+        <button onClick={() => setFiltresOpen(o => !o)}
+          className="lg:hidden flex items-center gap-1.5 text-xs font-semibold text-ink/60 border border-ink/10 rounded-full px-3 py-2 self-start">
+          <SlidersHorizontal size={13} /> Filtres{filtresActifs > 0 ? ` (${filtresActifs})` : ''}
+        </button>
       </div>
+
+      {filtresOpen && (
+        <div className="lg:hidden mb-6 p-3 bg-white border border-ink/10 rounded-xl">
+          <FiltreEnseignantBar vertical />
+        </div>
+      )}
 
       {loading ? (
         <p className="text-ink/50 text-sm">Chargement...</p>
