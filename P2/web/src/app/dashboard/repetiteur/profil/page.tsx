@@ -59,7 +59,7 @@ export default function RepetiteurProfilPage() {
   if (!user || user.role !== 'repetiteur') return null;
 
   return (
-    <div className="max-w-xl mx-auto bg-white rounded-xl border border-ink/10 p-6">
+    <div className="max-w-xl mx-auto bg-white rounded-2xl border border-ink/10 p-6">
       <h1 className="text-xl font-bold mb-4">Mon profil enseignant</h1>
 
       {!user.repetiteur?.valide && (

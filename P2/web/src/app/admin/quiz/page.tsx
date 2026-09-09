@@ -48,7 +48,7 @@ export default function AdminQuizPage() {
       ) : (
         <div className="space-y-3">
           {quizzes.map(q => (
-            <div key={q._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-center justify-between">
+            <div key={q._id} className="bg-white rounded-2xl border border-ink/10 p-4 flex items-center justify-between">
               <div>
                 <p className="font-semibold">{q.titre}</p>
                 <p className="text-sm text-ink-muted">{q.matiere} · {niveauLabel(q.niveau)} · {q.questions.length} questions</p>

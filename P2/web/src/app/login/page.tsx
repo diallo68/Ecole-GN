@@ -31,7 +31,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-sm mx-auto bg-white rounded-xl border border-ink/10 overflow-hidden">
+    <div className="max-w-sm mx-auto bg-white rounded-2xl border border-ink/10 overflow-hidden">
       {/* Titre de page pour la structure/lecteur d'écran — les onglets ci-dessous
           jouent déjà ce rôle visuellement, un second H1 visible ferait doublon. */}
       <h1 className="sr-only">Se connecter à Gandal</h1>

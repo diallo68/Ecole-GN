@@ -52,7 +52,7 @@ export default function RepetiteurClassesPage() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="bg-white rounded-xl border border-ink/10 p-4 h-fit">
+      <div className="bg-white rounded-2xl border border-ink/10 p-4 h-fit">
         <h2 className="font-bold mb-3">Planifier une classe virtuelle</h2>
         <div className="space-y-2">
           <input placeholder="Titre (ex: Révisions Bac blanc)" value={titre} onChange={e => setTitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
@@ -73,7 +73,7 @@ export default function RepetiteurClassesPage() {
           {classes.length === 0 ? (
             <p className="text-ink-muted text-sm">Aucune classe planifiée.</p>
           ) : classes.map(c => (
-            <div key={c._id} className="bg-white rounded-xl border border-ink/10 p-4">
+            <div key={c._id} className="bg-white rounded-2xl border border-ink/10 p-4">
               <p className="font-semibold">{c.titre}</p>
               <p className="text-sm text-ink-muted">{c.matiere} · {niveauLabel(c.niveau)} · {new Date(c.dateHeure).toLocaleString('fr-FR')}</p>
               <a href={c.lienVisio} target="_blank" rel="noreferrer" className="text-sm text-brand font-semibold">Lien de la salle →</a>
@@ -86,7 +86,7 @@ export default function RepetiteurClassesPage() {
           {reservations.length === 0 ? (
             <p className="text-ink-muted text-sm">Aucune réservation pour l'instant.</p>
           ) : reservations.map(r => (
-            <div key={r._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-center justify-between gap-3">
+            <div key={r._id} className="bg-white rounded-2xl border border-ink/10 p-4 flex items-center justify-between gap-3">
               <div>
                 <p className="font-semibold">{r.matiere} · {niveauLabel(r.niveau)}</p>
                 <p className="text-sm text-ink-muted">

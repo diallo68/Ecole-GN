@@ -98,7 +98,7 @@ export default function RepetiteurContenuPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1 bg-white rounded-xl border border-ink/10 p-4 h-fit">
+        <div className="lg:col-span-1 bg-white rounded-2xl border border-ink/10 p-4 h-fit">
           <h2 className="font-bold mb-3">Publier {type === 'video' ? 'une vidéo' : type === 'support' ? 'un support' : 'un exercice'}</h2>
           <div className="space-y-2">
             <input placeholder="Titre" value={titre} onChange={e => setTitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
@@ -134,7 +134,7 @@ export default function RepetiteurContenuPage() {
             type === 'exercice'
               ? <ExerciceCard key={item._id} item={item} onDelete={() => supprimer(item._id)} />
               : (
-                <div key={item._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-start justify-between">
+                <div key={item._id} className="bg-white rounded-2xl border border-ink/10 p-4 flex items-start justify-between">
                   <div>
                     <p className="font-semibold">{item.titre}</p>
                     <p className="text-sm text-ink-muted">{item.matiere} · {niveauLabel(item.niveau)}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
@@ -165,7 +165,7 @@ function ExerciceCard({ item, onDelete }: { item: ContentItem; onDelete: () => v
   const rendus = soumissions?.filter(s => s.statut === 'rendu').length ?? null;
 
   return (
-    <div className="bg-white rounded-xl border border-ink/10 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-ink/10 overflow-hidden">
       <div className="p-4 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-semibold">{item.titre}</p>

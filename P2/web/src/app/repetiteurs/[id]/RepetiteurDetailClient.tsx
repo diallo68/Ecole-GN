@@ -117,7 +117,7 @@ export default function RepetiteurDetailClient() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 bg-white rounded-xl border border-ink/10 p-6">
+      <div className="lg:col-span-2 bg-white rounded-2xl border border-ink/10 p-6">
         <div className="flex items-center gap-2 flex-wrap">
           <h1 className="text-2xl font-bold">{repetiteur.prenom} {repetiteur.nom}</h1>
           {repetiteur.repetiteur.valide ? (
@@ -165,7 +165,7 @@ export default function RepetiteurDetailClient() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-ink/10 p-6 h-fit">
+      <div className="bg-white rounded-2xl border border-ink/10 p-6 h-fit">
         <h2 className="font-bold mb-3">Réserver une session</h2>
 
         {parentSansEnfant ? (

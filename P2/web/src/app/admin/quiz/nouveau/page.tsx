@@ -63,7 +63,7 @@ export default function NouveauQuizPage() {
         Vérifie les réponses et les explications avant de publier — le quiz est visible immédiatement.
       </p>
 
-      <div className="bg-white rounded-xl border border-ink/10 p-4 mb-6 space-y-3">
+      <div className="bg-white rounded-2xl border border-ink/10 p-4 mb-6 space-y-3">
         <label htmlFor="quiz-titre" className="sr-only">Titre du quiz</label>
         <input id="quiz-titre" placeholder="Titre du quiz" value={titre} onChange={e => setTitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2" />
         <div className="flex flex-col sm:flex-row gap-3">
@@ -84,7 +84,7 @@ export default function NouveauQuizPage() {
 
       <div className="space-y-4">
         {questions.map((q, qi) => (
-          <div key={qi} className="bg-white rounded-xl border border-ink/10 p-4">
+          <div key={qi} className="bg-white rounded-2xl border border-ink/10 p-4">
             <div className="flex items-center justify-between mb-2">
               <p className="font-semibold" id={`quiz-question-${qi}`}>Question {qi + 1}</p>
               {questions.length > 1 && (

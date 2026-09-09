@@ -101,7 +101,7 @@ function QuizListContent() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {quizzes.map(q => (
-            <Link key={q._id} href={`/quiz/${q._id}`} className="bg-white rounded-xl border border-ink/10 p-4 hover:shadow-md transition-shadow">
+            <Link key={q._id} href={`/quiz/${q._id}`} className="bg-white rounded-2xl border border-ink/10 p-4 hover:shadow-md transition-shadow">
               <p className="font-bold">{q.titre}</p>
               <p className="text-sm text-ink-muted">{q.matiere} · {niveauLabel(q.niveau)}</p>
             </Link>

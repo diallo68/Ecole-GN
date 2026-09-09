@@ -51,7 +51,7 @@ export default function AdminRepetiteursPage() {
       ) : (
         <div className="space-y-3">
           {repetiteurs.map(r => (
-            <div key={r._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-center justify-between gap-3">
+            <div key={r._id} className="bg-white rounded-2xl border border-ink/10 p-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
                 {r.photo ? (
                   <img src={r.photo} alt="" className="w-11 h-11 rounded-full object-cover border border-ink/10 shrink-0" />
