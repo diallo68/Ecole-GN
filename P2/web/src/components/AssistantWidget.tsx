@@ -50,7 +50,7 @@ export default function AssistantWidget() {
             <p className="font-semibold text-sm flex-1">Assistant Gandal</p>
             <button onClick={() => setOpen(false)} aria-label="Fermer"><X size={16} /></button>
           </div>
-          <div className="flex-1 overflow-y-auto p-3 space-y-2">
+          <div className="flex-1 overflow-y-auto p-3 space-y-2" role="log" aria-live="polite" aria-label="Conversation avec l'assistant">
             {messages.map((m, i) => (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${m.role === 'user' ? 'bg-brand text-white' : 'bg-sand text-ink'}`}>
@@ -66,16 +66,18 @@ export default function AssistantWidget() {
             <div ref={bottomRef} />
           </div>
           <div className="p-2.5 border-t border-ink/10 flex items-center gap-2">
-            <input value={text} onChange={e => setText(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
+            <label htmlFor="assistant-input" className="sr-only">Votre question</label>
+            <input id="assistant-input" value={text} onChange={e => setText(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
               disabled={unavailable} placeholder={unavailable ? 'Assistant indisponible' : 'Écris ta question...'}
               className="flex-1 border border-ink/15 rounded-full px-3.5 py-2 text-sm outline-none focus:border-brand disabled:opacity-50" />
-            <button onClick={send} disabled={loading || !text.trim() || unavailable} className="w-9 h-9 rounded-full bg-brand text-white grid place-items-center disabled:opacity-40 shrink-0">
+            <button onClick={send} disabled={loading || !text.trim() || unavailable} aria-label="Envoyer"
+              className="w-9 h-9 rounded-full bg-brand text-white grid place-items-center disabled:opacity-40 shrink-0">
               <Send size={14} />
             </button>
           </div>
         </div>
       )}
-      <button onClick={() => setOpen(o => !o)}
+      <button onClick={() => setOpen(o => !o)} aria-label={open ? "Fermer l'assistant" : "Ouvrir l'assistant"} aria-expanded={open}
         className="w-14 h-14 rounded-full bg-brand text-white shadow-lg grid place-items-center hover:bg-brand-dark transition-colors">
         {open ? <X size={22} /> : <MessageCircleQuestion size={24} />}
       </button>

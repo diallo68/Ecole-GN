@@ -153,21 +153,36 @@ export default function RepetiteurDetailPage() {
                 </select>
               </div>
             )}
-            <select value={matiere} onChange={e => setMatiere(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2">
-              {repetiteur.repetiteur.matieres?.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-            <select value={niveau} onChange={e => setNiveau(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2">
-              {repetiteur.repetiteur.niveaux?.map(n => <option key={n} value={n}>{niveauLabel(n)}</option>)}
-            </select>
-            <select value={mode} onChange={e => setMode(e.target.value as 'presentiel' | 'en_ligne')} className="w-full border border-ink/15 rounded-lg px-3 py-2">
-              <option value="en_ligne">En ligne (visio)</option>
-              <option value="presentiel">Présentiel</option>
-            </select>
+            <div>
+              <label htmlFor="reservation-matiere" className="block text-xs font-semibold text-ink/50 mb-1">Matière</label>
+              <select id="reservation-matiere" value={matiere} onChange={e => setMatiere(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2">
+                {repetiteur.repetiteur.matieres?.map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="reservation-niveau" className="block text-xs font-semibold text-ink/50 mb-1">Classe</label>
+              <select id="reservation-niveau" value={niveau} onChange={e => setNiveau(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2">
+                {repetiteur.repetiteur.niveaux?.map(n => <option key={n} value={n}>{niveauLabel(n)}</option>)}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="reservation-mode" className="block text-xs font-semibold text-ink/50 mb-1">Mode</label>
+              <select id="reservation-mode" value={mode} onChange={e => setMode(e.target.value as 'presentiel' | 'en_ligne')} className="w-full border border-ink/15 rounded-lg px-3 py-2">
+                <option value="en_ligne">En ligne (visio)</option>
+                <option value="presentiel">Présentiel</option>
+              </select>
+            </div>
             {mode === 'presentiel' && (
-              <input placeholder="Adresse" value={adresse} onChange={e => setAdresse(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2" />
+              <div>
+                <label htmlFor="reservation-adresse" className="block text-xs font-semibold text-ink/50 mb-1">Adresse</label>
+                <input id="reservation-adresse" placeholder="Adresse" value={adresse} onChange={e => setAdresse(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2" />
+              </div>
             )}
-            <input type="datetime-local" value={dateHeure} onChange={e => setDateHeure(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2" />
-            <button onClick={reserver} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
+            <div>
+              <label htmlFor="reservation-date" className="block text-xs font-semibold text-ink/50 mb-1">Date et heure</label>
+              <input id="reservation-date" type="datetime-local" value={dateHeure} onChange={e => setDateHeure(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2" />
+            </div>
+            <button onClick={reserver} disabled={loading} aria-busy={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
               {loading ? 'Envoi...' : 'Réserver'}
             </button>
           </div>

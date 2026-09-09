@@ -59,18 +59,25 @@ export default function NouveauQuizPage() {
     <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-1">Nouveau quiz</h1>
       <p className="text-ink/60 mb-6 text-sm">
-        Contenu généré par IA en amont (voir cahier des charges §5.3) — relis attentivement avant de publier.
+        Vérifie les réponses et les explications avant de publier — le quiz est visible immédiatement.
       </p>
 
       <div className="bg-white rounded-xl border border-ink/10 p-4 mb-6 space-y-3">
-        <input placeholder="Titre du quiz" value={titre} onChange={e => setTitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2" />
+        <label htmlFor="quiz-titre" className="sr-only">Titre du quiz</label>
+        <input id="quiz-titre" placeholder="Titre du quiz" value={titre} onChange={e => setTitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2" />
         <div className="flex gap-3">
-          <select value={niveau} onChange={e => changerNiveau(e.target.value as Niveau)} className="flex-1 border border-ink/15 rounded-lg px-3 py-2">
-            {NIVEAUX.map(n => <option key={n.value} value={n.value}>{n.label}</option>)}
-          </select>
-          <select value={matiere} onChange={e => setMatiere(e.target.value)} className="flex-1 border border-ink/15 rounded-lg px-3 py-2">
-            {matieresDisponibles.map(m => <option key={m} value={m}>{m}</option>)}
-          </select>
+          <div className="flex-1">
+            <label htmlFor="quiz-niveau" className="sr-only">Niveau</label>
+            <select id="quiz-niveau" value={niveau} onChange={e => changerNiveau(e.target.value as Niveau)} className="w-full border border-ink/15 rounded-lg px-3 py-2">
+              {NIVEAUX.map(n => <option key={n.value} value={n.value}>{n.label}</option>)}
+            </select>
+          </div>
+          <div className="flex-1">
+            <label htmlFor="quiz-matiere" className="sr-only">Matière</label>
+            <select id="quiz-matiere" value={matiere} onChange={e => setMatiere(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2">
+              {matieresDisponibles.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -78,23 +85,27 @@ export default function NouveauQuizPage() {
         {questions.map((q, qi) => (
           <div key={qi} className="bg-white rounded-xl border border-ink/10 p-4">
             <div className="flex items-center justify-between mb-2">
-              <p className="font-semibold">Question {qi + 1}</p>
+              <p className="font-semibold" id={`quiz-question-${qi}`}>Question {qi + 1}</p>
               {questions.length > 1 && (
-                <button onClick={() => setQuestions(prev => prev.filter((_, i) => i !== qi))} className="text-red-500 text-xs hover:underline">Retirer</button>
+                <button onClick={() => setQuestions(prev => prev.filter((_, i) => i !== qi))} className="text-red-500 text-xs hover:underline">Retirer la question {qi + 1}</button>
               )}
             </div>
-            <input placeholder="Énoncé de la question" value={q.question} onChange={e => updateQuestion(qi, { question: e.target.value })}
+            <label htmlFor={`quiz-enonce-${qi}`} className="sr-only">Énoncé de la question {qi + 1}</label>
+            <input id={`quiz-enonce-${qi}`} placeholder="Énoncé de la question" value={q.question} onChange={e => updateQuestion(qi, { question: e.target.value })}
               className="w-full border border-ink/15 rounded-lg px-3 py-2 mb-2 text-sm" />
-            <div className="space-y-1.5 mb-2">
+            <div className="space-y-1.5 mb-2" role="radiogroup" aria-labelledby={`quiz-question-${qi}`}>
               {q.choix.map((c, ci) => (
                 <div key={ci} className="flex items-center gap-2">
-                  <input type="radio" checked={q.reponseCorrecte === ci} onChange={() => updateQuestion(qi, { reponseCorrecte: ci })} />
-                  <input placeholder={`Choix ${ci + 1}`} value={c} onChange={e => updateChoix(qi, ci, e.target.value)}
+                  <input type="radio" checked={q.reponseCorrecte === ci} onChange={() => updateQuestion(qi, { reponseCorrecte: ci })}
+                    aria-label={`Choix ${ci + 1} est la bonne réponse`} />
+                  <label htmlFor={`quiz-choix-${qi}-${ci}`} className="sr-only">Choix {ci + 1}</label>
+                  <input id={`quiz-choix-${qi}-${ci}`} placeholder={`Choix ${ci + 1}`} value={c} onChange={e => updateChoix(qi, ci, e.target.value)}
                     className="flex-1 border border-ink/15 rounded-lg px-3 py-1.5 text-sm" />
                 </div>
               ))}
             </div>
-            <input placeholder="Explication de la bonne réponse" value={q.explication} onChange={e => updateQuestion(qi, { explication: e.target.value })}
+            <label htmlFor={`quiz-explication-${qi}`} className="sr-only">Explication de la bonne réponse, question {qi + 1}</label>
+            <input id={`quiz-explication-${qi}`} placeholder="Explication de la bonne réponse" value={q.explication} onChange={e => updateQuestion(qi, { explication: e.target.value })}
               className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
           </div>
         ))}

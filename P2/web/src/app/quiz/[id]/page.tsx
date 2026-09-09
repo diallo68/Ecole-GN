@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
@@ -27,6 +27,17 @@ export default function QuizPlayPage() {
   // signe visible était un toast déjà disparu.
   const [notFound, setNotFound] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const questionRef = useRef<HTMLDivElement>(null);
+  const firstQuestion = useRef(true);
+
+  // Déplace le focus vers l'énoncé à chaque changement de question — sans
+  // ça le focus clavier reste sur le bouton "Suivant" pendant que le
+  // contenu change sous lui, invisible pour qui n'utilise pas la souris.
+  // Pas au tout premier rendu : on ne vole pas le focus à l'arrivée sur la page.
+  useEffect(() => {
+    if (firstQuestion.current) { firstQuestion.current = false; return; }
+    questionRef.current?.focus();
+  }, [currentIndex]);
 
   const chargerQuiz = () => {
     setNotFound(false);
@@ -129,18 +140,24 @@ export default function QuizPlayPage() {
         // ── Une question à la fois ────────────────────────────────────────
         <>
           <div className="flex flex-col gap-2 mb-6">
-            <div className="h-1.5 rounded-full bg-ink/10 overflow-hidden">
+            <div className="h-1.5 rounded-full bg-ink/10 overflow-hidden" role="progressbar" aria-valuenow={currentIndex + 1} aria-valuemin={1} aria-valuemax={quiz.questions.length}>
               <div className="h-full bg-brand rounded-full transition-all duration-300" style={{ width: `${((currentIndex + 1) / quiz.questions.length) * 100}%` }} />
             </div>
             <span className="text-xs font-semibold text-ink/40">Question {currentIndex + 1} sur {quiz.questions.length}</span>
           </div>
 
-          <QuestionCard
-            q={quiz.questions[currentIndex]}
-            index={currentIndex}
-            selected={reponses[currentIndex]}
-            onSelect={ci => choisir(currentIndex, ci)}
-          />
+          {/* tabIndex=-1 + focus() au changement de question (voir l'effet
+              plus haut) : un lecteur d'écran ou un utilisateur clavier voit
+              autrement le focus rester sur le bouton "Suivant" pendant que le
+              contenu change sous lui, sans annonce du changement. */}
+          <div ref={questionRef} tabIndex={-1} className="outline-none">
+            <QuestionCard
+              q={quiz.questions[currentIndex]}
+              index={currentIndex}
+              selected={reponses[currentIndex]}
+              onSelect={ci => choisir(currentIndex, ci)}
+            />
+          </div>
 
           <div className="flex items-center justify-between mt-6">
             <button onClick={() => setCurrentIndex(i => Math.max(0, i - 1))} disabled={currentIndex === 0}
@@ -174,10 +191,16 @@ function QuestionCard({ q, index, selected, correction, onSelect, disabled }: {
   onSelect: (choixIndex: number) => void;
   disabled?: boolean;
 }) {
+  const questionId = `question-${index}`;
   return (
     <div className="bg-white rounded-2xl border border-ink/10 p-5">
-      <p className="font-semibold mb-3">{index + 1}. {q.question}</p>
-      <div className="space-y-2">
+      <p id={questionId} className="font-semibold mb-3">{index + 1}. {q.question}</p>
+      {/* Choix exprimés comme de vrais radios (un seul choix possible par
+          question) — auparavant de simples boutons distingués uniquement par
+          la couleur, invisibles pour un lecteur d'écran ou en cas de
+          daltonisme. La correction ajoute un texte ("Bonne réponse" /
+          "Votre réponse"), pas seulement une couleur. */}
+      <div className="space-y-2" role="radiogroup" aria-labelledby={questionId}>
         {q.choix.map((c, ci) => {
           const isSelected = selected === ci;
           const isCorrectAnswer = correction && correction.reponseCorrecte === ci;
@@ -188,10 +211,18 @@ function QuestionCard({ q, index, selected, correction, onSelect, disabled }: {
           } else if (isSelected) style = 'border-brand bg-brand-light';
 
           return (
-            <button key={ci} disabled={disabled} onClick={() => onSelect(ci)}
-              className={`w-full text-left border rounded-lg px-3 py-2.5 text-sm transition-colors ${style}`}>
-              {c}
-            </button>
+            <label key={ci}
+              className={`flex items-center gap-2.5 border rounded-lg px-3 py-2.5 text-sm transition-colors ${style} ${disabled ? '' : 'cursor-pointer'}`}>
+              <input type="radio" name={questionId} value={ci} checked={isSelected} disabled={disabled}
+                onChange={() => onSelect(ci)} className="shrink-0 accent-brand w-4 h-4" />
+              <span className="flex-1">{c}</span>
+              {correction && isCorrectAnswer && (
+                <span className="text-xs font-bold text-green-700 shrink-0">✓ Bonne réponse</span>
+              )}
+              {correction && isSelected && !correction.correct && !isCorrectAnswer && (
+                <span className="text-xs font-bold text-red-700 shrink-0">Votre réponse</span>
+              )}
+            </label>
           );
         })}
       </div>

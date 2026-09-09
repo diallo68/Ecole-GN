@@ -208,7 +208,8 @@ function MesEnfants() {
       )}
 
       <div className="flex gap-2">
-        <input type="email" placeholder="Email du compte élève de ton enfant" value={email} onChange={e => setEmail(e.target.value)}
+        <label htmlFor="email-enfant" className="sr-only">Email du compte élève de ton enfant</label>
+        <input id="email-enfant" type="email" placeholder="Email du compte élève de ton enfant" value={email} onChange={e => setEmail(e.target.value)}
           className="flex-1 border border-ink/15 rounded-lg px-3 py-2 text-sm" />
         <button onClick={ajouter} disabled={loading} className="flex items-center gap-1.5 bg-ink text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-stone-800 disabled:opacity-50">
           <UserPlus size={15} /> Ajouter

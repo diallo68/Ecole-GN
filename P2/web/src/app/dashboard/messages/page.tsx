@@ -114,9 +114,10 @@ export default function MessagesPage() {
               <div ref={bottomRef} />
             </div>
             <div className="p-3 border-t border-ink/10 flex items-center gap-2">
-              <input value={text} onChange={e => setText(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
+              <label htmlFor="message-input" className="sr-only">Votre message</label>
+              <input id="message-input" value={text} onChange={e => setText(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
                 placeholder="Écris un message..." className="flex-1 border border-ink/15 rounded-full px-4 py-2 text-sm outline-none focus:border-brand" />
-              <button onClick={send} disabled={sending || !text.trim()} className="w-9 h-9 rounded-full bg-brand text-white grid place-items-center disabled:opacity-40 shrink-0">
+              <button onClick={send} disabled={sending || !text.trim()} aria-label="Envoyer" className="w-9 h-9 rounded-full bg-brand text-white grid place-items-center disabled:opacity-40 shrink-0">
                 <Send size={15} />
               </button>
             </div>

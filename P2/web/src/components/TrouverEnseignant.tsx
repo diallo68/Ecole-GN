@@ -51,7 +51,8 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
         <div className="relative sm:max-w-xs">
           <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Nom ou mot-clé..."
+          <label htmlFor="recherche-enseignant" className="sr-only">Rechercher un enseignant par nom ou mot-clé</label>
+          <input id="recherche-enseignant" value={search} onChange={e => setSearch(e.target.value)} placeholder="Nom ou mot-clé..."
             className="w-full border border-ink/10 rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none focus:border-brand bg-white" />
         </div>
 
