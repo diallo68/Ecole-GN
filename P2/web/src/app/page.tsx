@@ -148,7 +148,7 @@ export default function HomePage() {
         ) : repetiteurs.length === 0 ? (
           <p className="text-ink/50 text-sm">Aucun enseignant disponible pour le moment.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {repetiteurs.map(r => (
               <Link key={r._id} href={`/repetiteurs/${r._id}`} className="bg-white rounded-2xl border border-ink/10 p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all">
                 <div className="flex items-start justify-between mb-4">

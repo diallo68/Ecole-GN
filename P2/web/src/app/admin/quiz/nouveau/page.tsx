@@ -65,7 +65,7 @@ export default function NouveauQuizPage() {
       <div className="bg-white rounded-xl border border-ink/10 p-4 mb-6 space-y-3">
         <label htmlFor="quiz-titre" className="sr-only">Titre du quiz</label>
         <input id="quiz-titre" placeholder="Titre du quiz" value={titre} onChange={e => setTitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2" />
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1">
             <label htmlFor="quiz-niveau" className="sr-only">Niveau</label>
             <select id="quiz-niveau" value={niveau} onChange={e => changerNiveau(e.target.value as Niveau)} className="w-full border border-ink/15 rounded-lg px-3 py-2">

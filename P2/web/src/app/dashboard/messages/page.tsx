@@ -56,9 +56,11 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-ink/10 overflow-hidden grid grid-cols-1 md:grid-cols-[280px_1fr] h-[calc(100vh-180px)] min-h-[420px]">
-      {/* Liste des conversations */}
-      <div className={`border-r border-ink/10 overflow-y-auto ${activeId ? 'hidden md:block' : ''}`}>
+    <div className="bg-white rounded-2xl border border-ink/10 overflow-hidden grid grid-cols-1 lg:grid-cols-[280px_1fr] h-[calc(100dvh-180px)] min-h-[420px]">
+      {/* Deux colonnes seulement à partir de lg : à 768px, la sidebar du
+          dashboard ne laisse qu'environ 488px de large — une colonne de
+          conversations à 280px ne laisserait plus que ~208px au fil. */}
+      <div className={`border-r border-ink/10 overflow-y-auto ${activeId ? 'hidden lg:block' : ''}`}>
         <div className="p-4 border-b border-ink/10">
           <h1 className="font-bold text-ink">Messages</h1>
         </div>
@@ -95,7 +97,7 @@ export default function MessagesPage() {
         ) : (
           <>
             <div className="p-4 border-b border-ink/10 flex items-center gap-2">
-              <button onClick={() => router.push('/dashboard/messages')} className="md:hidden text-ink/50 text-sm mr-1">←</button>
+              <button onClick={() => router.push('/dashboard/messages')} className="lg:hidden text-ink/50 text-sm mr-1">←</button>
               <p className="font-semibold text-ink">
                 {active.participants.filter(p => p._id !== user?._id).map(p => `${p.prenom} ${p.nom}`).join(', ')}
               </p>
@@ -105,7 +107,7 @@ export default function MessagesPage() {
                 const mine = m.senderId === user?._id;
                 return (
                   <div key={m._id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm ${mine ? 'bg-brand text-white' : 'bg-sand text-ink'}`}>
+                    <div className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm [overflow-wrap:anywhere] ${mine ? 'bg-brand text-white' : 'bg-sand text-ink'}`}>
                       {m.text}
                     </div>
                   </div>

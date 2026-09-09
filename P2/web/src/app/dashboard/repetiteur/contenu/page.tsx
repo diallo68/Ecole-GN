@@ -96,8 +96,8 @@ export default function RepetiteurContenuPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-1 bg-white rounded-xl border border-ink/10 p-4 h-fit">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-1 bg-white rounded-xl border border-ink/10 p-4 h-fit">
           <h2 className="font-bold mb-3">Publier {type === 'video' ? 'une vidéo' : type === 'support' ? 'un support' : 'un exercice'}</h2>
           <div className="space-y-2">
             <input placeholder="Titre" value={titre} onChange={e => setTitre(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2 text-sm" />
@@ -128,7 +128,7 @@ export default function RepetiteurContenuPage() {
           </div>
         </div>
 
-        <div className="md:col-span-2 space-y-3">
+        <div className="lg:col-span-2 space-y-3">
           {items.length === 0 ? (
             <p className="text-ink/60 text-sm">Rien de publié pour l'instant dans cette catégorie.</p>
           ) : items.map(item => (

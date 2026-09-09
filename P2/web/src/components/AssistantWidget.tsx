@@ -43,8 +43,11 @@ export default function AssistantWidget() {
 
   return (
     <div className="fixed bottom-5 right-5 z-30">
+      {/* h-[min(420px,70dvh)] plutôt qu'une hauteur fixe : sur un petit
+          écran avec le clavier ouvert, 420px fixes peuvent dépasser la
+          zone visible réelle (100dvh suit les barres du navigateur mobile). */}
       {open && (
-        <div className="mb-3 w-[calc(100vw-2.5rem)] sm:w-80 h-[420px] bg-white rounded-2xl border border-ink/10 shadow-xl flex flex-col overflow-hidden">
+        <div className="mb-3 w-[calc(100vw-2.5rem)] sm:w-80 h-[min(420px,70dvh)] bg-white rounded-2xl border border-ink/10 shadow-xl flex flex-col overflow-hidden">
           <div className="bg-brand text-white px-4 py-3 flex items-center gap-2">
             <Sparkles size={16} />
             <p className="font-semibold text-sm flex-1">Assistant Gandal</p>
@@ -53,7 +56,7 @@ export default function AssistantWidget() {
           <div className="flex-1 overflow-y-auto p-3 space-y-2" role="log" aria-live="polite" aria-label="Conversation avec l'assistant">
             {messages.map((m, i) => (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${m.role === 'user' ? 'bg-brand text-white' : 'bg-sand text-ink'}`}>
+                <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm [overflow-wrap:anywhere] ${m.role === 'user' ? 'bg-brand text-white' : 'bg-sand text-ink'}`}>
                   {m.content}
                 </div>
               </div>

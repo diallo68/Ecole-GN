@@ -159,20 +159,23 @@ export default function QuizPlayPage() {
             />
           </div>
 
-          <div className="flex items-center justify-between mt-6">
+          {/* Empilées sous sm (l'action principale d'abord) : côte à côte,
+              "Précédent" et "Valider mes réponses" risquaient de se
+              comprimer l'une contre l'autre à 320px. */}
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between mt-6">
             <button onClick={() => setCurrentIndex(i => Math.max(0, i - 1))} disabled={currentIndex === 0}
-              className="flex items-center gap-1.5 text-sm font-semibold text-ink/60 hover:text-ink disabled:opacity-30">
+              className="flex items-center justify-center gap-1.5 text-sm font-semibold text-ink/60 hover:text-ink disabled:opacity-30">
               <ArrowLeft size={15} /> Précédent
             </button>
 
             {currentIndex < quiz.questions.length - 1 ? (
               <button onClick={() => setCurrentIndex(i => i + 1)} disabled={reponses[currentIndex] === null}
-                className="flex items-center gap-1.5 bg-brand text-white rounded-full px-6 py-2.5 font-semibold hover:bg-brand-dark disabled:opacity-40">
+                className="w-full sm:w-auto flex items-center justify-center gap-1.5 bg-brand text-white rounded-full px-6 py-2.5 font-semibold hover:bg-brand-dark disabled:opacity-40">
                 Suivant <ArrowRight size={15} />
               </button>
             ) : (
               <button onClick={soumettre} disabled={loading || reponses[currentIndex] === null}
-                className="bg-brand text-white rounded-full px-6 py-2.5 font-semibold hover:bg-brand-dark disabled:opacity-40">
+                className="w-full sm:w-auto bg-brand text-white rounded-full px-6 py-2.5 font-semibold hover:bg-brand-dark disabled:opacity-40">
                 {loading ? 'Correction...' : 'Valider mes réponses'}
               </button>
             )}

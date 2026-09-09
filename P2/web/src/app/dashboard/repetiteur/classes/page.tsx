@@ -50,7 +50,7 @@ export default function RepetiteurClassesPage() {
   if (!user || user.role !== 'repetiteur') return null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="bg-white rounded-xl border border-ink/10 p-4 h-fit">
         <h2 className="font-bold mb-3">Planifier une classe virtuelle</h2>
         <div className="space-y-2">
@@ -68,7 +68,7 @@ export default function RepetiteurClassesPage() {
         </div>
       </div>
 
-      <div className="md:col-span-2 space-y-6">
+      <div className="lg:col-span-2 space-y-6">
         <div className="space-y-3">
           <h2 className="font-bold">Mes classes virtuelles</h2>
           {classes.length === 0 ? (

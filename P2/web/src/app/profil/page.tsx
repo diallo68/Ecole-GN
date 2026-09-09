@@ -95,7 +95,7 @@ export default function ProfilPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-semibold mb-1">Prénom</label>
             <input value={prenom} onChange={e => setPrenom(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2" />
@@ -112,7 +112,7 @@ export default function ProfilPage() {
           <p className="text-xs text-ink/40 mt-1">L'email ne peut pas être modifié (identifiant de connexion).</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-semibold mb-1">Téléphone</label>
             <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="622 00 00 00" className="w-full border border-ink/15 rounded-lg px-3 py-2" />
