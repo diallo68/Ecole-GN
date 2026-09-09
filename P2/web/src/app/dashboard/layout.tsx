@@ -21,13 +21,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { href: '/dashboard', label: 'Accueil', icon: Home },
     { href: '/dashboard/messages', label: 'Messages', icon: MessageCircle },
   ];
+  // Même bug que le tableau de bord (voir ParentHome) : un parent tombait
+  // dans le "else" et se voyait proposer "Mes cours"/"Mes exercices",
+  // propres à un compte élève. Un parent n'a rien de propre à lui ici —
+  // "Mes enfants" vit dans /profil, déjà accessible depuis le menu du compte.
   if (user.role === 'repetiteur') {
     items.push(
       { href: '/dashboard/repetiteur/profil', label: 'Mon profil', icon: UserCog },
       { href: '/dashboard/repetiteur/contenu', label: 'Mon contenu', icon: BookOpen },
       { href: '/dashboard/repetiteur/classes', label: 'Classes virtuelles', icon: Video },
     );
-  } else {
+  } else if (user.role === 'eleve') {
     items.push(
       { href: '/dashboard/eleve/cours', label: 'Mes cours', icon: BookOpen },
       { href: '/dashboard/eleve/exercices', label: 'Mes exercices', icon: PenLine },
