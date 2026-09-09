@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { NIVEAUX_VALUES } = require('../utils/niveaux');
+const { TARIF_PERIODES } = require('../utils/repetiteurOptions');
 
 const ReservationSchema = new mongoose.Schema({
   eleveId:      { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -13,7 +14,8 @@ const ReservationSchema = new mongoose.Schema({
   adresse:      { type: String }, // si présentiel
   lienVisio:    { type: String }, // si en ligne (salle Jitsi générée)
   statut:       { type: String, enum: ['en_attente', 'confirmee', 'terminee', 'annulee'], default: 'en_attente' },
-  prix:         { type: Number }, // en GNF, snapshot du tarif au moment de la réservation
+  prix:         { type: Number }, // en GNF, snapshot de tarif.montant au moment de la réservation
+  prixPeriode:  { type: String, enum: TARIF_PERIODES }, // snapshot de tarif.periode — le prix seul ne dit pas si c'est /heure, /mois ou /an
   notes:        { type: String },
 }, { timestamps: true });
 

@@ -150,6 +150,50 @@ const authController = {
     await user.save();
     res.json({ success: true, user: user.toObject({ transform: (_, ret) => { delete ret.password; delete ret.verifyCode; delete ret.codeExpiry; delete ret.refreshToken; return ret; } }) });
   },
+
+  // ── Enfants liés à un compte parent ──────────────────────────────────
+  // Le lien parent-enfant n'est pas créé automatiquement à l'inscription
+  // (l'élève et le parent peuvent créer leur compte séparément, à des
+  // moments différents) : un parent l'établit ici via l'email de l'élève.
+  async mesEnfants(req, res) {
+    try {
+      const enfants = await User.find({ role: 'eleve', 'eleve.parentId': req.user.id })
+        .select('prenom nom email eleve.niveau');
+      res.json({ enfants });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
+  async ajouterEnfant(req, res) {
+    try {
+      const { email } = req.body;
+      const enfant = await User.findOne({ email: email.toLowerCase(), role: 'eleve' });
+      if (!enfant) return res.status(404).json({ error: "Aucun compte élève n'est enregistré avec cet email" });
+
+      if (enfant.eleve?.parentId && String(enfant.eleve.parentId) !== req.user.id) {
+        return res.status(409).json({ error: 'Ce compte élève est déjà lié à un autre parent' });
+      }
+
+      enfant.eleve.parentId = req.user.id;
+      await enfant.save();
+      res.json({ success: true, enfant: { _id: enfant._id, prenom: enfant.prenom, nom: enfant.nom, email: enfant.email, eleve: { niveau: enfant.eleve.niveau } } });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
+  async retirerEnfant(req, res) {
+    try {
+      const enfant = await User.findOne({ _id: req.params.childId, role: 'eleve', 'eleve.parentId': req.user.id });
+      if (!enfant) return res.status(404).json({ error: 'Enfant introuvable' });
+      enfant.eleve.parentId = undefined;
+      await enfant.save();
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
 };
 
 module.exports = authController;

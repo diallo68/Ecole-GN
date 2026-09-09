@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, UserPlus, X } from 'lucide-react';
 import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { ALL_CITIES } from '@/lib/constants';
+import { ALL_CITIES, niveauLabel } from '@/lib/constants';
 import FileUploadField from '@/components/FileUploadField';
+import type { Enfant } from '@/types';
 
 const ROLE_LABELS: Record<string, string> = { eleve: 'Élève', parent: 'Parent', repetiteur: 'Enseignant', admin: 'Admin' };
 
@@ -60,6 +61,7 @@ export default function ProfilPage() {
       </div>
     );
   }
+
 
   const initiales = `${prenom?.[0] || ''}${nom?.[0] || ''}`.toUpperCase();
 
@@ -138,6 +140,81 @@ export default function ProfilPage() {
           {loading ? 'Enregistrement...' : 'Enregistrer'}
         </button>
       </div>
+
+      {user.role === 'parent' && <MesEnfants />}
+    </div>
+  );
+}
+
+// ── Enfants liés au compte parent — nécessaire pour pouvoir réserver une
+// session (le formulaire de réservation demande de choisir parmi cette liste).
+function MesEnfants() {
+  const [enfants, setEnfants] = useState<Enfant[]>([]);
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  const charger = () => authApi.mesEnfants().then(d => setEnfants(d.enfants)).catch(() => {}).finally(() => setLoaded(true));
+
+  useEffect(() => { charger(); }, []);
+
+  const ajouter = async () => {
+    if (!email.trim()) { toast.error("Entre l'email de l'enfant"); return; }
+    setLoading(true);
+    try {
+      await authApi.ajouterEnfant(email.trim());
+      setEmail('');
+      toast.success('Enfant ajouté !');
+      charger();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erreur');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const retirer = async (id: string) => {
+    try {
+      await authApi.retirerEnfant(id);
+      setEnfants(prev => prev.filter(e => e._id !== id));
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erreur');
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-2xl border border-ink/10 p-6">
+      <h2 className="font-bold text-ink mb-1">Mes enfants</h2>
+      <p className="text-sm text-ink/50 mb-4">Lie le compte de ton enfant au tien pour pouvoir réserver des séances pour lui.</p>
+
+      {loaded && enfants.length === 0 && (
+        <p className="text-sm text-ink/50 mb-4">Aucun enfant lié pour le moment.</p>
+      )}
+
+      {enfants.length > 0 && (
+        <ul className="space-y-2 mb-4">
+          {enfants.map(e => (
+            <li key={e._id} className="flex items-center justify-between bg-sand/50 rounded-lg px-3 py-2">
+              <div>
+                <p className="text-sm font-semibold text-ink">{e.prenom} {e.nom}</p>
+                <p className="text-xs text-ink/50">{e.eleve?.niveau ? niveauLabel(e.eleve.niveau) : e.email}</p>
+              </div>
+              <button onClick={() => retirer(e._id)} aria-label={`Retirer ${e.prenom}`} className="text-ink/40 hover:text-flag p-1">
+                <X size={16} />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="flex gap-2">
+        <input type="email" placeholder="Email du compte élève de ton enfant" value={email} onChange={e => setEmail(e.target.value)}
+          className="flex-1 border border-ink/15 rounded-lg px-3 py-2 text-sm" />
+        <button onClick={ajouter} disabled={loading} className="flex items-center gap-1.5 bg-ink text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-stone-800 disabled:opacity-50">
+          <UserPlus size={15} /> Ajouter
+        </button>
+      </div>
+      <p className="text-xs text-ink/40 mt-2">Ton enfant doit déjà avoir créé son propre compte élève sur Gandal.</p>
     </div>
   );
 }

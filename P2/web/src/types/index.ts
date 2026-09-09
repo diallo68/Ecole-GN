@@ -45,6 +45,15 @@ export interface User {
   repetiteur?: RepetiteurProfile;
 }
 
+// Résumé d'un enfant lié à un compte parent — GET/POST /auth/mes-enfants.
+export interface Enfant {
+  _id: string;
+  prenom: string;
+  nom: string;
+  email: string;
+  eleve?: { niveau?: Niveau };
+}
+
 export interface Repetiteur {
   _id: string;
   prenom: string;

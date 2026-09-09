@@ -1,4 +1,4 @@
-import type { User, Repetiteur, Reservation, QuizSummary, QuizDetail, QuizCorrection, QuizFull, ContentItem, ClasseVirtuelle, Conversation, Message, AdminStats, QuizAttempt, AdminUser, Soumission } from '@/types';
+import type { User, Repetiteur, Reservation, QuizSummary, QuizDetail, QuizCorrection, QuizFull, ContentItem, ClasseVirtuelle, Conversation, Message, AdminStats, QuizAttempt, AdminUser, Soumission, Enfant } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
@@ -53,6 +53,11 @@ export const authApi = {
 
   updateMe: (body: { prenom?: string; nom?: string; age?: number | null; phone?: string; city?: string; photo?: string; pieceIdentite?: string }) =>
     patch<{ success: boolean; user: User }>('/auth/me', body),
+
+  // Enfants liés à un compte parent (nécessaire pour réserver une session).
+  mesEnfants: () => get<{ enfants: Enfant[] }>('/auth/mes-enfants'),
+  ajouterEnfant: (email: string) => post<{ success: boolean; enfant: Enfant }>('/auth/mes-enfants', { email }),
+  retirerEnfant: (childId: string) => del<{ success: boolean }>(`/auth/mes-enfants/${childId}`),
 };
 
 export const repetiteurApi = {

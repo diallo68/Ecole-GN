@@ -15,13 +15,25 @@ const reservationController = {
       const repetiteur = await User.findOne({ _id: repetiteurId, role: 'repetiteur', 'repetiteur.valide': true });
       if (!repetiteur) return res.status(404).json({ error: 'Répétiteur introuvable ou non disponible' });
 
+      let eleveId = req.user.id;
+      if (req.user.role === 'parent') {
+        eleveId = req.body.eleveId;
+        if (!eleveId) return res.status(400).json({ error: 'Choisissez pour quel enfant réserver' });
+        // Un parent ne peut réserver que pour un enfant réellement lié à son
+        // compte — sans ce contrôle, n'importe quel parent pourrait réserver
+        // pour n'importe quel élève en devinant son id.
+        const enfant = await User.findOne({ _id: eleveId, role: 'eleve', 'eleve.parentId': req.user.id });
+        if (!enfant) return res.status(403).json({ error: "Cet élève n'est pas lié à votre compte parent" });
+      }
+
       const reservation = await Reservation.create({
-        eleveId: req.user.role === 'eleve' ? req.user.id : req.body.eleveId,
+        eleveId,
         parentId: req.user.role === 'parent' ? req.user.id : undefined,
         repetiteurId, matiere, niveau, mode, dateHeure, dureeMinutes,
         adresse: mode === 'presentiel' ? adresse : undefined,
         lienVisio: mode === 'en_ligne' ? `https://meet.jit.si/${generateJitsiRoom()}` : undefined,
-        prix: repetiteur.repetiteur?.tarifHoraire,
+        prix: repetiteur.repetiteur?.tarif?.montant,
+        prixPeriode: repetiteur.repetiteur?.tarif?.periode,
       });
       res.status(201).json({ success: true, reservation });
     } catch (err) {

@@ -40,6 +40,10 @@ const updateMe = Joi.object({
   pieceIdentite: Joi.string().uri({ scheme: ['https'] }).allow('').optional(),
 });
 
+const ajouterEnfant = Joi.object({
+  email: Joi.string().email().required(),
+});
+
 const updateRepetiteurProfile = Joi.object({
   bio:      Joi.string().max(1000).allow('').optional(),
   matieres: Joi.array().items(Joi.string()).optional(),
@@ -65,6 +69,6 @@ function validate(schema) {
 }
 
 module.exports = {
-  schemas: { sendCode, register, login, updateMe, updateRepetiteurProfile },
+  schemas: { sendCode, register, login, updateMe, ajouterEnfant, updateRepetiteurProfile },
   validate,
 };
