@@ -35,10 +35,7 @@ export default function Navbar() {
           {isLoggedIn() && user ? (
             <UserMenu prenom={user.prenom} nom={user.nom} isAdmin={user.role === 'admin'} onLogout={logout} />
           ) : (
-            <>
-              <Link href="/login" className="hover:text-ink transition-colors">Connexion</Link>
-              <Link href="/register" className="bg-ink text-white px-5 py-2.5 rounded-full font-semibold hover:bg-stone-800 transition-colors shadow-sm">Inscription</Link>
-            </>
+            <Link href="/login" className="bg-ink text-white px-5 py-2.5 rounded-full font-semibold hover:bg-stone-800 transition-colors shadow-sm">Connexion</Link>
           )}
         </nav>
       </div>

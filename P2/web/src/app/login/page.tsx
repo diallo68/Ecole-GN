@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
@@ -29,17 +30,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-sm mx-auto bg-white rounded-xl border border-ink/10 p-6">
-      <h1 className="text-xl font-bold mb-4">Connexion</h1>
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <input type="email" required placeholder="Email" value={email} onChange={e => setEmail(e.target.value)}
-          className="w-full border border-ink/15 rounded-lg px-3 py-2" />
-        <input type="password" required placeholder="Mot de passe" value={password} onChange={e => setPassword(e.target.value)}
-          className="w-full border border-ink/15 rounded-lg px-3 py-2" />
-        <button type="submit" disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
-          {loading ? 'Connexion...' : 'Se connecter'}
-        </button>
-      </form>
+    <div className="max-w-sm mx-auto bg-white rounded-xl border border-ink/10 overflow-hidden">
+      <div className="flex text-sm font-bold text-center border-b border-ink/10">
+        <span className="flex-1 py-3.5 text-brand border-b-2 border-brand">Se connecter</span>
+        <Link href="/register" className="flex-1 py-3.5 text-ink/50 hover:text-ink transition-colors">S&apos;inscrire</Link>
+      </div>
+
+      <div className="p-6">
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <input type="email" required placeholder="Email" value={email} onChange={e => setEmail(e.target.value)}
+            className="w-full border border-ink/15 rounded-lg px-3 py-2" />
+          <input type="password" required placeholder="Mot de passe" value={password} onChange={e => setPassword(e.target.value)}
+            className="w-full border border-ink/15 rounded-lg px-3 py-2" />
+          <button type="submit" disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
+            {loading ? 'Connexion...' : 'Se connecter'}
+          </button>
+        </form>
+        <p className="text-center text-sm text-ink/60 mt-4">
+          Pas de compte ? <Link href="/register" className="text-brand font-bold hover:underline">S&apos;inscrire gratuitement</Link>
+        </p>
+      </div>
     </div>
   );
 }
