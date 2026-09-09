@@ -32,9 +32,15 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
         ...options.headers,
       },
     });
-  } catch {
-    // Échec réseau (hors ligne, DNS, CORS...) : pas de réponse HTTP du tout,
-    // donc pas de statut — on le distingue quand même d'une erreur serveur.
+  } catch (err) {
+    // Une requête annulée volontairement (AbortController, ex: une recherche
+    // plus récente qui remplace la précédente) n'est pas une panne — on la
+    // laisse passer telle quelle pour que l'appelant puisse l'ignorer
+    // silencieusement plutôt que d'afficher une fausse erreur réseau.
+    if (err instanceof DOMException && err.name === 'AbortError') throw err;
+    // Sinon : échec réseau réel (hors ligne, DNS, CORS...), pas de réponse
+    // HTTP du tout donc pas de statut — on le distingue quand même d'une
+    // erreur serveur.
     throw new ApiError('Impossible de joindre Gandal. Vérifiez votre connexion puis réessayez.', 0);
   }
   const data = await res.json().catch(() => ({}));
@@ -81,9 +87,9 @@ export const authApi = {
 };
 
 export const repetiteurApi = {
-  list: (params: { matiere?: string; niveau?: string; ville?: string; disponibilite?: string; tarifMax?: string } = {}) => {
-    const qs = buildQuery(params);
-    return get<{ repetiteurs: Repetiteur[] }>(`/repetiteurs${qs ? `?${qs}` : ''}`);
+  list: (params: { matiere?: string; niveau?: string; ville?: string; disponibilite?: string; tarifMax?: string; q?: string; page?: number; limit?: number } = {}, signal?: AbortSignal) => {
+    const qs = buildQuery(params as Record<string, string | number | undefined>);
+    return request<{ repetiteurs: Repetiteur[]; total: number; page: number; totalPages: number }>(`/repetiteurs${qs ? `?${qs}` : ''}`, { signal });
   },
   getById: (id: string) => get<{ repetiteur: Repetiteur }>(`/repetiteurs/${id}`),
   updateMyProfile: (body: Record<string, unknown>) => patch<{ success: boolean }>('/repetiteurs/me/profile', body),

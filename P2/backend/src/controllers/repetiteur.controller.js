@@ -1,18 +1,23 @@
 const User = require('../models/user.model');
 const { sanitizeText } = require('../utils/helpers');
 
+// Un utilisateur qui tape des caractères spéciaux regex ("(", "*"...) dans la
+// recherche ou la ville ne doit ni faire planter la requête (regex invalide)
+// ni chercher un motif — juste le texte tel quel.
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const repetiteurController = {
   // ── Recherche publique de répétiteurs (filtrable) ───────────────────
   async list(req, res) {
     try {
-      const { matiere, niveau, ville, disponibilite, tarifMax, limit = 50 } = req.query;
+      const { matiere, niveau, ville, disponibilite, tarifMax, q, page = 1, limit = 20 } = req.query;
       // 'repetiteur.disponible' : l'enseignant accepte-t-il de nouveaux
       // élèves ? Un profil qui a coupé cet interrupteur ne doit pas
       // apparaître dans une recherche censée aboutir à une prise de contact.
       const filter = { role: 'repetiteur', 'repetiteur.valide': true, 'repetiteur.disponible': true };
       if (matiere) filter['repetiteur.matieres'] = matiere;
       if (niveau) filter['repetiteur.niveaux'] = niveau;
-      if (ville) filter.city = new RegExp(ville, 'i');
+      if (ville) filter.city = new RegExp(escapeRegExp(ville), 'i');
       if (disponibilite) filter['repetiteur.disponibilites'] = disponibilite;
       // Les options de l'UI ("Jusqu'à 30 000 GNF"...) sont des montants à
       // l'heure — les comparer tel quel à un forfait mensuel/annuel n'aurait
@@ -23,13 +28,27 @@ const repetiteurController = {
         filter['repetiteur.tarif.periode'] = 'heure';
         filter['repetiteur.tarif.montant'] = { $lte: Number(tarifMax) };
       }
+      // Recherche texte (nom, prénom, matière) côté serveur — avant, seuls
+      // les 50 premiers profils étaient chargés puis filtrés dans le
+      // navigateur : un enseignant hors de ce lot était introuvable par nom.
+      if (q && q.trim()) {
+        const re = new RegExp(escapeRegExp(q.trim()), 'i');
+        filter.$or = [{ prenom: re }, { nom: re }, { 'repetiteur.matieres': re }];
+      }
 
-      const repetiteurs = await User.find(filter)
-        .select('prenom nom city repetiteur createdAt')
-        .sort({ 'repetiteur.avgRating': -1 })
-        .limit(Number(limit))
-        .lean();
-      res.json({ repetiteurs });
+      const pageNum = Math.max(1, parseInt(page, 10) || 1);
+      const limitNum = Math.min(50, Math.max(1, parseInt(limit, 10) || 20));
+
+      const [repetiteurs, total] = await Promise.all([
+        User.find(filter)
+          .select('prenom nom city repetiteur createdAt')
+          .sort({ 'repetiteur.avgRating': -1 })
+          .skip((pageNum - 1) * limitNum)
+          .limit(limitNum)
+          .lean(),
+        User.countDocuments(filter),
+      ]);
+      res.json({ repetiteurs, total, page: pageNum, totalPages: Math.max(1, Math.ceil(total / limitNum)) });
     } catch (err) {
       res.status(500).json({ error: 'Erreur serveur' });
     }

@@ -37,7 +37,7 @@ export default function HomePage() {
 
   const chargerRepetiteurs = () => {
     setRepetiteursError(false);
-    repetiteurApi.list({}).then(d => setRepetiteurs(d.repetiteurs.slice(0, 4))).catch(() => setRepetiteursError(true));
+    repetiteurApi.list({ limit: 4 }).then(d => setRepetiteurs(d.repetiteurs)).catch(() => setRepetiteursError(true));
   };
   useEffect(chargerRepetiteurs, []);
 
