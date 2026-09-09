@@ -182,21 +182,21 @@ export default function RegisterPage() {
       <div className="max-w-sm mx-auto bg-white rounded-2xl border border-ink/10 p-6 space-y-5">
         <div className="text-center">
           <div className="text-4xl mb-2">🪪</div>
-          <p className="text-xs font-bold text-ink/40 uppercase tracking-wide">Étape 3 sur 3</p>
+          <p className="text-xs font-bold text-ink-muted uppercase tracking-wide">Étape 3 sur 3</p>
           <p className="font-bold text-ink mt-1">Complète ton profil</p>
-          <p className="text-sm text-ink/60 mt-1">
+          <p className="text-sm text-ink-muted mt-1">
             {role === 'repetiteur'
               ? "Une photo et une pièce d'identité — utilisées par notre équipe pour vérifier ton profil avant sa mise en ligne."
               : "Une photo de profil — facultatif."}
           </p>
         </div>
         <div className="space-y-2">
-          <label className="block text-xs font-semibold text-ink/50">Photo (optionnel)</label>
+          <label className="block text-xs font-semibold text-ink-muted">Photo (optionnel)</label>
           <FileUploadField value={photo} onChange={setPhoto} accept="image/*" label="Ajouter une photo" />
         </div>
         {role === 'repetiteur' && (
           <div className="space-y-2">
-            <label className="block text-xs font-semibold text-ink/50">Pièce d'identité (optionnel pour le moment)</label>
+            <label className="block text-xs font-semibold text-ink-muted">Pièce d'identité (optionnel pour le moment)</label>
             <FileUploadField value={pieceIdentite} onChange={setPieceIdentite} accept="image/*,.pdf" label="Ajouter une pièce d'identité" />
           </div>
         )}
@@ -204,7 +204,7 @@ export default function RegisterPage() {
           {loading ? 'Envoi...' : documentsError ? 'Réessayer' : (photo || pieceIdentite) ? 'Continuer' : 'Passer cette étape'}
         </button>
         {documentsError && (
-          <button onClick={() => router.push('/dashboard')} className="w-full text-center text-sm text-ink/50 hover:underline">
+          <button onClick={() => router.push('/dashboard')} className="w-full text-center text-sm text-ink-muted hover:underline">
             Continuer sans enregistrer ces documents
           </button>
         )}
@@ -217,9 +217,9 @@ export default function RegisterPage() {
       <div className="max-w-sm mx-auto bg-white rounded-2xl border border-ink/10 p-6 space-y-5">
         <div className="text-center">
           <div className="text-4xl mb-2">📧</div>
-          <p className="text-xs font-bold text-ink/40 uppercase tracking-wide">Étape 2 sur 3</p>
+          <p className="text-xs font-bold text-ink-muted uppercase tracking-wide">Étape 2 sur 3</p>
           <p className="font-bold text-ink mt-1">Code de vérification</p>
-          <p className="text-sm text-ink/60 mt-1">Envoyé à {email}</p>
+          <p className="text-sm text-ink-muted mt-1">Envoyé à {email}</p>
         </div>
         <input placeholder="Code à 6 chiffres" maxLength={6} inputMode="numeric" autoComplete="one-time-code"
           value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
@@ -228,9 +228,9 @@ export default function RegisterPage() {
           {loading ? 'Vérification...' : 'Valider et créer mon compte'}
         </button>
         <div className="text-center">
-          <button onClick={() => { setStep('form'); setCode(''); }} className="text-sm text-ink/60 hover:underline">← Modifier mes infos</button>
-          <span className="mx-2 text-ink/40">·</span>
-          <button onClick={sendCode} disabled={resendCooldown > 0} className="text-sm text-brand font-semibold hover:underline disabled:opacity-40 disabled:no-underline disabled:text-ink/40">
+          <button onClick={() => { setStep('form'); setCode(''); }} className="text-sm text-ink-muted hover:underline">← Modifier mes infos</button>
+          <span className="mx-2 text-ink-muted">·</span>
+          <button onClick={sendCode} disabled={resendCooldown > 0} className="text-sm text-brand font-semibold hover:underline disabled:opacity-40 disabled:no-underline disabled:text-ink-muted">
             {resendCooldown > 0 ? `Renvoyer le code (${resendCooldown}s)` : 'Renvoyer le code'}
           </button>
         </div>
@@ -244,7 +244,7 @@ export default function RegisterPage() {
         <div className="h-1 rounded-full bg-ink/10 overflow-hidden" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
           <div className="h-full bg-brand rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
         </div>
-        <span className="text-[11px] font-bold text-ink/40">Étape 1 sur 3 — question {qIndex + 1} sur {questions.length}</span>
+        <span className="text-xs font-bold text-ink-muted">Étape 1 sur 3 — question {qIndex + 1} sur {questions.length}</span>
       </div>
 
       <div key={qIndex} className="flex flex-col gap-4 min-h-[280px] justify-center">
@@ -273,16 +273,16 @@ export default function RegisterPage() {
           <div className="flex flex-col gap-5">
             <h1 className="text-xl font-extrabold text-ink">Votre prénom et nom ?</h1>
             <div className="flex flex-col gap-2">
-              <label htmlFor="reg-prenom" className="text-xs font-semibold text-ink/40">Prénom</label>
+              <label htmlFor="reg-prenom" className="text-xs font-semibold text-ink-muted">Prénom</label>
               <input id="reg-prenom" ref={answerRef} value={prenom} onChange={e => setPrenom(e.target.value)} onKeyDown={handleEnter}
                 placeholder="Mamadou" autoComplete="given-name"
-                className="text-xl font-semibold text-ink bg-transparent outline-none border-b-2 border-ink/15 focus:border-brand pb-2 placeholder:text-ink/40 placeholder:font-medium" />
+                className="text-xl font-semibold text-ink bg-transparent outline-none border-b-2 border-ink/15 focus:border-brand pb-2 placeholder:text-ink-muted placeholder:font-medium" />
             </div>
             <div className="flex flex-col gap-2">
-              <label htmlFor="reg-nom" className="text-xs font-semibold text-ink/40">Nom (optionnel)</label>
+              <label htmlFor="reg-nom" className="text-xs font-semibold text-ink-muted">Nom (optionnel)</label>
               <input id="reg-nom" value={nom} onChange={e => setNom(e.target.value)} onKeyDown={handleEnter}
                 placeholder="Diallo" autoComplete="family-name"
-                className="text-xl font-semibold text-ink bg-transparent outline-none border-b-2 border-ink/15 focus:border-brand pb-2 placeholder:text-ink/40 placeholder:font-medium" />
+                className="text-xl font-semibold text-ink bg-transparent outline-none border-b-2 border-ink/15 focus:border-brand pb-2 placeholder:text-ink-muted placeholder:font-medium" />
             </div>
           </div>
         )}
@@ -304,7 +304,7 @@ export default function RegisterPage() {
             <h1 className="text-xl font-extrabold text-ink">Confirmez le mot de passe</h1>
             <input ref={answerRef} type="password" value={password2} onChange={e => setPassword2(e.target.value)} onKeyDown={handleEnter}
               placeholder="Répétez le mot de passe" autoComplete="new-password"
-              className="text-xl font-semibold text-ink bg-transparent outline-none border-b-2 border-ink/15 focus:border-brand pb-2 placeholder:text-ink/40 placeholder:font-medium" />
+              className="text-xl font-semibold text-ink bg-transparent outline-none border-b-2 border-ink/15 focus:border-brand pb-2 placeholder:text-ink-muted placeholder:font-medium" />
             {pwMatch === false && <p className="text-xs text-flag font-semibold">Les mots de passe ne correspondent pas</p>}
             {pwMatch === true && <p className="text-xs text-green-600 font-semibold">Les mots de passe correspondent</p>}
           </div>
@@ -346,19 +346,19 @@ export default function RegisterPage() {
 
       {q.id !== 'accountType' && q.id !== 'subRole' && q.id !== 'cycle' && q.id !== 'niveau' && (
         <div className="flex items-center justify-between mt-6">
-          <button onClick={goBack} className="text-sm font-bold text-ink/60 hover:text-ink">← Retour</button>
+          <button onClick={goBack} className="text-sm font-bold text-ink-muted hover:text-ink">← Retour</button>
           <button onClick={goNext} disabled={loading} className="bg-brand text-white rounded-lg py-2.5 px-6 font-semibold hover:bg-brand-dark disabled:opacity-50">
             {loading ? 'Envoi...' : qIndex === questions.length - 1 ? 'Recevoir mon code →' : 'Suivant →'}
           </button>
         </div>
       )}
       {q.id === 'accountType' && (
-        <p className="text-center text-sm text-ink/60 mt-6">
+        <p className="text-center text-sm text-ink-muted mt-6">
           Déjà un compte ? <a href="/login" className="text-brand font-bold hover:underline">Se connecter</a>
         </p>
       )}
       {(q.id === 'subRole' || q.id === 'cycle' || q.id === 'niveau') && (
-        <button onClick={goBack} className="text-sm font-bold text-ink/60 hover:text-ink mt-6">← Retour</button>
+        <button onClick={goBack} className="text-sm font-bold text-ink-muted hover:text-ink mt-6">← Retour</button>
       )}
     </div>
   );
@@ -380,11 +380,11 @@ const QuestionInput = forwardRef<HTMLInputElement, {
 }>(({ label, hint, value, onChange, onEnter, placeholder, type = 'text', autoComplete }, ref) => (
   <div className="flex flex-col gap-2">
     <h1 className="text-xl font-extrabold text-ink">{label}</h1>
-    {hint && <p className="text-xs text-ink/40 font-semibold -mt-1">{hint}</p>}
+    {hint && <p className="text-xs text-ink-muted font-semibold -mt-1">{hint}</p>}
     <input
       ref={ref} type={type} value={value} onChange={e => onChange(e.target.value)} onKeyDown={onEnter}
       placeholder={placeholder} autoComplete={autoComplete}
-      className="text-xl font-semibold text-ink bg-transparent outline-none border-b-2 border-ink/15 focus:border-brand pb-2 placeholder:text-ink/40 placeholder:font-medium"
+      className="text-xl font-semibold text-ink bg-transparent outline-none border-b-2 border-ink/15 focus:border-brand pb-2 placeholder:text-ink-muted placeholder:font-medium"
     />
   </div>
 ));

@@ -101,7 +101,7 @@ function MobileMenu({ open, onClose, pathname, connecte, user, onLogout }: {
         className="absolute inset-y-0 right-0 w-72 max-w-[85vw] h-dvh bg-white shadow-xl flex flex-col">
         <div className="flex items-center justify-between px-4 h-16 border-b border-ink/10 shrink-0">
           <span className="font-bold text-ink">Menu</span>
-          <button ref={closeBtnRef} onClick={onClose} aria-label="Fermer le menu" className="w-9 h-9 grid place-items-center text-ink/60 hover:text-ink">
+          <button ref={closeBtnRef} onClick={onClose} aria-label="Fermer le menu" className="w-9 h-9 grid place-items-center text-ink-muted hover:text-ink">
             <X size={20} />
           </button>
         </div>

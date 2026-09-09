@@ -63,7 +63,7 @@ export default function AssistantWidget() {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-sand text-ink/50 rounded-2xl px-3 py-2 text-sm">...</div>
+                <div className="bg-sand text-ink-muted rounded-2xl px-3 py-2 text-sm">...</div>
               </div>
             )}
             <div ref={bottomRef} />

@@ -33,7 +33,7 @@ export default function MesCoursPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-extrabold text-ink">Mes cours</h1>
-        <p className="text-sm text-ink/50">Supports de cours publiés par les enseignants Gandal{user?.eleve?.niveau ? ` — ${niveauLabel(user.eleve.niveau)}` : ''}.</p>
+        <p className="text-sm text-ink-muted">Supports de cours publiés par les enseignants Gandal{user?.eleve?.niveau ? ` — ${niveauLabel(user.eleve.niveau)}` : ''}.</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -42,9 +42,9 @@ export default function MesCoursPage() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-ink/50">Chargement...</p>
+        <p className="text-sm text-ink-muted">Chargement...</p>
       ) : items.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-ink/10 p-6 text-center text-sm text-ink/50">
+        <div className="bg-white rounded-2xl border border-ink/10 p-6 text-center text-sm text-ink-muted">
           Aucun support de cours disponible pour le moment.
         </div>
       ) : (
@@ -63,8 +63,8 @@ export default function MesCoursPage() {
                   {isVideo ? <ExternalLink size={15} className="text-ink/30 mt-1" /> : <Download size={15} className="text-ink/30 mt-1" />}
                 </div>
                 <p className="font-semibold text-ink text-sm">{item.titre}</p>
-                <p className="text-xs text-ink/50">{item.matiere}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
-                {auteur && <p className="text-xs text-ink/40 mt-auto">Par {auteur}</p>}
+                <p className="text-xs text-ink-muted">{item.matiere}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
+                {auteur && <p className="text-xs text-ink-muted mt-auto">Par {auteur}</p>}
               </a>
             );
           })}

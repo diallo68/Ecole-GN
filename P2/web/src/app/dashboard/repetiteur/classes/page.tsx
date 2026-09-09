@@ -72,11 +72,11 @@ export default function RepetiteurClassesPage() {
         <div className="space-y-3">
           <h2 className="font-bold">Mes classes virtuelles</h2>
           {classes.length === 0 ? (
-            <p className="text-ink/60 text-sm">Aucune classe planifiée.</p>
+            <p className="text-ink-muted text-sm">Aucune classe planifiée.</p>
           ) : classes.map(c => (
             <div key={c._id} className="bg-white rounded-xl border border-ink/10 p-4">
               <p className="font-semibold">{c.titre}</p>
-              <p className="text-sm text-ink/60">{c.matiere} · {niveauLabel(c.niveau)} · {new Date(c.dateHeure).toLocaleString('fr-FR')}</p>
+              <p className="text-sm text-ink-muted">{c.matiere} · {niveauLabel(c.niveau)} · {new Date(c.dateHeure).toLocaleString('fr-FR')}</p>
               <a href={c.lienVisio} target="_blank" rel="noreferrer" className="text-sm text-brand font-semibold">Lien de la salle →</a>
             </div>
           ))}
@@ -85,12 +85,12 @@ export default function RepetiteurClassesPage() {
         <div className="space-y-3">
           <h2 className="font-bold">Mes réservations (créneaux avec élèves)</h2>
           {reservations.length === 0 ? (
-            <p className="text-ink/60 text-sm">Aucune réservation pour l'instant.</p>
+            <p className="text-ink-muted text-sm">Aucune réservation pour l'instant.</p>
           ) : reservations.map(r => (
             <div key={r._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-center justify-between gap-3">
               <div>
                 <p className="font-semibold">{r.matiere} · {niveauLabel(r.niveau)}</p>
-                <p className="text-sm text-ink/60">
+                <p className="text-sm text-ink-muted">
                   {new Date(r.dateHeure).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })} — {r.mode === 'en_ligne' ? 'En ligne' : 'Présentiel'}
                 </p>
                 {r.lienVisio && <a href={r.lienVisio} target="_blank" rel="noreferrer" className="text-sm text-brand font-semibold">Rejoindre la visio →</a>}

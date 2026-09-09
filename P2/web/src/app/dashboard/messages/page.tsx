@@ -65,9 +65,9 @@ export default function MessagesPage() {
           <h1 className="font-bold text-ink">Messages</h1>
         </div>
         {loading ? (
-          <p className="p-4 text-sm text-ink/50">Chargement...</p>
+          <p className="p-4 text-sm text-ink-muted">Chargement...</p>
         ) : conversations.length === 0 ? (
-          <p className="p-4 text-sm text-ink/50">Aucune conversation. Contacte un enseignant depuis sa fiche pour démarrer une discussion.</p>
+          <p className="p-4 text-sm text-ink-muted">Aucune conversation. Contacte un enseignant depuis sa fiche pour démarrer une discussion.</p>
         ) : (
           conversations.map(c => {
             const other = c.participants.find(p => p._id !== user?._id) || c.participants[0];
@@ -79,7 +79,7 @@ export default function MessagesPage() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-ink truncate">{other?.prenom} {other?.nom}</p>
-                  <p className="text-xs text-ink/50 truncate">{c.lastMessage || 'Nouvelle conversation'}</p>
+                  <p className="text-xs text-ink-muted truncate">{c.lastMessage || 'Nouvelle conversation'}</p>
                 </div>
               </button>
             );
@@ -90,14 +90,14 @@ export default function MessagesPage() {
       {/* Fil de discussion */}
       <div className="flex flex-col min-w-0">
         {!active ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-ink/40 gap-2">
+          <div className="flex-1 flex flex-col items-center justify-center text-ink-muted gap-2">
             <MessageCircle size={32} strokeWidth={1.5} />
             <p className="text-sm">Sélectionne une conversation</p>
           </div>
         ) : (
           <>
             <div className="p-4 border-b border-ink/10 flex items-center gap-2">
-              <button onClick={() => router.push('/dashboard/messages')} className="lg:hidden text-ink/50 text-sm mr-1">←</button>
+              <button onClick={() => router.push('/dashboard/messages')} className="lg:hidden text-ink-muted text-sm mr-1">←</button>
               <p className="font-semibold text-ink">
                 {active.participants.filter(p => p._id !== user?._id).map(p => `${p.prenom} ${p.nom}`).join(', ')}
               </p>

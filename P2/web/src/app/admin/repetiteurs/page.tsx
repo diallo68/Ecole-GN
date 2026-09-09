@@ -45,9 +45,9 @@ export default function AdminRepetiteursPage() {
       </div>
 
       {loading ? (
-        <p className="text-ink/60">Chargement...</p>
+        <p className="text-ink-muted">Chargement...</p>
       ) : repetiteurs.length === 0 ? (
-        <p className="text-ink/60">Aucun enseignant dans cette catégorie.</p>
+        <p className="text-ink-muted">Aucun enseignant dans cette catégorie.</p>
       ) : (
         <div className="space-y-3">
           {repetiteurs.map(r => (
@@ -56,14 +56,14 @@ export default function AdminRepetiteursPage() {
                 {r.photo ? (
                   <img src={r.photo} alt="" className="w-11 h-11 rounded-full object-cover border border-ink/10 shrink-0" />
                 ) : (
-                  <div className="w-11 h-11 rounded-full bg-sand text-ink/40 font-bold grid place-items-center border border-ink/10 shrink-0">
+                  <div className="w-11 h-11 rounded-full bg-sand text-ink-muted font-bold grid place-items-center border border-ink/10 shrink-0">
                     {r.prenom?.[0]}{r.nom?.[0]}
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="font-semibold">{r.prenom} {r.nom} <span className="text-ink/40 font-normal text-sm">— {r.email}</span></p>
-                  <p className="text-sm text-ink/60">{r.city} · {r.repetiteur.matieres?.join(', ')} · {r.repetiteur.niveaux?.map(niveauLabel).join(', ')}</p>
-                  <p className="text-xs text-ink/50 mt-0.5">{r.phone || 'Pas de téléphone renseigné'}</p>
+                  <p className="font-semibold">{r.prenom} {r.nom} <span className="text-ink-muted font-normal text-sm">— {r.email}</span></p>
+                  <p className="text-sm text-ink-muted">{r.city} · {r.repetiteur.matieres?.join(', ')} · {r.repetiteur.niveaux?.map(niveauLabel).join(', ')}</p>
+                  <p className="text-xs text-ink-muted mt-0.5">{r.phone || 'Pas de téléphone renseigné'}</p>
                   <div className="flex items-center gap-2 mt-1.5">
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${r.repetiteur.valide ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
                       {r.repetiteur.valide ? 'Validé' : 'En attente'}

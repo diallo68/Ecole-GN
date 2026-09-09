@@ -130,7 +130,7 @@ export default function RepetiteurContenuPage() {
 
         <div className="lg:col-span-2 space-y-3">
           {items.length === 0 ? (
-            <p className="text-ink/60 text-sm">Rien de publié pour l'instant dans cette catégorie.</p>
+            <p className="text-ink-muted text-sm">Rien de publié pour l'instant dans cette catégorie.</p>
           ) : items.map(item => (
             type === 'exercice'
               ? <ExerciceCard key={item._id} item={item} onDelete={() => supprimer(item._id)} />
@@ -138,7 +138,7 @@ export default function RepetiteurContenuPage() {
                 <div key={item._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-start justify-between">
                   <div>
                     <p className="font-semibold">{item.titre}</p>
-                    <p className="text-sm text-ink/60">{item.matiere} · {niveauLabel(item.niveau)}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
+                    <p className="text-sm text-ink-muted">{item.matiere} · {niveauLabel(item.niveau)}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
                   </div>
                   <button onClick={() => supprimer(item._id)} className="text-red-500 text-sm hover:underline shrink-0 ml-3">Supprimer</button>
                 </div>
@@ -170,7 +170,7 @@ function ExerciceCard({ item, onDelete }: { item: ContentItem; onDelete: () => v
       <div className="p-4 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-semibold">{item.titre}</p>
-          <p className="text-sm text-ink/60">{item.matiere} · {niveauLabel(item.niveau)}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
+          <p className="text-sm text-ink-muted">{item.matiere} · {niveauLabel(item.niveau)}{item.chapitre ? ` · ${item.chapitre}` : ''}</p>
           {item.enonce && <p className="text-sm text-ink/70 mt-1">{item.enonce}</p>}
         </div>
         <div className="flex items-center gap-3 shrink-0">
@@ -184,9 +184,9 @@ function ExerciceCard({ item, onDelete }: { item: ContentItem; onDelete: () => v
       {open && (
         <div className="p-4 border-t border-ink/5 space-y-2">
           {soumissions === null ? (
-            <p className="text-sm text-ink/50">Chargement...</p>
+            <p className="text-sm text-ink-muted">Chargement...</p>
           ) : soumissions.length === 0 ? (
-            <p className="text-sm text-ink/50">Aucune copie rendue pour l'instant.</p>
+            <p className="text-sm text-ink-muted">Aucune copie rendue pour l'instant.</p>
           ) : soumissions.map(s => <CopieRow key={s._id} soumission={s} onCorrigee={charger} />)}
         </div>
       )}
@@ -219,7 +219,7 @@ function CopieRow({ soumission, onCorrigee }: { soumission: Soumission; onCorrig
     <div className="bg-sand rounded-lg p-3 space-y-2">
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-ink">{eleve ? `${eleve.prenom} ${eleve.nom}` : 'Élève'}</p>
-        <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${soumission.statut === 'corrige' ? 'bg-brand-light text-brand-dark' : 'bg-accent/15 text-[#8a6400]'}`}>
+        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${soumission.statut === 'corrige' ? 'bg-brand-light text-brand-dark' : 'bg-accent/15 text-[#8a6400]'}`}>
           {soumission.statut === 'corrige' ? `Corrigé — ${soumission.note ?? '—'}/20` : 'À corriger'}
         </span>
       </div>

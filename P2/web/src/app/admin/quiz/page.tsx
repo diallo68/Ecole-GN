@@ -44,16 +44,16 @@ export default function AdminQuizPage() {
       </div>
 
       {loading ? (
-        <p className="text-ink/60">Chargement...</p>
+        <p className="text-ink-muted">Chargement...</p>
       ) : quizzes.length === 0 ? (
-        <p className="text-ink/60">Aucun quiz créé pour l'instant.</p>
+        <p className="text-ink-muted">Aucun quiz créé pour l'instant.</p>
       ) : (
         <div className="space-y-3">
           {quizzes.map(q => (
             <div key={q._id} className="bg-white rounded-xl border border-ink/10 p-4 flex items-center justify-between">
               <div>
                 <p className="font-semibold">{q.titre}</p>
-                <p className="text-sm text-ink/60">{q.matiere} · {niveauLabel(q.niveau)} · {q.questions.length} questions</p>
+                <p className="text-sm text-ink-muted">{q.matiere} · {niveauLabel(q.niveau)} · {q.questions.length} questions</p>
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${q.publie ? 'bg-green-100 text-green-700' : 'bg-ink/5 text-ink/70'}`}>
                   {q.publie ? 'Publié' : 'Brouillon'}
                 </span>

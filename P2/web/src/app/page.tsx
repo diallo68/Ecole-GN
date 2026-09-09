@@ -71,7 +71,7 @@ export default function HomePage() {
 
         <div className="relative flex flex-col lg:flex-row items-center gap-10 lg:gap-14 py-8 lg:py-12">
           <div className="w-full lg:w-[55%] flex flex-col items-start gap-6">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-ink/5 border border-ink/10 text-sm font-medium text-ink/60">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-ink/5 border border-ink/10 text-sm font-medium text-ink-muted">
               <span className="w-2 h-2 rounded-full bg-brand" />
               Soutien scolaire du primaire au lycée
             </span>
@@ -81,7 +81,7 @@ export default function HomePage() {
               <span className="text-brand">partout en Guinée.</span>
             </h1>
 
-            <p className="text-base md:text-lg text-ink/60 leading-relaxed max-w-xl">
+            <p className="text-base md:text-lg text-ink-muted leading-relaxed max-w-xl">
               Connectez-vous avec des enseignants de la Guinée, dont le profil est vérifié par notre équipe avant publication. Séances à domicile ou en ligne, adaptées au rythme de chaque élève.
             </p>
 
@@ -109,7 +109,7 @@ export default function HomePage() {
             <div className="absolute -bottom-5 -left-5 bg-white/95 backdrop-blur-md border border-white p-4 rounded-2xl shadow-lg flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-brand-light text-brand-dark grid place-items-center shrink-0 font-bold">✓</div>
               <div>
-                <p className="text-[11px] text-ink/50 uppercase tracking-wider font-semibold">Vérification</p>
+                <p className="text-xs text-ink-muted uppercase tracking-wider font-semibold">Vérification</p>
                 <p className="text-sm font-bold text-ink leading-none mt-1">Profil vérifié par Gandal</p>
               </div>
             </div>
@@ -136,7 +136,7 @@ export default function HomePage() {
                 <Icon size={20} strokeWidth={1.75} />
               </div>
               <p className="font-bold text-ink mb-1">{titre}</p>
-              <p className="text-sm text-ink/50">{texte}</p>
+              <p className="text-sm text-ink-muted">{texte}</p>
             </div>
           ))}
         </div>
@@ -147,7 +147,7 @@ export default function HomePage() {
         <div className="flex items-center justify-between mb-5">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Enseignants disponibles</h2>
-            <p className="text-ink/50 text-sm mt-1">Des profils vérifiés, passionnés par la transmission du savoir.</p>
+            <p className="text-ink-muted text-sm mt-1">Des profils vérifiés, passionnés par la transmission du savoir.</p>
           </div>
           <Link href="/repetiteurs" className="hidden sm:inline-flex items-center gap-1.5 text-sm text-brand font-semibold hover:text-brand-dark shrink-0">
             Voir tout <ArrowRight size={14} />
@@ -156,7 +156,7 @@ export default function HomePage() {
         {repetiteursError ? (
           <ErrorState message="Impossible de charger les enseignants." onRetry={chargerRepetiteurs} />
         ) : repetiteurs.length === 0 ? (
-          <p className="text-ink/50 text-sm">Aucun enseignant disponible pour le moment.</p>
+          <p className="text-ink-muted text-sm">Aucun enseignant disponible pour le moment.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {repetiteurs.map(r => (
@@ -172,9 +172,9 @@ export default function HomePage() {
                   )}
                 </div>
                 <p className="font-bold text-ink">{r.prenom} {r.nom}</p>
-                <p className="text-sm text-ink/50 mt-0.5">{r.repetiteur.matieres?.join(', ')}</p>
+                <p className="text-sm text-ink-muted mt-0.5">{r.repetiteur.matieres?.join(', ')}</p>
                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-ink/10">
-                  <span className="text-xs text-ink/40">{r.city}</span>
+                  <span className="text-xs text-ink-muted">{r.city}</span>
                   {r.repetiteur.tarif?.montant && <span className="text-sm font-bold text-brand">{tarifLabel(r.repetiteur.tarif)}</span>}
                 </div>
               </Link>
@@ -187,7 +187,7 @@ export default function HomePage() {
       <section>
         <div className="text-center max-w-xl mx-auto mb-6">
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Teste-toi — quiz gratuits</h2>
-          <p className="text-ink/50 text-sm mt-1">Révise à ton rythme, conçus selon le programme national guinéen.</p>
+          <p className="text-ink-muted text-sm mt-1">Révise à ton rythme, conçus selon le programme national guinéen.</p>
         </div>
 
         {/* Filtres niveau : cycle puis classe précise */}
@@ -211,7 +211,7 @@ export default function HomePage() {
         {quizzesError ? (
           <ErrorState message="Impossible de charger les quiz." onRetry={chargerQuizzes} />
         ) : quizzes.length === 0 ? (
-          <p className="text-ink/50 text-sm text-center">Aucun quiz publié pour le moment.</p>
+          <p className="text-ink-muted text-sm text-center">Aucun quiz publié pour le moment.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {quizzes.map(q => {
@@ -219,12 +219,12 @@ export default function HomePage() {
               return (
                 <Link key={q._id} href={`/quiz/${q._id}`} className="bg-white rounded-2xl border border-ink/10 p-4 flex items-center gap-4 hover:shadow-lg hover:-translate-y-0.5 transition-all">
                   <div className="w-14 h-14 rounded-xl bg-sand grid place-items-center shrink-0">
-                    <Icon size={24} className="text-ink/60" strokeWidth={1.75} />
+                    <Icon size={24} className="text-ink-muted" strokeWidth={1.75} />
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5 mb-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wide bg-ink/5 text-ink/50 px-2 py-0.5 rounded">{q.matiere}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-wide bg-ink/5 text-ink/50 px-2 py-0.5 rounded">{niveauLabel(q.niveau)}</span>
+                      <span className="text-xs font-bold uppercase tracking-wide bg-ink/5 text-ink-muted px-2 py-0.5 rounded">{q.matiere}</span>
+                      <span className="text-xs font-bold uppercase tracking-wide bg-ink/5 text-ink-muted px-2 py-0.5 rounded">{niveauLabel(q.niveau)}</span>
                     </div>
                     <p className="font-bold text-ink leading-tight truncate">{q.titre}</p>
                     <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand mt-1">
@@ -242,7 +242,7 @@ export default function HomePage() {
             <Link key={c.value} href={`/quiz?cycle=${c.value}`}
               className="bg-white rounded-2xl border border-ink/10 p-6 flex flex-col items-center gap-1 text-center hover:border-brand hover:shadow-md transition-all">
               <span className="font-bold text-ink">{c.label}</span>
-              <span className="text-xs text-ink/50">{c.desc}</span>
+              <span className="text-xs text-ink-muted">{c.desc}</span>
             </Link>
           ))}
         </div>
@@ -252,7 +252,7 @@ export default function HomePage() {
       <section>
         <div className="text-center max-w-xl mx-auto mb-6">
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">On était sur le terrain</h2>
-          <p className="text-ink/50 text-sm mt-1">Premières séances Gandal, en direct des salles de classe de Fria.</p>
+          <p className="text-ink-muted text-sm mt-1">Premières séances Gandal, en direct des salles de classe de Fria.</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="col-span-2 row-span-2 rounded-2xl overflow-hidden bg-ink/5 aspect-square md:aspect-auto">
@@ -273,7 +273,7 @@ export default function HomePage() {
       <section id="avis" className="text-center bg-sand rounded-3xl py-14 px-6">
         <MessageCircle size={28} className="mx-auto text-brand mb-3" strokeWidth={1.5} />
         <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Les avis arrivent bientôt</h2>
-        <p className="text-ink/50 text-sm mt-2 max-w-md mx-auto">
+        <p className="text-ink-muted text-sm mt-2 max-w-md mx-auto">
           Gandal vient de démarrer en Guinée — les retours de nos premiers élèves, parents et enseignants apparaîtront ici dès qu'ils seront publiés.
         </p>
       </section>
@@ -286,8 +286,8 @@ export default function HomePage() {
 function FilterChip({ active, onClick, label, small }: { active: boolean; onClick: () => void; label: string; small?: boolean }) {
   return (
     <button onClick={onClick}
-      className={`rounded-full font-semibold border transition-colors ${small ? 'px-2.5 py-1 text-[11px]' : 'px-3.5 py-1.5 text-xs'} ${
-        active ? 'bg-brand text-white border-brand' : 'bg-white border-ink/15 text-ink/60 hover:border-brand/40'
+      className={`rounded-full font-semibold border transition-colors ${small ? 'px-2.5 py-1 text-xs' : 'px-3.5 py-1.5 text-xs'} ${
+        active ? 'bg-brand text-white border-brand' : 'bg-white border-ink/15 text-ink-muted hover:border-brand/40'
       }`}>
       {label}
     </button>

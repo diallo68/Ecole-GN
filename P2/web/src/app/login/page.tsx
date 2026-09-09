@@ -36,7 +36,7 @@ export default function LoginPage() {
       <h1 className="sr-only">Se connecter à Gandal</h1>
       <div className="flex text-sm font-bold text-center border-b border-ink/10">
         <span className="flex-1 py-3.5 text-brand border-b-2 border-brand">Se connecter</span>
-        <Link href="/register" className="flex-1 py-3.5 text-ink/50 hover:text-ink transition-colors">S&apos;inscrire</Link>
+        <Link href="/register" className="flex-1 py-3.5 text-ink-muted hover:text-ink transition-colors">S&apos;inscrire</Link>
       </div>
 
       <div className="p-6">
@@ -55,7 +55,7 @@ export default function LoginPage() {
             {loading ? 'Connexion...' : 'Se connecter'}
           </button>
         </form>
-        <p className="text-center text-sm text-ink/60 mt-4">
+        <p className="text-center text-sm text-ink-muted mt-4">
           Pas de compte ? <Link href="/register" className="text-brand font-bold hover:underline">S&apos;inscrire gratuitement</Link>
         </p>
       </div>

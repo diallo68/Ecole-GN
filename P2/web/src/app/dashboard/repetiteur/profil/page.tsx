@@ -91,7 +91,7 @@ export default function RepetiteurProfilPage() {
           <div className="space-y-2">
             {CYCLES.map(cycle => (
               <div key={cycle.value}>
-                <p className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1">{cycle.label}</p>
+                <p className="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-1">{cycle.label}</p>
                 <div className="flex flex-wrap gap-2">
                   {niveauxDuCycle(cycle.value).map(n => (
                     <button key={n.value} type="button" onClick={() => toggle(niveaux, n.value, setNiveaux)}
@@ -115,7 +115,7 @@ export default function RepetiteurProfilPage() {
               {TARIF_PERIODES.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
             </select>
           </div>
-          <p className="text-xs text-ink/40 mt-1">À l'heure pour des cours ponctuels, au mois ou à l'année pour un forfait/prépa examen.</p>
+          <p className="text-xs text-ink-muted mt-1">À l'heure pour des cours ponctuels, au mois ou à l'année pour un forfait/prépa examen.</p>
         </div>
 
         <div>

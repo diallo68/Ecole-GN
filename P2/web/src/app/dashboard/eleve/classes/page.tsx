@@ -34,17 +34,17 @@ export default function EleveClassesPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-extrabold text-ink">Classes virtuelles &amp; réservations</h1>
-        <p className="text-sm text-ink/50">Tes séances programmées avec tes enseignants — en groupe ou en tête-à-tête.</p>
+        <p className="text-sm text-ink-muted">Tes séances programmées avec tes enseignants — en groupe ou en tête-à-tête.</p>
       </div>
 
       {loading ? (
-        <p className="text-sm text-ink/50">Chargement...</p>
+        <p className="text-sm text-ink-muted">Chargement...</p>
       ) : (
         <>
           <div className="bg-white rounded-2xl border border-ink/10 p-4">
             <h2 className="font-bold text-ink mb-3">À venir</h2>
             {aVenir.length === 0 ? (
-              <p className="text-sm text-ink/50">Aucune classe virtuelle ni réservation programmée pour l'instant.</p>
+              <p className="text-sm text-ink-muted">Aucune classe virtuelle ni réservation programmée pour l'instant.</p>
             ) : (
               <div className="space-y-2">
                 {aVenir.map(i => <ItemRow key={i.data._id} item={i} />)}
@@ -85,7 +85,7 @@ function ItemRow({ item, muted }: {
           <p className="font-semibold text-ink text-sm">
             {isClasse ? item.data.titre : item.data.matiere} · {niveauLabel(item.data.niveau)}
           </p>
-          <p className="text-xs text-ink/50">
+          <p className="text-xs text-ink-muted">
             {item.date.toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}
             {enseignant ? ` · Avec ${enseignant}` : ''}
             {!isClasse && ` · ${(item.data as Reservation).mode === 'en_ligne' ? 'En ligne' : 'Présentiel'}`}
@@ -95,7 +95,7 @@ function ItemRow({ item, muted }: {
           )}
         </div>
       </div>
-      <span className="text-[11px] font-semibold bg-white px-2.5 py-1 rounded-full capitalize shrink-0">
+      <span className="text-xs font-semibold bg-white px-2.5 py-1 rounded-full capitalize shrink-0">
         {isClasse ? 'Classe virtuelle' : item.data.statut.replace('_', ' ')}
       </span>
     </div>

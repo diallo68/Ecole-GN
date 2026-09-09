@@ -19,14 +19,14 @@ export default function AdminMessageriePage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-extrabold text-ink">Messagerie</h1>
-        <p className="text-sm text-ink/50">Vue d'ensemble des conversations récentes sur la plateforme (lecture seule).</p>
+        <p className="text-sm text-ink-muted">Vue d'ensemble des conversations récentes sur la plateforme (lecture seule).</p>
       </div>
 
       <div className="bg-white rounded-2xl border border-ink/10 overflow-hidden">
         {loading ? (
-          <p className="p-4 text-sm text-ink/50">Chargement...</p>
+          <p className="p-4 text-sm text-ink-muted">Chargement...</p>
         ) : conversations.length === 0 ? (
-          <div className="p-8 text-center text-sm text-ink/50 flex flex-col items-center gap-2">
+          <div className="p-8 text-center text-sm text-ink-muted flex flex-col items-center gap-2">
             <MessageCircle size={28} strokeWidth={1.5} className="text-ink/20" />
             Aucune conversation pour l'instant.
           </div>
@@ -44,10 +44,10 @@ export default function AdminMessageriePage() {
                 <p className="text-sm font-semibold text-ink truncate">
                   {c.participants.map(p => `${p.prenom} ${p.nom}${p.role ? ` (${ROLE_LABELS[p.role] || p.role})` : ''}`).join(' ↔ ')}
                 </p>
-                <p className="text-xs text-ink/50 truncate">{c.lastMessage || 'Aucun message échangé.'}</p>
+                <p className="text-xs text-ink-muted truncate">{c.lastMessage || 'Aucun message échangé.'}</p>
               </div>
               {c.lastMessageAt && (
-                <span className="text-[11px] text-ink/40 shrink-0">{new Date(c.lastMessageAt).toLocaleDateString('fr-FR')}</span>
+                <span className="text-xs text-ink-muted shrink-0">{new Date(c.lastMessageAt).toLocaleDateString('fr-FR')}</span>
               )}
             </div>
           ))

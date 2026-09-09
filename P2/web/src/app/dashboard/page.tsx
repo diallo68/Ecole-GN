@@ -38,7 +38,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-ink">Bonjour {user.prenom} 👋</h1>
-        <p className="text-ink/50 text-sm">Espace {ROLE_LABELS[user.role] || user.role}</p>
+        <p className="text-ink-muted text-sm">Espace {ROLE_LABELS[user.role] || user.role}</p>
       </div>
 
       {user.role === 'repetiteur' && !user.repetiteur?.valide && (
@@ -127,7 +127,7 @@ function QuickAction({ href, icon: Icon, label, desc }: { href: string; icon: Lu
       </div>
       <div className="min-w-0 flex-1">
         <p className="font-semibold text-ink text-sm">{label}</p>
-        <p className="text-xs text-ink/50 truncate">{desc}</p>
+        <p className="text-xs text-ink-muted truncate">{desc}</p>
       </div>
       <ArrowRight size={16} className="text-ink/30 group-hover:text-brand transition-colors shrink-0" />
     </Link>
@@ -140,7 +140,7 @@ function AgendaSection({ title, prochaine, aVenir, emptyLabel }: { title: string
     <div className="bg-white rounded-2xl border border-ink/10 p-4">
       <h2 className="font-bold text-ink mb-3">{title}</h2>
       {!prochaine ? (
-        <p className="text-sm text-ink/50">{emptyLabel}</p>
+        <p className="text-sm text-ink-muted">{emptyLabel}</p>
       ) : (
         <div className="space-y-2">
           <ReservationRow r={prochaine} highlight />
@@ -156,12 +156,12 @@ function ReservationRow({ r, highlight }: { r: Reservation; highlight?: boolean 
     <div className={`rounded-xl p-3 flex items-center justify-between gap-3 ${highlight ? 'bg-brand-light' : 'bg-sand'}`}>
       <div className="min-w-0">
         <p className="font-semibold text-ink text-sm">{r.matiere} · {r.niveau}</p>
-        <p className="text-xs text-ink/50">
+        <p className="text-xs text-ink-muted">
           {new Date(r.dateHeure).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })} — {r.mode === 'en_ligne' ? 'En ligne' : 'Présentiel'}
         </p>
         {r.lienVisio && <a href={r.lienVisio} target="_blank" rel="noreferrer" className="text-xs text-brand font-semibold hover:underline">Rejoindre la visio →</a>}
       </div>
-      <span className="text-[11px] font-semibold bg-white px-2.5 py-1 rounded-full capitalize shrink-0">{r.statut.replace('_', ' ')}</span>
+      <span className="text-xs font-semibold bg-white px-2.5 py-1 rounded-full capitalize shrink-0">{r.statut.replace('_', ' ')}</span>
     </div>
   );
 }
@@ -174,7 +174,7 @@ function MessagesPreview({ conversations }: { conversations: Conversation[] }) {
         <Link href="/dashboard/messages" className="text-xs font-semibold text-brand hover:text-brand-dark">Tout voir →</Link>
       </div>
       {conversations.length === 0 ? (
-        <p className="text-sm text-ink/50">Aucune conversation pour l'instant.</p>
+        <p className="text-sm text-ink-muted">Aucune conversation pour l'instant.</p>
       ) : (
         <div className="space-y-1">
           {conversations.slice(0, 3).map(c => (
@@ -184,7 +184,7 @@ function MessagesPreview({ conversations }: { conversations: Conversation[] }) {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-ink truncate">{c.participants.map(p => p.prenom).join(', ')}</p>
-                <p className="text-xs text-ink/50 truncate">{c.lastMessage || '...'}</p>
+                <p className="text-xs text-ink-muted truncate">{c.lastMessage || '...'}</p>
               </div>
             </Link>
           ))}

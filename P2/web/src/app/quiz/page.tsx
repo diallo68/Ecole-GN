@@ -9,7 +9,7 @@ import type { QuizSummary, Cycle, Niveau } from '@/types';
 
 export default function QuizListPage() {
   return (
-    <Suspense fallback={<p className="text-ink/60">Chargement...</p>}>
+    <Suspense fallback={<p className="text-ink-muted">Chargement...</p>}>
       <QuizListContent />
     </Suspense>
   );
@@ -34,13 +34,13 @@ function QuizListContent() {
     return (
       <div className="max-w-2xl mx-auto text-center">
         <h1 className="text-2xl font-bold text-ink mb-1">Quiz d'auto-évaluation</h1>
-        <p className="text-ink/60 mb-8">Commence par choisir ton niveau d'étude.</p>
+        <p className="text-ink-muted mb-8">Commence par choisir ton niveau d'étude.</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {CYCLES.map(c => (
             <button key={c.value} onClick={() => router.push(`/quiz?cycle=${c.value}`)}
               className="bg-white rounded-2xl border border-ink/10 p-6 flex flex-col items-center gap-2 hover:border-brand hover:shadow-md transition-all">
               <span className="font-bold text-ink">{c.label}</span>
-              <span className="text-xs text-ink/50">{c.desc}</span>
+              <span className="text-xs text-ink-muted">{c.desc}</span>
             </button>
           ))}
         </div>
@@ -56,7 +56,7 @@ function QuizListContent() {
           <h1 className="text-2xl font-bold text-ink">{CYCLES.find(c => c.value === cycle)?.label}</h1>
           <Link href="/quiz" className="text-sm text-brand font-semibold hover:text-brand-dark">Changer de niveau</Link>
         </div>
-        <p className="text-ink/60 mb-8 text-left">Choisis ta classe.</p>
+        <p className="text-ink-muted mb-8 text-left">Choisis ta classe.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {niveauxDuCycle(cycle).map(n => (
             <button key={n.value} onClick={() => router.push(`/quiz?cycle=${cycle}&niveau=${n.value}`)}
@@ -76,7 +76,7 @@ function QuizListContent() {
         <h1 className="text-2xl font-bold text-ink">Quiz — {niveauLabel(niveau)}</h1>
         <Link href="/quiz" className="text-sm text-brand font-semibold hover:text-brand-dark">Changer de niveau</Link>
       </div>
-      <p className="text-ink/60 mb-4">Teste tes connaissances gratuitement.</p>
+      <p className="text-ink-muted mb-4">Teste tes connaissances gratuitement.</p>
 
       <div className="flex flex-wrap gap-2 mb-6">
         <FilterPill active={!matiere} onClick={() => setMatiere('')} label="Toutes les matières" />
@@ -84,13 +84,13 @@ function QuizListContent() {
       </div>
 
       {quizzes.length === 0 ? (
-        <p className="text-ink/60">Aucun quiz disponible pour ces critères.</p>
+        <p className="text-ink-muted">Aucun quiz disponible pour ces critères.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {quizzes.map(q => (
             <Link key={q._id} href={`/quiz/${q._id}`} className="bg-white rounded-xl border border-ink/10 p-4 hover:shadow-md transition-shadow">
               <p className="font-bold">{q.titre}</p>
-              <p className="text-sm text-ink/60">{q.matiere} · {niveauLabel(q.niveau)}</p>
+              <p className="text-sm text-ink-muted">{q.matiere} · {niveauLabel(q.niveau)}</p>
             </Link>
           ))}
         </div>

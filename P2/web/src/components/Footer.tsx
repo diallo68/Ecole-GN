@@ -13,14 +13,14 @@ export default function Footer() {
               </span>
               Gandal
             </Link>
-            <p className="text-sm text-ink/50 leading-relaxed">
+            <p className="text-sm text-ink-muted leading-relaxed">
               La plateforme de soutien scolaire à Conakry et en Guinée. Apprendre, comprendre, réussir.
             </p>
           </div>
 
           <div>
             <h4 className="font-bold text-ink text-sm mb-3">Plateforme</h4>
-            <ul className="space-y-2.5 text-sm text-ink/60">
+            <ul className="space-y-2.5 text-sm text-ink-muted">
               <li><Link href="/repetiteurs" className="hover:text-ink transition-colors">Trouver un enseignant</Link></li>
               <li><Link href="/quiz" className="hover:text-ink transition-colors">Faire un quiz</Link></li>
             </ul>
@@ -28,7 +28,7 @@ export default function Footer() {
 
           <div>
             <h4 className="font-bold text-ink text-sm mb-3">Enseignants</h4>
-            <ul className="space-y-2.5 text-sm text-ink/60">
+            <ul className="space-y-2.5 text-sm text-ink-muted">
               <li><Link href="/register" className="hover:text-ink transition-colors">Devenir enseignant</Link></li>
               <li><Link href="/login" className="hover:text-ink transition-colors">Espace enseignant</Link></li>
             </ul>
@@ -36,13 +36,13 @@ export default function Footer() {
 
           <div>
             <h4 className="font-bold text-ink text-sm mb-3">Contact</h4>
-            <a href="mailto:support.yougouyougou@gmail.com" className="flex items-start gap-2 text-sm text-ink/60 hover:text-ink transition-colors break-all">
+            <a href="mailto:support.yougouyougou@gmail.com" className="flex items-start gap-2 text-sm text-ink-muted hover:text-ink transition-colors break-words">
               <Mail size={14} /> support.yougouyougou@gmail.com
             </a>
           </div>
         </div>
 
-        <div className="border-t border-ink/10 pt-6 text-xs text-ink/40">
+        <div className="border-t border-ink/10 pt-6 text-xs text-ink-muted">
           © {new Date().getFullYear()} Gandal Guinée. Tous droits réservés.
         </div>
       </div>

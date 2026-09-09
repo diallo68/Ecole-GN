@@ -16,7 +16,7 @@ export default function StatCard({ icon: Icon, label, value, tone = 'brand' }: {
       </div>
       <div className="min-w-0">
         <p className="text-xl font-extrabold text-ink leading-tight">{value}</p>
-        <p className="text-xs text-ink/50 font-medium truncate">{label}</p>
+        <p className="text-xs text-ink-muted font-medium truncate">{label}</p>
       </div>
     </div>
   );

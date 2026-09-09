@@ -37,7 +37,7 @@ export default function FiltreEnseignantBar({ vertical = false }: { vertical?: b
             </optgroup>
           ))}
         </select>
-        <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink/40 pointer-events-none" />
+        <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none" />
       </div>
       <MiniSelect vertical={vertical} label="Tarif maximum" value={tarifMax} onChange={setTarifMax} options={TARIF_MAX_OPTIONS} />
       <MiniSelect vertical={vertical} label="Ville" value={ville} onChange={setVille}
@@ -45,7 +45,7 @@ export default function FiltreEnseignantBar({ vertical = false }: { vertical?: b
       <MiniSelect vertical={vertical} label="Disponibilité" value={disponibilite} onChange={setDisponibilite}
         options={[{ value: '', label: 'Toutes les heures' }, ...DISPONIBILITES]} />
       {actifs > 0 && (
-        <button onClick={reset} className={`text-xs font-semibold text-ink/50 hover:text-flag underline underline-offset-2 ${vertical ? 'text-left' : ''}`}>
+        <button onClick={reset} className={`text-xs font-semibold text-ink-muted hover:text-flag underline underline-offset-2 ${vertical ? 'text-left' : ''}`}>
           Effacer les filtres{!vertical && ` (${actifs})`}
         </button>
       )}
@@ -65,7 +65,7 @@ function MiniSelect({ label, value, onChange, options, vertical }: {
         className={`appearance-none bg-sand/70 hover:bg-sand border border-ink/10 rounded-full text-xs font-semibold text-ink pl-3 pr-6 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-1 ${vertical ? 'w-full' : 'max-w-[130px]'}`}>
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
-      <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink/40 pointer-events-none" />
+      <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none" />
     </div>
   );
 }

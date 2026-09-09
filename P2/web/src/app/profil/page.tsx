@@ -56,7 +56,7 @@ export default function ProfilPage() {
   if (!user) {
     return (
       <div className="max-w-xl mx-auto text-center py-16">
-        <p className="text-ink/60 mb-4">Connecte-toi pour accéder à ton profil.</p>
+        <p className="text-ink-muted mb-4">Connecte-toi pour accéder à ton profil.</p>
         <Link href="/login" className="bg-brand text-white rounded-lg px-5 py-2.5 font-semibold hover:bg-brand-dark">Se connecter</Link>
       </div>
     );
@@ -68,7 +68,7 @@ export default function ProfilPage() {
   return (
     <div className="max-w-xl mx-auto">
       <h1 className="text-2xl font-bold text-ink mb-1">Mon profil</h1>
-      <p className="text-ink/50 text-sm mb-6">Tes informations personnelles.</p>
+      <p className="text-ink-muted text-sm mb-6">Tes informations personnelles.</p>
 
       {user.role === 'repetiteur' && (
         <Link href="/dashboard/repetiteur/profil"
@@ -88,7 +88,7 @@ export default function ProfilPage() {
             </div>
           )}
           <div className="flex-1">
-            <span className="text-xs font-semibold text-ink/40 uppercase tracking-wide">{ROLE_LABELS[user.role] || user.role}</span>
+            <span className="text-xs font-semibold text-ink-muted uppercase tracking-wide">{ROLE_LABELS[user.role] || user.role}</span>
             <div className="mt-1">
               <FileUploadField value={photo} onChange={setPhoto} accept="image/*" label="Changer la photo" />
             </div>
@@ -108,8 +108,8 @@ export default function ProfilPage() {
 
         <div>
           <label className="block text-sm font-semibold mb-1">Email</label>
-          <input value={user.email} disabled className="w-full border border-ink/15 rounded-lg px-3 py-2 bg-sand/50 text-ink/50" />
-          <p className="text-xs text-ink/40 mt-1">L'email ne peut pas être modifié (identifiant de connexion).</p>
+          <input value={user.email} disabled className="w-full border border-ink/15 rounded-lg px-3 py-2 bg-sand/50 text-ink-muted" />
+          <p className="text-xs text-ink-muted mt-1">L'email ne peut pas être modifié (identifiant de connexion).</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -132,7 +132,7 @@ export default function ProfilPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-1">Pièce d'identité <span className="text-ink/40 font-normal">(optionnel)</span></label>
+          <label className="block text-sm font-semibold mb-1">Pièce d'identité <span className="text-ink-muted font-normal">(optionnel)</span></label>
           <FileUploadField value={pieceIdentite} onChange={setPieceIdentite} accept="image/*,.pdf" label="Ajouter une pièce d'identité" />
         </div>
 
@@ -185,10 +185,10 @@ function MesEnfants() {
   return (
     <div className="bg-white rounded-2xl border border-ink/10 p-6">
       <h2 className="font-bold text-ink mb-1">Mes enfants</h2>
-      <p className="text-sm text-ink/50 mb-4">Lie le compte de ton enfant au tien pour pouvoir réserver des séances pour lui.</p>
+      <p className="text-sm text-ink-muted mb-4">Lie le compte de ton enfant au tien pour pouvoir réserver des séances pour lui.</p>
 
       {loaded && enfants.length === 0 && (
-        <p className="text-sm text-ink/50 mb-4">Aucun enfant lié pour le moment.</p>
+        <p className="text-sm text-ink-muted mb-4">Aucun enfant lié pour le moment.</p>
       )}
 
       {enfants.length > 0 && (
@@ -197,9 +197,9 @@ function MesEnfants() {
             <li key={e._id} className="flex items-center justify-between bg-sand/50 rounded-lg px-3 py-2">
               <div>
                 <p className="text-sm font-semibold text-ink">{e.prenom} {e.nom}</p>
-                <p className="text-xs text-ink/50">{e.eleve?.niveau ? niveauLabel(e.eleve.niveau) : e.email}</p>
+                <p className="text-xs text-ink-muted">{e.eleve?.niveau ? niveauLabel(e.eleve.niveau) : e.email}</p>
               </div>
-              <button onClick={() => retirer(e._id)} aria-label={`Retirer ${e.prenom}`} className="text-ink/40 hover:text-flag p-1">
+              <button onClick={() => retirer(e._id)} aria-label={`Retirer ${e.prenom}`} className="text-ink-muted hover:text-flag p-1">
                 <X size={16} />
               </button>
             </li>
@@ -215,7 +215,7 @@ function MesEnfants() {
           <UserPlus size={15} /> Ajouter
         </button>
       </div>
-      <p className="text-xs text-ink/40 mt-2">Ton enfant doit déjà avoir créé son propre compte élève sur Gandal.</p>
+      <p className="text-xs text-ink-muted mt-2">Ton enfant doit déjà avoir créé son propre compte élève sur Gandal.</p>
     </div>
   );
 }

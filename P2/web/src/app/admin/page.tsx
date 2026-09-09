@@ -31,13 +31,13 @@ export default function AdminOverviewPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-ink">Bonjour {user?.prenom} 👋</h1>
-        <p className="text-ink/50 text-sm">Aperçu de la plateforme Gandal</p>
+        <p className="text-ink-muted text-sm">Aperçu de la plateforme Gandal</p>
       </div>
 
       {error ? (
         <ErrorState message="Impossible de charger les statistiques." onRetry={charger} />
       ) : !stats ? (
-        <p className="text-sm text-ink/50">Chargement des statistiques...</p>
+        <p className="text-sm text-ink-muted">Chargement des statistiques...</p>
       ) : (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -78,7 +78,7 @@ function QuickAction({ href, icon: Icon, label, desc }: { href: string; icon: Lu
       </div>
       <div className="min-w-0 flex-1">
         <p className="font-semibold text-ink text-sm">{label}</p>
-        <p className="text-xs text-ink/50 truncate">{desc}</p>
+        <p className="text-xs text-ink-muted truncate">{desc}</p>
       </div>
       <ArrowRight size={16} className="text-ink/30 group-hover:text-brand transition-colors shrink-0" />
     </Link>

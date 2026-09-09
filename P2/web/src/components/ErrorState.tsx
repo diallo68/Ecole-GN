@@ -10,7 +10,7 @@ export default function ErrorState({ message = 'Une erreur est survenue.', onRet
   return (
     <div className="text-center py-8">
       <AlertCircle size={22} className="mx-auto text-flag mb-2" strokeWidth={1.75} />
-      <p className="text-sm text-ink/60 mb-3">{message}</p>
+      <p className="text-sm text-ink-muted mb-3">{message}</p>
       {onRetry && (
         <button onClick={onRetry} className="text-sm font-semibold text-brand hover:underline">Réessayer</button>
       )}

@@ -89,7 +89,7 @@ export default function QuizPlayClient() {
       <div className="max-w-md mx-auto text-center bg-white rounded-2xl border border-ink/10 p-8">
         <Lock size={28} className="mx-auto text-brand mb-3" strokeWidth={1.75} />
         <h1 className="text-xl font-bold text-ink mb-2">Ton test gratuit est déjà utilisé</h1>
-        <p className="text-sm text-ink/60 mb-6">
+        <p className="text-sm text-ink-muted mb-6">
           Sans inscription, un seul quiz d'essai est disponible. Crée un compte gratuit pour continuer à t'entraîner à volonté.
         </p>
         <Link href="/register" className="inline-flex items-center justify-center gap-2 bg-brand text-white rounded-full px-6 py-3 font-semibold hover:bg-brand-dark transition-colors">
@@ -102,18 +102,18 @@ export default function QuizPlayClient() {
   if (notFound) {
     return (
       <div className="max-w-md mx-auto text-center py-12">
-        <p className="text-ink/60 mb-4">Ce quiz n&apos;est plus disponible.</p>
+        <p className="text-ink-muted mb-4">Ce quiz n&apos;est plus disponible.</p>
         <Link href="/quiz" className="text-sm font-semibold text-brand hover:underline">← Retour au catalogue</Link>
       </div>
     );
   }
   if (loadError) return <ErrorState message="Impossible de charger ce quiz." onRetry={chargerQuiz} />;
-  if (!quiz) return <p className="text-ink/60">Chargement...</p>;
+  if (!quiz) return <p className="text-ink-muted">Chargement...</p>;
 
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-1">{quiz.titre}</h1>
-      <p className="text-ink/60 mb-6">{quiz.matiere} · {niveauLabel(quiz.niveau)}</p>
+      <p className="text-ink-muted mb-6">{quiz.matiere} · {niveauLabel(quiz.niveau)}</p>
 
       {result && (
         <div className="bg-brand/10 border border-brand rounded-xl p-4 mb-4 text-center">
@@ -126,7 +126,7 @@ export default function QuizPlayClient() {
           <Sparkles size={20} className="text-brand shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-ink">C'était ton essai gratuit !</p>
-            <p className="text-xs text-ink/60">Inscris-toi pour passer d'autres quiz et réserver un enseignant.</p>
+            <p className="text-xs text-ink-muted">Inscris-toi pour passer d'autres quiz et réserver un enseignant.</p>
           </div>
           <Link href="/register" className="text-sm font-bold text-brand hover:text-brand-dark shrink-0">S'inscrire →</Link>
         </div>
@@ -146,7 +146,7 @@ export default function QuizPlayClient() {
             <div className="h-1.5 rounded-full bg-ink/10 overflow-hidden" role="progressbar" aria-valuenow={currentIndex + 1} aria-valuemin={1} aria-valuemax={quiz.questions.length}>
               <div className="h-full bg-brand rounded-full transition-all duration-300" style={{ width: `${((currentIndex + 1) / quiz.questions.length) * 100}%` }} />
             </div>
-            <span className="text-xs font-semibold text-ink/40">Question {currentIndex + 1} sur {quiz.questions.length}</span>
+            <span className="text-xs font-semibold text-ink-muted">Question {currentIndex + 1} sur {quiz.questions.length}</span>
           </div>
 
           {/* tabIndex=-1 + focus() au changement de question (voir l'effet
@@ -167,7 +167,7 @@ export default function QuizPlayClient() {
               comprimer l'une contre l'autre à 320px. */}
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between mt-6">
             <button onClick={() => setCurrentIndex(i => Math.max(0, i - 1))} disabled={currentIndex === 0}
-              className="flex items-center justify-center gap-1.5 text-sm font-semibold text-ink/60 hover:text-ink disabled:opacity-30">
+              className="flex items-center justify-center gap-1.5 text-sm font-semibold text-ink-muted hover:text-ink disabled:opacity-30">
               <ArrowLeft size={15} /> Précédent
             </button>
 
@@ -233,7 +233,7 @@ function QuestionCard({ q, index, selected, correction, onSelect, disabled }: {
         })}
       </div>
       {correction?.explication && (
-        <p className="text-xs text-ink/60 mt-3 italic">{correction.explication}</p>
+        <p className="text-xs text-ink-muted mt-3 italic">{correction.explication}</p>
       )}
     </div>
   );

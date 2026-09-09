@@ -79,7 +79,7 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
         </div>
         {/* Mobile/tablette : bouton dépliable, avec le nombre de filtres actifs */}
         <button onClick={() => setFiltresOpen(o => !o)}
-          className="lg:hidden flex items-center gap-1.5 text-xs font-semibold text-ink/60 border border-ink/10 rounded-full px-3 py-2 self-start">
+          className="lg:hidden flex items-center gap-1.5 text-xs font-semibold text-ink-muted border border-ink/10 rounded-full px-3 py-2 self-start">
           <SlidersHorizontal size={13} /> Filtres{filtresActifs > 0 ? ` (${filtresActifs})` : ''}
         </button>
       </div>
@@ -91,14 +91,14 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
       )}
 
       {loading ? (
-        <p className="text-ink/50 text-sm">Chargement...</p>
+        <p className="text-ink-muted text-sm">Chargement...</p>
       ) : error ? (
         <ErrorState message="Impossible de charger les enseignants." onRetry={() => setReloadKey(k => k + 1)} />
       ) : repetiteurs.length === 0 ? (
-        <p className="text-ink/50 text-sm">Aucun enseignant ne correspond à ces critères.</p>
+        <p className="text-ink-muted text-sm">Aucun enseignant ne correspond à ces critères.</p>
       ) : (
         <>
-          <p className="text-xs text-ink/40 mb-3">{total} enseignant{total > 1 ? 's' : ''} trouvé{total > 1 ? 's' : ''}</p>
+          <p className="text-xs text-ink-muted mb-3">{total} enseignant{total > 1 ? 's' : ''} trouvé{total > 1 ? 's' : ''}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {repetiteurs.map(r => (
               <Link key={r._id} href={`/repetiteurs/${r._id}`} className="bg-white rounded-2xl border border-ink/10 p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all">
@@ -113,9 +113,9 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
                   )}
                 </div>
                 <p className="font-bold text-ink">{r.prenom} {r.nom}</p>
-                <p className="text-sm text-ink/50 mt-0.5">{r.repetiteur.matieres?.join(', ')}</p>
+                <p className="text-sm text-ink-muted mt-0.5">{r.repetiteur.matieres?.join(', ')}</p>
                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-ink/10">
-                  <span className="text-xs text-ink/40">{r.city}</span>
+                  <span className="text-xs text-ink-muted">{r.city}</span>
                   {r.repetiteur.tarif?.montant && <span className="text-sm font-bold text-brand">{tarifLabel(r.repetiteur.tarif)}</span>}
                 </div>
               </Link>
@@ -125,12 +125,12 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-4 mt-8">
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}
-                className="flex items-center gap-1 text-sm font-semibold text-ink/60 hover:text-ink disabled:opacity-30">
+                className="flex items-center gap-1 text-sm font-semibold text-ink-muted hover:text-ink disabled:opacity-30">
                 <ChevronLeft size={16} /> Précédent
               </button>
-              <span className="text-xs font-semibold text-ink/40">Page {page} sur {totalPages}</span>
+              <span className="text-xs font-semibold text-ink-muted">Page {page} sur {totalPages}</span>
               <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
-                className="flex items-center gap-1 text-sm font-semibold text-ink/60 hover:text-ink disabled:opacity-30">
+                className="flex items-center gap-1 text-sm font-semibold text-ink-muted hover:text-ink disabled:opacity-30">
                 Suivant <ChevronRight size={16} />
               </button>
             </div>

@@ -106,13 +106,13 @@ export default function RepetiteurDetailClient() {
   if (notFound) {
     return (
       <div className="max-w-md mx-auto text-center py-12">
-        <p className="text-ink/60 mb-4">Ce profil enseignant n&apos;est plus disponible.</p>
+        <p className="text-ink-muted mb-4">Ce profil enseignant n&apos;est plus disponible.</p>
         <Link href="/repetiteurs" className="text-sm font-semibold text-brand hover:underline">← Retour aux résultats</Link>
       </div>
     );
   }
   if (loadError) return <ErrorState message="Impossible de charger ce profil enseignant." onRetry={chargerRepetiteur} />;
-  if (!repetiteur) return <p className="text-ink/60">Chargement...</p>;
+  if (!repetiteur) return <p className="text-ink-muted">Chargement...</p>;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -130,7 +130,7 @@ export default function RepetiteurDetailClient() {
             </span>
           )}
         </div>
-        <p className="text-ink/60">{repetiteur.city}</p>
+        <p className="text-ink-muted">{repetiteur.city}</p>
         {repetiteur.repetiteur.ratingCount > 0 && (
           <p className="text-amber-500 mt-1">★ {repetiteur.repetiteur.avgRating} ({repetiteur.repetiteur.ratingCount} avis)</p>
         )}
@@ -158,7 +158,7 @@ export default function RepetiteurDetailClient() {
               nouvelle adresse "gandal.net" fabriquée qui n'existerait pas
               vraiment. Calculé au clic (pas au rendu) pour éviter tout écart
               serveur/client sur window.location. */}
-          <button onClick={signaler} className="inline-flex items-center gap-2 text-sm font-semibold text-ink/40 hover:text-ink/70">
+          <button onClick={signaler} className="inline-flex items-center gap-2 text-sm font-semibold text-ink-muted hover:text-ink/70">
             <Flag size={14} /> Signaler ce profil
           </button>
         </div>
@@ -169,7 +169,7 @@ export default function RepetiteurDetailClient() {
 
         {parentSansEnfant ? (
           <div className="text-sm">
-            <p className="text-ink/60 mb-3">Lie d&apos;abord le compte de ton enfant à ton profil parent pour pouvoir réserver une séance pour lui.</p>
+            <p className="text-ink-muted mb-3">Lie d&apos;abord le compte de ton enfant à ton profil parent pour pouvoir réserver une séance pour lui.</p>
             <Link href="/profil" className="inline-flex items-center gap-1.5 bg-brand text-white rounded-lg px-4 py-2 font-semibold hover:bg-brand-dark">
               Lier mon enfant →
             </Link>
@@ -178,26 +178,26 @@ export default function RepetiteurDetailClient() {
           <div className="space-y-3">
             {user?.role === 'parent' && enfants.length > 0 && (
               <div>
-                <label className="block text-xs font-semibold text-ink/50 mb-1">Pour quel enfant ?</label>
+                <label className="block text-xs font-semibold text-ink-muted mb-1">Pour quel enfant ?</label>
                 <select value={eleveId} onChange={e => setEleveId(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2">
                   {enfants.map(e => <option key={e._id} value={e._id}>{e.prenom} {e.nom}</option>)}
                 </select>
               </div>
             )}
             <div>
-              <label htmlFor="reservation-matiere" className="block text-xs font-semibold text-ink/50 mb-1">Matière</label>
+              <label htmlFor="reservation-matiere" className="block text-xs font-semibold text-ink-muted mb-1">Matière</label>
               <select id="reservation-matiere" value={matiere} onChange={e => setMatiere(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2">
                 {repetiteur.repetiteur.matieres?.map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
             <div>
-              <label htmlFor="reservation-niveau" className="block text-xs font-semibold text-ink/50 mb-1">Classe</label>
+              <label htmlFor="reservation-niveau" className="block text-xs font-semibold text-ink-muted mb-1">Classe</label>
               <select id="reservation-niveau" value={niveau} onChange={e => setNiveau(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2">
                 {repetiteur.repetiteur.niveaux?.map(n => <option key={n} value={n}>{niveauLabel(n)}</option>)}
               </select>
             </div>
             <div>
-              <label htmlFor="reservation-mode" className="block text-xs font-semibold text-ink/50 mb-1">Mode</label>
+              <label htmlFor="reservation-mode" className="block text-xs font-semibold text-ink-muted mb-1">Mode</label>
               <select id="reservation-mode" value={mode} onChange={e => setMode(e.target.value as 'presentiel' | 'en_ligne')} className="w-full border border-ink/15 rounded-lg px-3 py-2">
                 <option value="en_ligne">En ligne (visio)</option>
                 <option value="presentiel">Présentiel</option>
@@ -205,12 +205,12 @@ export default function RepetiteurDetailClient() {
             </div>
             {mode === 'presentiel' && (
               <div>
-                <label htmlFor="reservation-adresse" className="block text-xs font-semibold text-ink/50 mb-1">Adresse</label>
+                <label htmlFor="reservation-adresse" className="block text-xs font-semibold text-ink-muted mb-1">Adresse</label>
                 <input id="reservation-adresse" placeholder="Adresse" value={adresse} onChange={e => setAdresse(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2" />
               </div>
             )}
             <div>
-              <label htmlFor="reservation-date" className="block text-xs font-semibold text-ink/50 mb-1">Date et heure</label>
+              <label htmlFor="reservation-date" className="block text-xs font-semibold text-ink-muted mb-1">Date et heure</label>
               <input id="reservation-date" type="datetime-local" value={dateHeure} onChange={e => setDateHeure(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2" />
             </div>
             <button onClick={reserver} disabled={loading} aria-busy={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">

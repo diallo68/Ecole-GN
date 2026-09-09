@@ -33,7 +33,7 @@ export default function MesExercicesPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-extrabold text-ink">Mes exercices</h1>
-        <p className="text-sm text-ink/50">Exercices publiés par les enseignants Gandal{user?.eleve?.niveau ? ` — ${niveauLabel(user.eleve.niveau)}` : ''}.</p>
+        <p className="text-sm text-ink-muted">Exercices publiés par les enseignants Gandal{user?.eleve?.niveau ? ` — ${niveauLabel(user.eleve.niveau)}` : ''}.</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -42,9 +42,9 @@ export default function MesExercicesPage() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-ink/50">Chargement...</p>
+        <p className="text-sm text-ink-muted">Chargement...</p>
       ) : items.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-ink/10 p-6 text-center text-sm text-ink/50">
+        <div className="bg-white rounded-2xl border border-ink/10 p-6 text-center text-sm text-ink-muted">
           Aucun exercice disponible pour le moment.
         </div>
       ) : (
@@ -58,15 +58,15 @@ export default function MesExercicesPage() {
                 <button onClick={() => setOpenId(open ? null : item._id)} className="w-full flex items-center justify-between gap-3 p-4 text-left">
                   <div className="min-w-0">
                     <p className="font-semibold text-ink text-sm">{item.titre}</p>
-                    <p className="text-xs text-ink/50">{item.matiere}{item.chapitre ? ` · ${item.chapitre}` : ''}{auteur ? ` · Par ${auteur}` : ''}</p>
+                    <p className="text-xs text-ink-muted">{item.matiere}{item.chapitre ? ` · ${item.chapitre}` : ''}{auteur ? ` · Par ${auteur}` : ''}</p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     {mySoumission && (
-                      <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${mySoumission.statut === 'corrige' ? 'bg-brand-light text-brand-dark' : 'bg-accent/15 text-[#8a6400]'}`}>
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${mySoumission.statut === 'corrige' ? 'bg-brand-light text-brand-dark' : 'bg-accent/15 text-[#8a6400]'}`}>
                         {mySoumission.statut === 'corrige' ? `Corrigé — ${mySoumission.note ?? '—'}/20` : 'Rendu'}
                       </span>
                     )}
-                    <ChevronDown size={16} className={`text-ink/40 transition-transform ${open ? 'rotate-180' : ''}`} />
+                    <ChevronDown size={16} className={`text-ink-muted transition-transform ${open ? 'rotate-180' : ''}`} />
                   </div>
                 </button>
                 {open && (
@@ -119,7 +119,7 @@ function SubmissionForm({ exerciceId, existing, onSubmitted }: { exerciceId: str
 
   return (
     <div className="bg-sand rounded-xl p-3 space-y-2">
-      <p className="text-xs font-semibold text-ink/60 flex items-center gap-1.5">
+      <p className="text-xs font-semibold text-ink-muted flex items-center gap-1.5">
         {existing ? <CheckCircle2 size={13} className="text-brand" /> : null}
         {existing ? (existing.statut === 'corrige' ? 'Ta réponse (corrigée)' : 'Ta réponse (rendue)') : 'Rendre ma réponse'}
       </p>
