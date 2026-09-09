@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import toast from 'react-hot-toast';
+import Button from '@/components/Button';
 import { quizApi } from '@/lib/api';
 import { niveauLabel } from '@/lib/constants';
 import type { QuizFull } from '@/types';
@@ -38,9 +38,7 @@ export default function AdminQuizPage() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Quiz d'auto-évaluation</h1>
-        <Link href="/admin/quiz/nouveau" className="bg-brand text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-brand-dark">
-          + Nouveau quiz
-        </Link>
+        <Button href="/admin/quiz/nouveau" size="sm">+ Nouveau quiz</Button>
       </div>
 
       {loading ? (

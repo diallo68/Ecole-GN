@@ -5,6 +5,7 @@ import { ChevronDown, Paperclip, CheckCircle2, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { contentApi, soumissionApi } from '@/lib/api';
 import { MATIERES, niveauLabel } from '@/lib/constants';
+import Button from '@/components/Button';
 import { useAuthStore } from '@/store/authStore';
 import FileUploadField from '@/components/FileUploadField';
 import type { ContentItem, Soumission } from '@/types';
@@ -135,9 +136,9 @@ function SubmissionForm({ exerciceId, existing, onSubmitted }: { exerciceId: str
         <FileUploadField value={fichierUrl} onChange={setFichierUrl} accept=".pdf,image/*" label="Joindre un fichier (optionnel)" />
       )}
       {existing?.statut !== 'corrige' && (
-        <button onClick={envoyer} disabled={loading} className="inline-flex items-center gap-1.5 bg-brand text-white rounded-lg px-3 py-1.5 text-xs font-semibold hover:bg-brand-dark disabled:opacity-50">
-          <Send size={13} /> {loading ? 'Envoi...' : existing ? 'Mettre à jour' : 'Envoyer'}
-        </button>
+        <Button onClick={envoyer} loading={loading} loadingLabel="Envoi..." icon={Send} iconPosition="left" size="sm">
+          {existing ? 'Mettre à jour' : 'Envoyer'}
+        </Button>
       )}
     </div>
   );
