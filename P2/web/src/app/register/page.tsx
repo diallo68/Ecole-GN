@@ -9,6 +9,7 @@ import { authApi } from '@/lib/api';
 import { ALL_CITIES, CYCLES, niveauxDuCycle } from '@/lib/constants';
 import { useAuthStore } from '@/store/authStore';
 import FileUploadField from '@/components/FileUploadField';
+import Button from '@/components/Button';
 import type { Role, Niveau, Cycle } from '@/types';
 
 type AccountChoice = 'eleve_parent' | 'repetiteur' | '';
@@ -200,13 +201,13 @@ export default function RegisterPage() {
             <FileUploadField value={pieceIdentite} onChange={setPieceIdentite} accept="image/*,.pdf" label="Ajouter une pièce d'identité" />
           </div>
         )}
-        <button onClick={finishDocuments} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
-          {loading ? 'Envoi...' : documentsError ? 'Réessayer' : (photo || pieceIdentite) ? 'Continuer' : 'Passer cette étape'}
-        </button>
+        <Button onClick={finishDocuments} fullWidth loading={loading}>
+          {documentsError ? 'Réessayer' : (photo || pieceIdentite) ? 'Continuer' : 'Passer cette étape'}
+        </Button>
         {documentsError && (
-          <button onClick={() => router.push('/dashboard')} className="w-full text-center text-sm text-ink-muted hover:underline">
+          <Button variant="ghost" onClick={() => router.push('/dashboard')} fullWidth>
             Continuer sans enregistrer ces documents
-          </button>
+          </Button>
         )}
       </div>
     );
@@ -224,9 +225,7 @@ export default function RegisterPage() {
         <input placeholder="Code à 6 chiffres" maxLength={6} inputMode="numeric" autoComplete="one-time-code"
           value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
           className="w-full border border-ink/15 rounded-lg px-3 py-2 text-center text-lg tracking-widest" />
-        <button onClick={verifyAndRegister} disabled={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
-          {loading ? 'Vérification...' : 'Valider et créer mon compte'}
-        </button>
+        <Button onClick={verifyAndRegister} fullWidth loading={loading} loadingLabel="Vérification...">Valider et créer mon compte</Button>
         <div className="text-center">
           <button onClick={() => { setStep('form'); setCode(''); }} className="text-sm text-ink-muted hover:underline">← Modifier mes infos</button>
           <span className="mx-2 text-ink-muted">·</span>
@@ -346,10 +345,10 @@ export default function RegisterPage() {
 
       {q.id !== 'accountType' && q.id !== 'subRole' && q.id !== 'cycle' && q.id !== 'niveau' && (
         <div className="flex items-center justify-between mt-6">
-          <button onClick={goBack} className="text-sm font-bold text-ink-muted hover:text-ink">← Retour</button>
-          <button onClick={goNext} disabled={loading} className="bg-brand text-white rounded-lg py-2.5 px-6 font-semibold hover:bg-brand-dark disabled:opacity-50">
-            {loading ? 'Envoi...' : qIndex === questions.length - 1 ? 'Recevoir mon code →' : 'Suivant →'}
-          </button>
+          <Button variant="ghost" size="sm" onClick={goBack}>← Retour</Button>
+          <Button onClick={goNext} loading={loading} loadingLabel="Envoi...">
+            {qIndex === questions.length - 1 ? 'Recevoir mon code →' : 'Suivant →'}
+          </Button>
         </div>
       )}
       {q.id === 'accountType' && (
@@ -358,7 +357,7 @@ export default function RegisterPage() {
         </p>
       )}
       {(q.id === 'subRole' || q.id === 'cycle' || q.id === 'niveau') && (
-        <button onClick={goBack} className="text-sm font-bold text-ink-muted hover:text-ink mt-6">← Retour</button>
+        <Button variant="ghost" size="sm" onClick={goBack} className="mt-6">← Retour</Button>
       )}
     </div>
   );

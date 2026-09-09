@@ -6,6 +6,7 @@ import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import Button from '@/components/Button';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -51,9 +52,7 @@ export default function LoginPage() {
             <input id="login-password" type="password" required placeholder="Mot de passe" autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)}
               className="w-full border border-ink/15 rounded-lg px-3 py-2" />
           </div>
-          <button type="submit" disabled={loading} aria-busy={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
-            {loading ? 'Connexion...' : 'Se connecter'}
-          </button>
+          <Button type="submit" fullWidth loading={loading} loadingLabel="Connexion...">Se connecter</Button>
         </form>
         <p className="text-center text-sm text-ink-muted mt-4">
           Pas de compte ? <Link href="/register" className="text-brand font-bold hover:underline">S&apos;inscrire gratuitement</Link>

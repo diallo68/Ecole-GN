@@ -8,6 +8,7 @@ import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, L
 import type { LucideIcon } from 'lucide-react';
 import { repetiteurApi, quizApi } from '@/lib/api';
 import ErrorState from '@/components/ErrorState';
+import Button from '@/components/Button';
 import { niveauLabel, tarifLabel, CYCLES, niveauxDuCycle } from '@/lib/constants';
 import { useAuthStore } from '@/store/authStore';
 import type { Repetiteur, QuizSummary, Cycle, Niveau } from '@/types';
@@ -88,14 +89,12 @@ export default function HomePage() {
             </p>
 
             <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 mt-1">
-              <Link href="/repetiteurs" className="group flex items-center justify-center gap-2 bg-brand text-white px-7 py-3.5 rounded-2xl font-semibold hover:bg-brand-dark transition-all shadow-lg shadow-brand/20">
+              <Button href="/repetiteurs" size="lg" icon={ArrowRight} className="shadow-lg shadow-brand/20">
                 Trouver un enseignant
-                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-              </Link>
-              <Link href="/quiz" className="flex items-center justify-center gap-2 bg-white text-ink border border-ink/10 px-7 py-3.5 rounded-2xl font-semibold hover:border-ink/20 transition-colors shadow-sm">
-                <Zap size={16} />
+              </Button>
+              <Button href="/quiz" variant="secondary" size="lg" icon={Zap} iconPosition="left" className="shadow-sm">
                 Faire un quiz gratuit
-              </Link>
+              </Button>
             </div>
           </div>
 

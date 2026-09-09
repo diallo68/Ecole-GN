@@ -9,6 +9,7 @@ import { repetiteurApi, reservationApi, messagingApi, authApi, ApiError } from '
 import { useAuthStore } from '@/store/authStore';
 import { niveauLabel, tarifLabel, DISPONIBILITES } from '@/lib/constants';
 import ErrorState from '@/components/ErrorState';
+import Button from '@/components/Button';
 import type { Repetiteur, Enfant } from '@/types';
 
 // Composant client (interactions, réservation, état d'auth) — séparé de
@@ -170,9 +171,7 @@ export default function RepetiteurDetailClient() {
         {parentSansEnfant ? (
           <div className="text-sm">
             <p className="text-ink-muted mb-3">Liez d&apos;abord le compte de votre enfant à votre profil parent pour pouvoir réserver une séance pour lui.</p>
-            <Link href="/profil" className="inline-flex items-center gap-1.5 bg-brand text-white rounded-lg px-4 py-2 font-semibold hover:bg-brand-dark">
-              Lier mon enfant →
-            </Link>
+            <Button href="/profil">Lier mon enfant →</Button>
           </div>
         ) : (
           <div className="space-y-3">
@@ -213,9 +212,7 @@ export default function RepetiteurDetailClient() {
               <label htmlFor="reservation-date" className="block text-xs font-semibold text-ink-muted mb-1">Date et heure</label>
               <input id="reservation-date" type="datetime-local" value={dateHeure} onChange={e => setDateHeure(e.target.value)} className="w-full border border-ink/15 rounded-lg px-3 py-2" />
             </div>
-            <button onClick={reserver} disabled={loading} aria-busy={loading} className="w-full bg-brand text-white rounded-lg py-2 font-semibold hover:bg-brand-dark disabled:opacity-50">
-              {loading ? 'Envoi...' : 'Réserver'}
-            </button>
+            <Button onClick={reserver} fullWidth loading={loading} loadingLabel="Envoi...">Réserver</Button>
           </div>
         )}
       </div>
