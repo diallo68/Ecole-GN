@@ -2,14 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, Leaf, Landmark, Map, HelpCircle, Search, CalendarCheck } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { repetiteurApi, quizApi } from '@/lib/api';
-import AssistantWidget from '@/components/AssistantWidget';
 import ErrorState from '@/components/ErrorState';
 import { niveauLabel, tarifLabel, CYCLES, niveauxDuCycle } from '@/lib/constants';
 import { useAuthStore } from '@/store/authStore';
 import type { Repetiteur, QuizSummary, Cycle, Niveau } from '@/types';
+
+// Chargé en différé (pas au chargement initial de l'accueil) : le panneau
+// n'est utilisé qu'après une interaction volontaire, ssr:false l'exclut du
+// rendu serveur et de l'empaquetage JS initial de la page.
+const AssistantWidget = dynamic(() => import('@/components/AssistantWidget'), { ssr: false });
 
 const MATIERE_ICONS: Record<string, LucideIcon> = {
   'Mathématiques': Sigma,
@@ -94,7 +100,11 @@ export default function HomePage() {
           <div className="w-full lg:w-[45%] relative h-[260px] lg:h-[340px] hidden md:block">
             <div className="absolute top-1/2 -left-6 w-20 h-20 bg-accent/10 rounded-full blur-xl -translate-y-1/2" />
             <div className="absolute inset-0 rounded-[2.5rem_0.75rem_2.5rem_0.75rem] overflow-hidden shadow-xl bg-ink/5">
-              <img src="/accueil/hero.jpeg" alt="Séance de soutien scolaire Gandal à Fria, Guinée" className="w-full h-full object-cover" />
+              {/* priority : seule image au-dessus de la ligne de flottaison sur
+                  desktop, candidate naturelle au LCP. sizes reflète sa largeur
+                  réelle (45% de max-w-5xl à partir de lg, pleine largeur avant). */}
+              <Image src="/accueil/hero.jpeg" alt="Séance de soutien scolaire Gandal à Fria, Guinée" fill priority
+                sizes="(min-width: 1024px) 460px, (min-width: 768px) 400px, 100vw" className="object-cover" />
             </div>
             <div className="absolute -bottom-5 -left-5 bg-white/95 backdrop-blur-md border border-white p-4 rounded-2xl shadow-lg flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-brand-light text-brand-dark grid place-items-center shrink-0 font-bold">✓</div>
@@ -249,8 +259,11 @@ export default function HomePage() {
             <video src="/accueil/video.mp4" poster="/accueil/classe-1.jpeg" controls preload="metadata" className="w-full h-full object-cover" />
           </div>
           {['classe-1', 'classe-2', 'classe-3', 'classe-4', 'classe-5', 'classe-6'].map(photo => (
-            <div key={photo} className="rounded-2xl overflow-hidden bg-ink/5 aspect-square">
-              <img src={`/accueil/${photo}.jpeg`} alt="Séance de soutien scolaire Gandal à Fria, Guinée" className="w-full h-full object-cover hover:scale-105 transition-transform" />
+            <div key={photo} className="relative rounded-2xl overflow-hidden bg-ink/5 aspect-square">
+              {/* Sous la ligne de flottaison : chargement différé par défaut
+                  (comportement standard de next/image, pas de priority ici). */}
+              <Image src={`/accueil/${photo}.jpeg`} alt="Séance de soutien scolaire Gandal à Fria, Guinée" fill
+                sizes="(min-width: 768px) 25vw, 50vw" className="object-cover hover:scale-105 transition-transform" />
             </div>
           ))}
         </div>
