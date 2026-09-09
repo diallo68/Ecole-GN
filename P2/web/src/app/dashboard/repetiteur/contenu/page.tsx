@@ -51,7 +51,7 @@ export default function RepetiteurContenuPage() {
 
   const publier = async () => {
     if (!titre || (type !== 'exercice' && !url) || (type === 'exercice' && !enonce)) {
-      toast.error('Remplis au moins le titre et le contenu principal');
+      toast.error('Remplissez au moins le titre et le contenu principal');
       return;
     }
     setLoading(true);

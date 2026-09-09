@@ -81,8 +81,8 @@ export default function RepetiteurDetailClient() {
 
   const reserver = async () => {
     if (!isLoggedIn()) { router.push('/login'); return; }
-    if (!matiere || !dateHeure) { toast.error('Choisis une matière et une date'); return; }
-    if (user?.role === 'parent' && !eleveId) { toast.error('Choisis pour quel enfant réserver'); return; }
+    if (!matiere || !dateHeure) { toast.error('Choisissez une matière et une date'); return; }
+    if (user?.role === 'parent' && !eleveId) { toast.error('Choisissez pour quel enfant réserver'); return; }
     setLoading(true);
     try {
       await reservationApi.create({
@@ -169,7 +169,7 @@ export default function RepetiteurDetailClient() {
 
         {parentSansEnfant ? (
           <div className="text-sm">
-            <p className="text-ink-muted mb-3">Lie d&apos;abord le compte de ton enfant à ton profil parent pour pouvoir réserver une séance pour lui.</p>
+            <p className="text-ink-muted mb-3">Liez d&apos;abord le compte de votre enfant à votre profil parent pour pouvoir réserver une séance pour lui.</p>
             <Link href="/profil" className="inline-flex items-center gap-1.5 bg-brand text-white rounded-lg px-4 py-2 font-semibold hover:bg-brand-dark">
               Lier mon enfant →
             </Link>

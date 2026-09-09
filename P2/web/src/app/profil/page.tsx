@@ -56,7 +56,7 @@ export default function ProfilPage() {
   if (!user) {
     return (
       <div className="max-w-xl mx-auto text-center py-16">
-        <p className="text-ink-muted mb-4">Connecte-toi pour accéder à ton profil.</p>
+        <p className="text-ink-muted mb-4">Connectez-vous pour accéder à votre profil.</p>
         <Link href="/login" className="bg-brand text-white rounded-lg px-5 py-2.5 font-semibold hover:bg-brand-dark">Se connecter</Link>
       </div>
     );
@@ -68,13 +68,13 @@ export default function ProfilPage() {
   return (
     <div className="max-w-xl mx-auto">
       <h1 className="text-2xl font-bold text-ink mb-1">Mon profil</h1>
-      <p className="text-ink-muted text-sm mb-6">Tes informations personnelles.</p>
+      <p className="text-ink-muted text-sm mb-6">Vos informations personnelles.</p>
 
       {user.role === 'repetiteur' && (
         <Link href="/dashboard/repetiteur/profil"
           className="flex items-center gap-2.5 bg-brand-light text-brand-dark rounded-xl px-4 py-3 mb-6 text-sm font-semibold hover:bg-brand-light/70 transition-colors">
           <GraduationCap size={16} />
-          Gérer ton profil enseignant (bio, matières, tarif, disponibilités) →
+          Gérer votre profil enseignant (bio, matières, tarif, disponibilités) →
         </Link>
       )}
 
@@ -159,7 +159,7 @@ function MesEnfants() {
   useEffect(() => { charger(); }, []);
 
   const ajouter = async () => {
-    if (!email.trim()) { toast.error("Entre l'email de l'enfant"); return; }
+    if (!email.trim()) { toast.error("Entrez l'email de l'enfant"); return; }
     setLoading(true);
     try {
       await authApi.ajouterEnfant(email.trim());
@@ -185,7 +185,7 @@ function MesEnfants() {
   return (
     <div className="bg-white rounded-2xl border border-ink/10 p-6">
       <h2 className="font-bold text-ink mb-1">Mes enfants</h2>
-      <p className="text-sm text-ink-muted mb-4">Lie le compte de ton enfant au tien pour pouvoir réserver des séances pour lui.</p>
+      <p className="text-sm text-ink-muted mb-4">Liez le compte de votre enfant au vôtre pour pouvoir réserver des séances pour lui.</p>
 
       {loaded && enfants.length === 0 && (
         <p className="text-sm text-ink-muted mb-4">Aucun enfant lié pour le moment.</p>
@@ -208,14 +208,14 @@ function MesEnfants() {
       )}
 
       <div className="flex gap-2">
-        <label htmlFor="email-enfant" className="sr-only">Email du compte élève de ton enfant</label>
-        <input id="email-enfant" type="email" placeholder="Email du compte élève de ton enfant" value={email} onChange={e => setEmail(e.target.value)}
+        <label htmlFor="email-enfant" className="sr-only">Email du compte élève de votre enfant</label>
+        <input id="email-enfant" type="email" placeholder="Email du compte élève de votre enfant" value={email} onChange={e => setEmail(e.target.value)}
           className="flex-1 border border-ink/15 rounded-lg px-3 py-2 text-sm" />
         <button onClick={ajouter} disabled={loading} className="flex items-center gap-1.5 bg-ink text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-stone-800 disabled:opacity-50">
           <UserPlus size={15} /> Ajouter
         </button>
       </div>
-      <p className="text-xs text-ink-muted mt-2">Ton enfant doit déjà avoir créé son propre compte élève sur Gandal.</p>
+      <p className="text-xs text-ink-muted mt-2">Votre enfant doit déjà avoir créé son propre compte élève sur Gandal.</p>
     </div>
   );
 }

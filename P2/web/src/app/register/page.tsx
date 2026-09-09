@@ -142,7 +142,7 @@ export default function RegisterPage() {
   };
 
   const verifyAndRegister = async () => {
-    if (code.length !== 6) { toast.error('Entre le code à 6 chiffres'); return; }
+    if (code.length !== 6) { toast.error('Entrez le code à 6 chiffres'); return; }
     setLoading(true);
     try {
       const data = await authApi.register({
@@ -183,10 +183,10 @@ export default function RegisterPage() {
         <div className="text-center">
           <div className="text-4xl mb-2">🪪</div>
           <p className="text-xs font-bold text-ink-muted uppercase tracking-wide">Étape 3 sur 3</p>
-          <p className="font-bold text-ink mt-1">Complète ton profil</p>
+          <p className="font-bold text-ink mt-1">Complétez votre profil</p>
           <p className="text-sm text-ink-muted mt-1">
             {role === 'repetiteur'
-              ? "Une photo et une pièce d'identité — utilisées par notre équipe pour vérifier ton profil avant sa mise en ligne."
+              ? "Une photo et une pièce d'identité — utilisées par notre équipe pour vérifier votre profil avant sa mise en ligne."
               : "Une photo de profil — facultatif."}
           </p>
         </div>

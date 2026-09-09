@@ -8,7 +8,7 @@ type ChatMessage = { role: 'user' | 'assistant'; content: string };
 
 const INTRO: ChatMessage = {
   role: 'assistant',
-  content: "Salut ! Je peux t'aider à choisir un enseignant, comprendre comment fonctionne Gandal, ou t'orienter vers un quiz. Pose ta question 👋",
+  content: "Bonjour ! Je peux vous aider à choisir un enseignant, comprendre comment fonctionne Gandal, ou vous orienter vers un quiz. Posez votre question 👋",
 };
 
 export default function AssistantWidget() {
@@ -35,7 +35,7 @@ export default function AssistantWidget() {
       setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
     } catch {
       setUnavailable(true);
-      setMessages(prev => [...prev, { role: 'assistant', content: "Désolé, je ne suis pas disponible pour l'instant. Explore \"Enseignants\" ou \"Quiz\" dans le menu en attendant !" }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: "Désolé, je ne suis pas disponible pour l'instant. Explorez \"Enseignants\" ou \"Quiz\" dans le menu en attendant !" }]);
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,7 @@ export default function AssistantWidget() {
           <div className="p-2.5 border-t border-ink/10 flex items-center gap-2">
             <label htmlFor="assistant-input" className="sr-only">Votre question</label>
             <input id="assistant-input" value={text} onChange={e => setText(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
-              disabled={unavailable} placeholder={unavailable ? 'Assistant indisponible' : 'Écris ta question...'}
+              disabled={unavailable} placeholder={unavailable ? 'Assistant indisponible' : 'Écrivez votre question...'}
               className="flex-1 border border-ink/15 rounded-full px-3.5 py-2 text-sm outline-none focus:border-brand disabled:opacity-50" />
             <button onClick={send} disabled={loading || !text.trim() || unavailable} aria-label="Envoyer"
               className="w-9 h-9 rounded-full bg-brand text-white grid place-items-center disabled:opacity-40 shrink-0">

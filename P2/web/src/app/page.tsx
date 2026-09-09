@@ -63,7 +63,9 @@ export default function HomePage() {
 
   return (
     <>
-    <div className="space-y-20">
+    {/* 80px entre sections sur toute la largeur rendait l'accueil très long
+        à faire défiler sur mobile — espacement responsive (48/64/80px). */}
+    <div className="space-y-12 md:space-y-16 lg:space-y-20">
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute -top-20 -left-16 w-72 h-72 rounded-full bg-flag/10 blur-3xl pointer-events-none" />
@@ -186,8 +188,8 @@ export default function HomePage() {
       {/* Quiz */}
       <section>
         <div className="text-center max-w-xl mx-auto mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Teste-toi — quiz gratuits</h2>
-          <p className="text-ink-muted text-sm mt-1">Révise à ton rythme, conçus selon le programme national guinéen.</p>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Testez-vous — quiz gratuits</h2>
+          <p className="text-ink-muted text-sm mt-1">Révisez à votre rythme, conçus selon le programme national guinéen.</p>
         </div>
 
         {/* Filtres niveau : cycle puis classe précise */}

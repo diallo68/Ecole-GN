@@ -71,7 +71,7 @@ export default function RepetiteurProfilPage() {
         <div>
           <label className="block text-sm font-semibold mb-1">Présentation</label>
           <textarea value={bio} onChange={e => setBio(e.target.value)} rows={4} maxLength={1000}
-            className="w-full border border-ink/15 rounded-lg px-3 py-2" placeholder="Présente-toi à tes futurs élèves..." />
+            className="w-full border border-ink/15 rounded-lg px-3 py-2" placeholder="Présentez-vous à vos futurs élèves..." />
         </div>
 
         <div>

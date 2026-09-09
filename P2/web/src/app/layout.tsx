@@ -16,7 +16,7 @@ const outfit = Outfit({
 
 const SITE_URL = 'https://gandall.net';
 const TITLE = 'Gandal — Soutien scolaire en Guinée';
-const DESCRIPTION = 'Trouve un enseignant, réserve un cours, teste-toi avec nos quiz — Gandal, connaissance pour tous.';
+const DESCRIPTION = 'Trouvez un enseignant, réservez un cours, testez-vous avec nos quiz — Gandal, connaissance pour tous.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

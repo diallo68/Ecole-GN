@@ -67,7 +67,7 @@ export default function MessagesPage() {
         {loading ? (
           <p className="p-4 text-sm text-ink-muted">Chargement...</p>
         ) : conversations.length === 0 ? (
-          <p className="p-4 text-sm text-ink-muted">Aucune conversation. Contacte un enseignant depuis sa fiche pour démarrer une discussion.</p>
+          <p className="p-4 text-sm text-ink-muted">Aucune conversation. Contactez un enseignant depuis sa fiche pour démarrer une discussion.</p>
         ) : (
           conversations.map(c => {
             const other = c.participants.find(p => p._id !== user?._id) || c.participants[0];

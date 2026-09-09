@@ -43,7 +43,7 @@ export default function DashboardPage() {
 
       {user.role === 'repetiteur' && !user.repetiteur?.valide && (
         <div className="bg-accent/10 border border-accent/30 text-[#8a6400] rounded-xl px-4 py-3 text-sm font-medium">
-          Ton profil est en attente de validation par l'équipe Gandal avant d'apparaître dans les recherches.
+          Votre profil est en attente de validation par l'équipe Gandal avant d'apparaître dans les recherches.
         </div>
       )}
 
@@ -96,8 +96,8 @@ function EleveHome({ aVenir, prochaine, tentatives }: { user: User; reservations
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <QuickAction href="/repetiteurs" icon={GraduationCap} label="Trouver un enseignant" desc="Réserve un cours" />
-        <QuickAction href="/quiz" icon={ClipboardList} label="Faire un quiz" desc="Teste tes connaissances" />
+        <QuickAction href="/repetiteurs" icon={GraduationCap} label="Trouver un enseignant" desc="Réservez un cours" />
+        <QuickAction href="/quiz" icon={ClipboardList} label="Faire un quiz" desc="Testez vos connaissances" />
       </div>
 
       <AgendaSection title="Mes réservations" prochaine={prochaine} aVenir={aVenir} emptyLabel="Aucune réservation pour l'instant." />
