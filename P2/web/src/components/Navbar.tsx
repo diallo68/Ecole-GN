@@ -97,7 +97,9 @@ export default function Navbar() {
               <UserMenu prenom={user!.prenom} nom={user!.nom} isAdmin={user!.role === 'admin'} onLogout={logout} />
             </>
           ) : (
-            <Link href="/login" className="bg-ink text-white px-5 py-2.5 rounded-full font-semibold hover:bg-stone-800 transition-colors shadow-sm">Connexion</Link>
+            <Link href="/login" className="flex items-center gap-2 border border-brand/30 text-brand px-5 py-2.5 rounded-full font-semibold hover:bg-brand-light transition-colors">
+              <UserCircle size={17} strokeWidth={2.2} /> Connexion
+            </Link>
           )}
         </nav>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { quizApi } from '@/lib/api';
 import { Colors, CYCLES, niveauxDuCycle, niveauLabel, matieresDuNiveau } from '@/lib/constants';
@@ -8,10 +8,17 @@ import type { QuizSummary, Niveau, Cycle } from '@/types';
 
 export default function QuizListScreen() {
   const router = useRouter();
+  const { cycle: cycleParam } = useLocalSearchParams<{ cycle?: string }>();
   const [cycle, setCycle] = useState<Cycle | null>(null);
   const [niveau, setNiveau] = useState<Niveau | null>(null);
   const [matiere, setMatiere] = useState<string | null>(null);
   const [quizzes, setQuizzes] = useState<QuizSummary[]>([]);
+
+  // Arrivée depuis la carte "À chaque classe, ses révisions" de l'accueil
+  // (?cycle=...) — pré-sélectionne le cycle sans passer par l'étape 1.
+  useEffect(() => {
+    if (cycleParam && CYCLES.some(c => c.value === cycleParam)) setCycle(cycleParam as Cycle);
+  }, [cycleParam]);
 
   useEffect(() => {
     if (!niveau) return;

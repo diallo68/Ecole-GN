@@ -22,6 +22,8 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Outfit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        // Accent manuscrit (tagline accueil uniquement) — voir layout.tsx.
+        hand: ['var(--font-hand)', 'cursive'],
       },
     },
   },

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, Leaf, Landmark, Map, HelpCircle, Search, CalendarCheck, GraduationCap, BookOpen, Backpack, MapPin } from 'lucide-react';
+import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, Leaf, Landmark, Map, HelpCircle, Search, CalendarCheck, GraduationCap, BookOpen, Backpack } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { repetiteurApi, quizApi } from '@/lib/api';
 import ErrorState from '@/components/ErrorState';
@@ -83,7 +83,7 @@ export default function HomePage() {
         à faire défiler sur mobile — espacement responsive (48/64/80px). */}
     <div className="space-y-12 md:space-y-16 lg:space-y-20">
       <section aria-labelledby="home-title">
-        <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-10 pt-3 lg:pt-6">
+        <div className="grid items-center gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-12 pt-3 lg:pt-6">
           <div className="min-w-0 py-2 lg:py-8">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand mb-5">Soutien scolaire en Guinée</p>
             <h1 id="home-title" className="text-[2rem] sm:text-[2.75rem] lg:text-[3.25rem] font-bold tracking-tight leading-[1.1]">
@@ -97,14 +97,18 @@ export default function HomePage() {
               <Button href="/repetiteurs" size="lg" icon={ArrowRight}>Trouver un enseignant</Button>
               <Button href="/quiz" variant="secondary" size="lg">Découvrir les quiz</Button>
             </div>
-            <p className="hidden lg:block mt-7 text-sm text-brand font-medium">Apprendre aujourd’hui, bâtir demain.</p>
+            <p className="mt-7 font-hand text-xl text-brand relative inline-block">
+              Apprendre aujourd’hui, bâtir demain.
+              <svg viewBox="0 0 200 10" preserveAspectRatio="none" aria-hidden="true" className="absolute left-0 -bottom-1.5 w-full h-2.5 text-accent">
+                <path d="M2 6 Q 50 -2 100 6 T 198 6" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+              </svg>
+            </p>
           </div>
           <figure className="relative min-w-0">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-brand-light lg:aspect-[5/4]">
-              <Image src="/accueil/hero.jpeg" alt="Des élèves pendant une séance de soutien scolaire Gandal à Fria" fill priority
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-brand-light lg:aspect-[1.12/1]">
+              <Image src="/accueil/hero-illustration.jpg" alt="Illustration d'un enseignant accompagnant deux élèves autour d'un livre, dans une salle de classe" fill priority
                 sizes="(min-width: 1152px) 540px, (min-width: 1024px) 48vw, (min-width: 640px) 90vw, calc(100vw - 32px)" className="object-cover" />
             </div>
-            <figcaption className="mt-3 flex items-center gap-2 text-xs text-ink-muted"><MapPin size={14} aria-hidden="true" />Une séance Gandal à Fria, Guinée</figcaption>
           </figure>
         </div>
         <HomeSearch />

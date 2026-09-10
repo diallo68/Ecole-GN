@@ -8,7 +8,7 @@ export default function HomeSearch() {
   const labelClass = 'flex min-w-0 items-center gap-3 rounded-xl border border-ink/15 px-4 py-3 focus-within:ring-2 focus-within:ring-brand focus-within:ring-offset-2';
   return (
     <form action="/repetiteurs" method="get" role="search" aria-label="Trouver un enseignant"
-      className="relative mt-6 lg:mt-8 grid gap-3 rounded-2xl border border-ink/10 bg-white p-4 sm:p-5 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto] shadow-[0_8px_30px_-16px_rgba(19,90,61,0.2)]">
+      className="relative z-10 mt-6 lg:-mt-12 grid gap-3 rounded-2xl border border-ink/10 bg-white p-4 sm:p-5 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto] shadow-[0_14px_35px_-18px_rgba(19,90,61,0.28)]">
       <label className={labelClass}>
         <BookOpen size={21} className="shrink-0 text-brand" aria-hidden="true" />
         <span className="min-w-0 flex-1"><span className="text-xs font-semibold">Matière</span>
