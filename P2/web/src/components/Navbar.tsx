@@ -11,9 +11,14 @@ import { useAuthStore } from '@/store/authStore';
 // ici : ils n'ont de sens que sur /repetiteurs et y vivent maintenant
 // directement (voir TrouverEnseignant.tsx), au lieu d'apparaître y compris
 // sur la page de connexion ou le catalogue Quiz.
+// "Chercher" et "Réserver" mènent tous les deux à /repetiteurs : il n'existe
+// pas de page de réservation autonome, la réservation démarre toujours par
+// la recherche d'un enseignant (choix explicite, pas un oubli). D'où la clé
+// "key" distincte du href pour ces deux entrées.
 const NAV_LINKS = [
-  { href: '/repetiteurs', label: 'Enseignants' },
-  { href: '/quiz', label: 'Quiz' },
+  { key: 'chercher', href: '/repetiteurs', label: 'Chercher' },
+  { key: 'reserver', href: '/repetiteurs', label: 'Réserver' },
+  { key: 'quiz', href: '/quiz', label: 'Quiz' },
 ];
 
 export default function Navbar() {
@@ -35,7 +40,7 @@ export default function Navbar() {
         {/* Desktop/tablette : liens et compte directement dans la barre */}
         <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-ink/70 shrink-0">
           {NAV_LINKS.map(l => (
-            <Link key={l.href} href={l.href} aria-current={pathname === l.href ? 'page' : undefined}
+            <Link key={l.key} href={l.href} aria-current={pathname === l.href ? 'page' : undefined}
               className={`hover:text-ink transition-colors ${pathname === l.href ? 'text-ink font-semibold' : ''}`}>
               {l.label}
             </Link>
@@ -108,7 +113,7 @@ function MobileMenu({ open, onClose, pathname, connecte, user, onLogout }: {
 
         <div className="flex-1 overflow-y-auto p-3 space-y-1">
           {NAV_LINKS.map(l => (
-            <Link key={l.href} href={l.href} onClick={onClose} aria-current={pathname === l.href ? 'page' : undefined} className={linkClass(l.href)}>
+            <Link key={l.key} href={l.href} onClick={onClose} aria-current={pathname === l.href ? 'page' : undefined} className={linkClass(l.href)}>
               {l.label === 'Quiz' && <Zap size={16} />} {l.label}
             </Link>
           ))}
