@@ -49,7 +49,7 @@ export default function Button(props: AsButton | AsLink) {
   } = props;
 
   const classes = [
-    'inline-flex items-center justify-center rounded-xl font-semibold transition-colors',
+    'inline-flex min-h-11 items-center justify-center rounded-xl font-semibold transition-colors',
     'disabled:cursor-not-allowed',
     VARIANT_CLASSES[variant],
     SIZE_CLASSES[size],
@@ -73,7 +73,7 @@ export default function Button(props: AsButton | AsLink) {
 
   const buttonRest = rest as Omit<AsButton, keyof ButtonOwnProps>;
   return (
-    <button className={classes} disabled={loading || buttonRest.disabled} aria-busy={loading || undefined} {...buttonRest}>
+    <button {...buttonRest} className={classes} disabled={loading || buttonRest.disabled} aria-busy={loading || undefined}>
       {content}
     </button>
   );

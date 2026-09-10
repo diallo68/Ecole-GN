@@ -39,6 +39,15 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
     const v = params.get('ville');
     if (q) setSearch(q);
     if (v) setVille(v);
+    if (params.has('matiere') || params.has('niveau')) {
+      useFiltreEnseignantStore.setState({
+        matiere: params.get('matiere') || '',
+        niveau: params.get('niveau') || '',
+        ville: params.get('ville') || '',
+        tarifMax: '',
+        disponibilite: '',
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

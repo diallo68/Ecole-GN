@@ -60,12 +60,12 @@ export default function Navbar() {
           <span className="w-8 h-8 rounded-lg bg-brand text-white grid place-items-center shrink-0">
             <BookOpen size={16} strokeWidth={2.4} />
           </span>
-          <span className="hidden sm:inline">Gandal</span>
+          <span className="inline">Gandal</span>
         </Link>
 
         {/* Barre de recherche centrale — seulement à partir de lg, pas la
             place avant (input + select + bouton + le reste de la nav). */}
-        <div className="hidden lg:flex flex-1 justify-center mx-4">
+        <div className={`${pathname === "/" ? "hidden" : "hidden lg:flex"} flex-1 justify-center mx-4`}>
           <NavSearchBar />
         </div>
 
@@ -73,13 +73,14 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-ink/70 shrink-0">
           {/* Entre md et lg, la barre de recherche est cachée : on retombe
               sur un simple lien vers la recherche. */}
-          <Link href="/repetiteurs" className="lg:hidden hover:text-ink transition-colors">Chercher</Link>
+          <Link href="/repetiteurs" className={`${pathname === "/" ? "hidden" : "lg:hidden"} hover:text-ink transition-colors`}>Chercher</Link>
           {NAV_LINKS.map(l => (
             <Link key={l.key} href={l.href} aria-current={pathname === l.href ? 'page' : undefined}
               className={`hover:text-ink transition-colors ${pathname === l.href ? 'text-ink font-semibold' : ''}`}>
-              {l.label}
+              {pathname === '/' && l.key === 'reserver' ? 'Enseignants' : l.label}
             </Link>
           ))}
+          {pathname === "/" && <Link href="/#comment-ca-marche" className="hover:text-brand">Comment ça marche</Link>}
           {connecte ? (
             <>
               <NotificationBell count={notifNonLus} setCount={setNotifNonLus} />

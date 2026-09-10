@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, Leaf, Landmark, Map, HelpCircle, Search, CalendarCheck, GraduationCap } from 'lucide-react';
+import { ArrowRight, Zap, MessageCircle, Sigma, Languages, Atom, FlaskConical, Leaf, Landmark, Map, HelpCircle, Search, CalendarCheck, GraduationCap, BookOpen, Backpack, MapPin } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { repetiteurApi, quizApi } from '@/lib/api';
 import ErrorState from '@/components/ErrorState';
 import EmptyState from '@/components/EmptyState';
 import FavoriButton from '@/components/FavoriButton';
 import Button from '@/components/Button';
+import HomeSearch from '@/components/HomeSearch';
 import { niveauLabel, tarifLabel, CYCLES, niveauxDuCycle } from '@/lib/constants';
 import { useAuthStore } from '@/store/authStore';
 import type { Repetiteur, QuizSummary, Cycle, Niveau } from '@/types';
@@ -43,10 +44,13 @@ export default function HomePage() {
   // conclut à tort que Gandal n'a ni enseignant ni quiz.
   const [repetiteursError, setRepetiteursError] = useState(false);
   const [quizzesError, setQuizzesError] = useState(false);
+  const [teachersLoading, setTeachersLoading] = useState(true);
+  const [quizzesLoading, setQuizzesLoading] = useState(true);
 
   const chargerRepetiteurs = () => {
     setRepetiteursError(false);
-    repetiteurApi.list({ limit: 4 }).then(d => setRepetiteurs(d.repetiteurs)).catch(() => setRepetiteursError(true));
+    setTeachersLoading(true);
+    repetiteurApi.list({ limit: 4 }).then(d => setRepetiteurs(d.repetiteurs)).catch(() => setRepetiteursError(true)).finally(() => setTeachersLoading(false));
   };
   useEffect(chargerRepetiteurs, []);
 
@@ -58,90 +62,82 @@ export default function HomePage() {
     }
   }, [user]);
 
-  const chargerQuizzes = () => {
+  const [quizReload, setQuizReload] = useState(0);
+  const chargerQuizzes = () => setQuizReload(value => value + 1);
+  useEffect(() => {
+    let active = true;
+    setQuizzesLoading(true);
     setQuizzesError(false);
-    quizApi.list({ niveau: niveau || undefined }).then(d => setQuizzes(d.quizzes.slice(0, 6))).catch(() => setQuizzesError(true));
-  };
-  useEffect(chargerQuizzes, [niveau]);
+    quizApi.list({ niveau: niveau || undefined }).then(d => {
+      if (!active) return;
+      const levels = cycle ? niveauxDuCycle(cycle).map(n => n.value) : [];
+      setQuizzes(d.quizzes.filter(q => !cycle || levels.includes(q.niveau)).slice(0, 6));
+    }).catch(() => { if (active) setQuizzesError(true); })
+      .finally(() => { if (active) setQuizzesLoading(false); });
+    return () => { active = false; };
+  }, [niveau, cycle, quizReload]);
 
   return (
     <>
     {/* 80px entre sections sur toute la largeur rendait l'accueil très long
         à faire défiler sur mobile — espacement responsive (48/64/80px). */}
     <div className="space-y-12 md:space-y-16 lg:space-y-20">
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute -top-20 -left-16 w-72 h-72 rounded-full bg-flag/10 blur-3xl pointer-events-none" />
-        <div className="absolute top-1/3 -right-20 w-80 h-80 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
-
-        <div className="relative flex flex-col lg:flex-row items-center gap-10 lg:gap-14 py-8 lg:py-12">
-          <div className="w-full lg:w-[55%] flex flex-col items-start gap-6">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-ink/5 border border-ink/10 text-sm font-medium text-ink-muted">
-              <span className="w-2 h-2 rounded-full bg-brand" />
-              Soutien scolaire du primaire au lycée
-            </span>
-
-            <h1 className="text-[2.25rem] md:text-5xl lg:text-[3.25rem] font-bold tracking-tight leading-[1.08] text-ink">
-              Le savoir à portée de main, <br className="hidden md:block" />
-              <span className="text-brand">partout en Guinée.</span>
+      <section aria-labelledby="home-title">
+        <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-10 pt-3 lg:pt-6">
+          <div className="min-w-0 py-2 lg:py-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand mb-5">Soutien scolaire en Guinée</p>
+            <h1 id="home-title" className="text-[2rem] sm:text-[2.75rem] lg:text-[3.25rem] font-bold tracking-tight leading-[1.1]">
+              Un enseignant pour progresser,<br />
+              <span className="text-brand">du primaire au lycée.</span>
             </h1>
-
-            <p className="text-base md:text-lg text-ink-muted leading-relaxed max-w-xl">
-              Connectez-vous avec des enseignants de la Guinée, dont le profil est vérifié par notre équipe avant publication. Séances à domicile ou en ligne, adaptées au rythme de chaque élève.
+            <p className="mt-5 text-base lg:text-lg leading-relaxed text-ink-muted max-w-lg">
+              Trouvez un accompagnement adapté à votre classe et révisez à votre rythme avec les quiz Gandal.
             </p>
-
-            <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 mt-1">
-              <Button href="/repetiteurs" size="lg" icon={ArrowRight} className="shadow-lg shadow-brand/20">
-                Trouver un enseignant
-              </Button>
-              <Button href="/quiz" variant="secondary" size="lg" icon={Zap} iconPosition="left" className="shadow-sm">
-                Faire un quiz gratuit
-              </Button>
+            <div className="mt-7 flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3">
+              <Button href="/repetiteurs" size="lg" icon={ArrowRight}>Trouver un enseignant</Button>
+              <Button href="/quiz" variant="secondary" size="lg">Découvrir les quiz</Button>
             </div>
+            <p className="hidden lg:block mt-7 text-sm text-brand font-medium">Apprendre aujourd’hui, bâtir demain.</p>
           </div>
-
-          <div className="w-full lg:w-[45%] relative h-[260px] lg:h-[340px] hidden md:block">
-            <div className="absolute top-1/2 -left-6 w-20 h-20 bg-accent/10 rounded-full blur-xl -translate-y-1/2" />
-            <div className="absolute inset-0 rounded-[2.5rem_0.75rem_2.5rem_0.75rem] overflow-hidden shadow-xl bg-ink/5">
-              {/* priority : seule image au-dessus de la ligne de flottaison sur
-                  desktop, candidate naturelle au LCP. sizes reflète sa largeur
-                  réelle (45% de max-w-5xl à partir de lg, pleine largeur avant). */}
-              <Image src="/accueil/hero.jpeg" alt="Séance de soutien scolaire Gandal à Fria, Guinée" fill priority
-                sizes="(min-width: 1024px) 460px, (min-width: 768px) 400px, 100vw" className="object-cover" />
+          <figure className="relative min-w-0">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-brand-light lg:aspect-[5/4]">
+              <Image src="/accueil/hero.jpeg" alt="Des élèves pendant une séance de soutien scolaire Gandal à Fria" fill priority
+                sizes="(min-width: 1152px) 540px, (min-width: 1024px) 48vw, (min-width: 640px) 90vw, calc(100vw - 32px)" className="object-cover" />
             </div>
-            <div className="absolute -bottom-5 -left-5 bg-white/95 backdrop-blur-md border border-white p-4 rounded-2xl shadow-lg flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-brand-light text-brand-dark grid place-items-center shrink-0 font-bold">✓</div>
-              <div>
-                <p className="text-xs text-ink-muted uppercase tracking-wider font-semibold">Vérification</p>
-                <p className="text-sm font-bold text-ink leading-none mt-1">Profil vérifié par Gandal</p>
-              </div>
+            <figcaption className="mt-3 flex items-center gap-2 text-xs text-ink-muted"><MapPin size={14} aria-hidden="true" />Une séance Gandal à Fria, Guinée</figcaption>
+          </figure>
+        </div>
+        <HomeSearch />
+        <div id="comment-ca-marche" className="scroll-mt-24 grid gap-6 sm:grid-cols-3 border-b border-ink/10 py-8 lg:py-10">
+          <h2 className="sr-only">Comment ça marche</h2>
+          {[
+            { icon: Search, titre: 'Choisissez', texte: 'La matière, la classe et votre ville.' },
+            { icon: MessageCircle, titre: 'Échangez', texte: 'Discutez de vos besoins avec l’enseignant.' },
+            { icon: CalendarCheck, titre: 'Demandez une séance', texte: 'L’enseignant confirme votre demande.' },
+          ].map(({ icon: Icon, titre, texte }, index) => (
+            <div key={titre} className="flex items-start gap-3">
+              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-accent/20 text-xs font-semibold">0{index + 1}</span>
+              <Icon size={24} className="hidden lg:block shrink-0 text-brand mt-1" aria-hidden="true" />
+              <div><h3 className="font-semibold">{titre}</h3><p className="mt-1 text-sm leading-relaxed text-ink-muted">{texte}</p></div>
             </div>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* Comment ça marche — le parcours réel : recherche, échange par
-          message, demande de séance que l'enseignant confirme. Pas de
-          paiement en ligne sur la plateforme à ce stade, donc on ne
-          l'évoque pas ici. */}
-      <section>
-        <div className="text-center max-w-xl mx-auto mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Comment ça marche</h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            { icon: Search, titre: 'Cherchez', texte: 'Filtrez par matière, classe et ville pour trouver un enseignant vérifié.' },
-            { icon: MessageCircle, titre: 'Échangez', texte: 'Discutez directement avec l\'enseignant pour préciser vos besoins.' },
-            { icon: CalendarCheck, titre: 'Réservez', texte: 'Demandez une séance, présentielle ou en ligne : l\'enseignant la confirme.' },
-          ].map(({ icon: Icon, titre, texte }) => (
-            <div key={titre} className="bg-white rounded-2xl border border-ink/10 p-5 text-center">
-              <div className="w-11 h-11 mx-auto rounded-xl bg-brand-light text-brand-dark grid place-items-center mb-3">
-                <Icon size={20} strokeWidth={1.75} />
-              </div>
-              <p className="font-bold text-ink mb-1">{titre}</p>
-              <p className="text-sm text-ink-muted">{texte}</p>
-            </div>
-          ))}
+      <section aria-labelledby="cycles-title">
+        <p className="text-xs uppercase tracking-[0.16em] font-semibold text-brand mb-3">Apprendre à son rythme</p>
+        <h2 id="cycles-title" className="text-2xl md:text-3xl font-bold tracking-tight">À chaque classe, ses révisions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          {CYCLES.map((c, index) => {
+            const Icon = [Backpack, BookOpen, GraduationCap][index];
+            const descriptions = ['Des quiz pour consolider les bases et prendre confiance.', 'Révisez les notions clés et progressez à votre rythme.', 'Préparez vos examens et visez plus loin.'];
+            return (
+              <Link key={c.value} href={`/quiz?cycle=${c.value}`} className="group flex items-start gap-4 rounded-2xl border border-ink/10 bg-white p-5 lg:p-6 transition-colors hover:border-brand/40">
+                <span className="size-14 shrink-0 rounded-full bg-accent/25 text-brand grid place-items-center"><Icon size={27} strokeWidth={1.6} aria-hidden="true" /></span>
+                <div className="min-w-0"><h3 className="text-xl font-bold">{c.label}</h3><p className="text-sm text-ink-muted leading-relaxed mt-2">{descriptions[index]}</p><span className="inline-flex items-center gap-2 mt-4 text-sm font-semibold text-brand">Explorer les quiz <ArrowRight size={15} aria-hidden="true" /></span></div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
@@ -156,7 +152,7 @@ export default function HomePage() {
             Voir tout <ArrowRight size={14} />
           </Link>
         </div>
-        {repetiteursError ? (
+        {teachersLoading ? <HomeSkeleton count={4} /> : repetiteursError ? (
           <ErrorState message="Impossible de charger les enseignants." onRetry={chargerRepetiteurs} />
         ) : repetiteurs.length === 0 ? (
           <EmptyState icon={GraduationCap} message="Aucun profil enseignant n'est actuellement proposé." ctaLabel="Découvrir les quiz" ctaHref="/quiz" />
@@ -214,7 +210,7 @@ export default function HomePage() {
           )}
         </div>
 
-        {quizzesError ? (
+        {quizzesLoading ? <HomeSkeleton count={3} /> : quizzesError ? (
           <ErrorState message="Impossible de charger les quiz." onRetry={chargerQuizzes} />
         ) : quizzes.length === 0 ? (
           <EmptyState icon={HelpCircle} message="Aucun quiz n'est publié pour le moment." />
@@ -228,11 +224,11 @@ export default function HomePage() {
                     <Icon size={24} className="text-ink-muted" strokeWidth={1.75} />
                   </div>
                   <div className="min-w-0">
-                    <div className="flex items-center gap-1.5 mb-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
                       <span className="text-xs font-bold uppercase tracking-wide bg-ink/5 text-ink-muted px-2 py-0.5 rounded">{q.matiere}</span>
                       <span className="text-xs font-bold uppercase tracking-wide bg-ink/5 text-ink-muted px-2 py-0.5 rounded">{niveauLabel(q.niveau)}</span>
                     </div>
-                    <p className="font-bold text-ink leading-tight truncate">{q.titre}</p>
+                    <p className="font-bold text-ink leading-snug">{q.titre}</p>
                     <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand mt-1">
                       Commencer <ArrowRight size={12} />
                     </span>
@@ -243,15 +239,6 @@ export default function HomePage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-          {CYCLES.map(c => (
-            <Link key={c.value} href={`/quiz?cycle=${c.value}`}
-              className="bg-white rounded-2xl border border-ink/10 p-6 flex flex-col items-center gap-1 text-center hover:border-brand hover:shadow-md transition-all">
-              <span className="font-bold text-ink">{c.label}</span>
-              <span className="text-xs text-ink-muted">{c.desc}</span>
-            </Link>
-          ))}
-        </div>
       </section>
 
       {/* Terrain — vraies séances Gandal, preuve concrète en attendant les avis */}
@@ -275,13 +262,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Avis — pas encore de vrais avis à afficher, section honnête en attendant */}
-      <section id="avis" className="text-center bg-sand rounded-3xl py-14 px-6">
-        <MessageCircle size={28} className="mx-auto text-brand mb-3" strokeWidth={1.5} />
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Les avis arrivent bientôt</h2>
-        <p className="text-ink-muted text-sm mt-2 max-w-md mx-auto">
-          Gandal vient de démarrer en Guinée : les retours de nos premiers élèves, parents et enseignants apparaîtront ici dès qu'ils seront publiés.
-        </p>
+      <section className="rounded-2xl bg-brand-light border border-brand/10 p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div><h2 className="text-2xl font-bold text-brand-dark">Vous êtes enseignant ?</h2><p className="mt-2 text-ink-muted">Partagez vos connaissances et accompagnez les élèves en Guinée.</p></div>
+        <Button href="/register" className="shrink-0">Rejoindre Gandal <ArrowRight size={16} aria-hidden="true" /></Button>
       </section>
     </div>
     <AssistantWidget />
@@ -291,11 +274,18 @@ export default function HomePage() {
 
 function FilterChip({ active, onClick, label, small }: { active: boolean; onClick: () => void; label: string; small?: boolean }) {
   return (
-    <button onClick={onClick}
-      className={`rounded-full font-semibold border transition-colors ${small ? 'px-2.5 py-1 text-xs' : 'px-3.5 py-1.5 text-xs'} ${
+    <button onClick={onClick} aria-pressed={active}
+      className={`rounded-full font-semibold border transition-colors ${small ? 'px-3 py-2 text-sm min-h-11' : 'px-4 py-2 text-sm min-h-11'} ${
         active ? 'bg-brand text-white border-brand' : 'bg-white border-ink/15 text-ink-muted hover:border-brand/40'
       }`}>
       {label}
     </button>
   );
+}
+
+function HomeSkeleton({ count }: { count: number }) {
+  return <div role="status" aria-label="Chargement du contenu" className={`grid gap-4 sm:grid-cols-2 ${count === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
+    <span className="sr-only">Chargement en cours…</span>
+    {Array.from({ length: count }, (_, i) => <div key={i} aria-hidden="true" className="rounded-2xl border border-ink/10 bg-white p-5 space-y-4 motion-safe:animate-pulse"><div className="size-12 rounded-full bg-sand" /><div className="h-4 w-3/4 rounded bg-sand" /><div className="h-3 w-1/2 rounded bg-sand" /></div>)}
+  </div>;
 }
