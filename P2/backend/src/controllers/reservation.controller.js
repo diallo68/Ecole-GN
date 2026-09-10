@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const Reservation = require('../models/reservation.model');
 const User = require('../models/user.model');
+const { notifier } = require('../utils/notifications');
 
 // Génère un identifiant de salle Jitsi unique et peu devinable.
 function generateJitsiRoom() {
@@ -74,6 +75,19 @@ const reservationController = {
       if (!isOwner) return res.status(403).json({ error: 'Accès refusé' });
       reservation.statut = statut;
       await reservation.save();
+
+      // Notifie l'élève (et le parent s'il a réservé) uniquement quand c'est
+      // l'enseignant qui confirme ou annule — pas quand l'élève/parent
+      // change lui-même le statut de sa propre réservation.
+      if (req.user.role === 'repetiteur' && ['confirmee', 'annulee'].includes(statut)) {
+        const texte = statut === 'confirmee'
+          ? `Votre réservation de ${reservation.matiere} a été confirmée par l'enseignant.`
+          : `Votre réservation de ${reservation.matiere} a été annulée par l'enseignant.`;
+        const type = statut === 'confirmee' ? 'reservation_confirmee' : 'reservation_annulee';
+        notifier(reservation.eleveId, type, texte, '/dashboard');
+        if (reservation.parentId) notifier(reservation.parentId, type, texte, '/dashboard');
+      }
+
       res.json({ success: true, reservation });
     } catch (err) {
       res.status(500).json({ error: 'Erreur serveur' });

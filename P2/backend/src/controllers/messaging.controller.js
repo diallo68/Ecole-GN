@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const Conversation = require('../models/conversation.model');
 const Message = require('../models/message.model');
+const User = require('../models/user.model');
 const { sanitizeText } = require('../utils/helpers');
+const { notifier } = require('../utils/notifications');
 
 // Nombre de messages non lus par conversation, pour l'utilisateur courant —
 // "non lu" = envoyé par l'autre participant et pas encore marqué lu (voir
@@ -84,6 +86,15 @@ const messagingController = {
       conversation.lastMessage = message.text;
       conversation.lastMessageAt = new Date();
       await conversation.save();
+
+      // Notifie les autres participants (pas l'expéditeur) — en arrière-plan,
+      // un échec de notification ne doit pas faire échouer l'envoi du message.
+      const sender = await User.findById(req.user.id).select('prenom nom');
+      const destinataires = conversation.participants.filter(p => String(p) !== req.user.id);
+      for (const destinataireId of destinataires) {
+        notifier(destinataireId, 'message', `Nouveau message de ${sender?.prenom || 'un utilisateur'}`, `/dashboard/messages?c=${conversation._id}`);
+      }
+
       res.status(201).json({ success: true, message });
     } catch (err) {
       res.status(500).json({ error: 'Erreur serveur' });

@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Home, MessageCircle, UserCog, BookOpen, Video, PenLine, Heart } from 'lucide-react';
+import { Home, Bell, MessageCircle, UserCog, BookOpen, Video, PenLine, Heart } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import DashboardShell, { type DashboardNavItem } from '@/components/DashboardShell';
 
@@ -19,6 +19,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const items: DashboardNavItem[] = [
     { href: '/dashboard', label: 'Accueil', icon: Home },
+    { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
     { href: '/dashboard/messages', label: 'Messages', icon: MessageCircle },
   ];
   // Même bug que le tableau de bord (voir ParentHome) : un parent tombait

@@ -1,5 +1,6 @@
 const User = require('../models/user.model');
 const { sanitizeText } = require('../utils/helpers');
+const { notifier } = require('../utils/notifications');
 
 // Un utilisateur qui tape des caractères spéciaux regex ("(", "*"...) dans la
 // recherche ou la ville ne doit ni faire planter la requête (regex invalide)
@@ -122,12 +123,20 @@ const repetiteurController = {
   async moderate(req, res) {
     try {
       const { valide } = req.body;
+      const avant = await User.findOne({ _id: req.params.id, role: 'repetiteur' }).select('repetiteur.valide');
+      if (!avant) return res.status(404).json({ error: 'Répétiteur introuvable' });
       const user = await User.findOneAndUpdate(
         { _id: req.params.id, role: 'repetiteur' },
         { 'repetiteur.valide': !!valide },
         { new: true },
       ).select('prenom nom repetiteur');
-      if (!user) return res.status(404).json({ error: 'Répétiteur introuvable' });
+
+      // Notifie seulement au passage non validé → validé (pas à chaque
+      // enregistrement si l'admin re-coche un profil déjà validé).
+      if (!avant.repetiteur?.valide && valide) {
+        notifier(user._id, 'profil_valide', 'Votre profil enseignant a été validé, il est maintenant visible par les élèves.', '/dashboard');
+      }
+
       res.json({ success: true, repetiteur: user.repetiteur });
     } catch (err) {
       res.status(500).json({ error: 'Erreur serveur' });

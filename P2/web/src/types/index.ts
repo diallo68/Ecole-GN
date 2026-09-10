@@ -173,6 +173,17 @@ export interface Message {
   createdAt: string;
 }
 
+export type NotificationType = 'message' | 'reservation_confirmee' | 'reservation_annulee' | 'profil_valide';
+
+export interface AppNotification {
+  _id: string;
+  type: NotificationType;
+  texte: string;
+  lien?: string;
+  lu: boolean;
+  createdAt: string;
+}
+
 export interface QuizAttempt {
   _id: string;
   quizId: QuizSummary | null;

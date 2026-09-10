@@ -1,4 +1,4 @@
-import type { User, Repetiteur, Reservation, QuizSummary, QuizDetail, QuizCorrection, QuizFull, ContentItem, ClasseVirtuelle, Conversation, Message, AdminStats, QuizAttempt, AdminUser, Soumission, Enfant } from '@/types';
+import type { User, Repetiteur, Reservation, QuizSummary, QuizDetail, QuizCorrection, QuizFull, ContentItem, ClasseVirtuelle, Conversation, Message, AdminStats, QuizAttempt, AdminUser, Soumission, Enfant, AppNotification } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
@@ -160,6 +160,13 @@ export const messagingApi = {
   messages: (id: string) => get<{ messages: Message[] }>(`/messaging/conversations/${id}/messages`),
   send: (id: string, text: string) => post<{ success: boolean; message: Message }>(`/messaging/conversations/${id}/messages`, { text }),
   unreadCount: () => get<{ count: number }>('/messaging/unread-count'),
+};
+
+export const notificationApi = {
+  mine: () => get<{ notifications: AppNotification[] }>('/notifications'),
+  unreadCount: () => get<{ count: number }>('/notifications/unread-count'),
+  markRead: (id: string) => patch<{ success: boolean }>(`/notifications/${id}/read`),
+  markAllRead: () => patch<{ success: boolean }>('/notifications/read-all'),
 };
 
 export const soumissionApi = {

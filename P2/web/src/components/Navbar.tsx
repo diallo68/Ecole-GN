@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, ChevronDown, LayoutDashboard, LogOut, Menu, MessageCircle, UserCircle, X, Zap } from 'lucide-react';
+import { Bell, BookOpen, ChevronDown, LayoutDashboard, LogOut, Menu, MessageCircle, UserCircle, X, Zap } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
-import { messagingApi } from '@/lib/api';
+import { messagingApi, notificationApi } from '@/lib/api';
 import NavSearchBar from './NavSearchBar';
+import NotificationBell from './NotificationBell';
 
 // Navigation globale — uniquement les destinations communes à tout le site.
 // Les filtres enseignants (matière/tarif/ville/disponibilité) ne vivent plus
@@ -35,6 +36,18 @@ export default function Navbar() {
   useEffect(() => {
     if (!connecte) return;
     const charger = () => messagingApi.unreadCount().then(d => setNonLus(d.count)).catch(() => {});
+    charger();
+    const t = setInterval(charger, 30000);
+    return () => clearInterval(t);
+  }, [connecte]);
+
+  // Même schéma pour les notifications (messages reçus, réservations
+  // confirmées/annulées par l'enseignant, profil validé) — sondage
+  // périodique séparé du badge Messages, qui compte autre chose.
+  const [notifNonLus, setNotifNonLus] = useState(0);
+  useEffect(() => {
+    if (!connecte) return;
+    const charger = () => notificationApi.unreadCount().then(d => setNotifNonLus(d.count)).catch(() => {});
     charger();
     const t = setInterval(charger, 30000);
     return () => clearInterval(t);
@@ -69,6 +82,7 @@ export default function Navbar() {
           ))}
           {connecte ? (
             <>
+              <NotificationBell count={notifNonLus} setCount={setNotifNonLus} />
               <Link href="/dashboard/messages" aria-label={`Messages${nonLus > 0 ? ` (${nonLus} non lus)` : ''}`}
                 aria-current={pathname === '/dashboard/messages' ? 'page' : undefined}
                 className={`relative hover:text-ink transition-colors ${pathname === '/dashboard/messages' ? 'text-ink' : ''}`}>
@@ -86,23 +100,25 @@ export default function Navbar() {
           )}
         </nav>
 
-        {/* Mobile : un seul bouton Menu — tout le reste vit dans le tiroir */}
-        <button onClick={() => setMenuOpen(true)} aria-label={`Ouvrir le menu${nonLus > 0 ? ` (${nonLus} messages non lus)` : ''}`} aria-expanded={menuOpen} aria-controls="mobile-menu"
+        {/* Mobile : un seul bouton Menu — tout le reste vit dans le tiroir. Le
+            point s'allume dès qu'il y a un message OU une notification non
+            lue, le détail (lequel) apparaît une fois le tiroir ouvert. */}
+        <button onClick={() => setMenuOpen(true)} aria-label={`Ouvrir le menu${nonLus + notifNonLus > 0 ? ` (${nonLus + notifNonLus} non lus)` : ''}`} aria-expanded={menuOpen} aria-controls="mobile-menu"
           className="md:hidden relative flex items-center justify-center w-10 h-10 -mr-2 text-ink/70 hover:text-ink">
           <Menu size={22} />
-          {nonLus > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-flag" />}
+          {nonLus + notifNonLus > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-flag" />}
         </button>
       </div>
 
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} pathname={pathname}
-        connecte={connecte} user={user} onLogout={logout} nonLus={nonLus} />
+        connecte={connecte} user={user} onLogout={logout} nonLus={nonLus} notifNonLus={notifNonLus} />
     </header>
   );
 }
 
-function MobileMenu({ open, onClose, pathname, connecte, user, onLogout, nonLus }: {
+function MobileMenu({ open, onClose, pathname, connecte, user, onLogout, nonLus, notifNonLus }: {
   open: boolean; onClose: () => void; pathname: string;
-  connecte: boolean; user: { prenom: string; nom?: string; role: string } | null; onLogout: () => void; nonLus: number;
+  connecte: boolean; user: { prenom: string; nom?: string; role: string } | null; onLogout: () => void; nonLus: number; notifNonLus: number;
 }) {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const triggerFocusRef = useRef<Element | null>(null);
@@ -163,6 +179,14 @@ function MobileMenu({ open, onClose, pathname, connecte, user, onLogout, nonLus 
               <div className="px-4 py-2 mb-1">
                 <p className="font-semibold text-ink text-sm truncate">{user.prenom} {user.nom}</p>
               </div>
+              <Link href="/dashboard/notifications" onClick={onClose} className={`${linkClass('/dashboard/notifications')} justify-between`}>
+                <span className="flex items-center gap-2.5"><Bell size={16} /> Notifications</span>
+                {notifNonLus > 0 && (
+                  <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-flag text-white text-[10px] font-bold grid place-items-center leading-none">
+                    {notifNonLus > 9 ? '9+' : notifNonLus}
+                  </span>
+                )}
+              </Link>
               <Link href="/dashboard/messages" onClick={onClose} className={`${linkClass('/dashboard/messages')} justify-between`}>
                 <span className="flex items-center gap-2.5"><MessageCircle size={16} /> Messages</span>
                 {nonLus > 0 && (
