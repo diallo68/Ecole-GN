@@ -132,7 +132,7 @@ export default function HomePage() {
           {[
             { icon: Search, titre: 'Cherchez', texte: 'Filtrez par matière, classe et ville pour trouver un enseignant vérifié.' },
             { icon: MessageCircle, titre: 'Échangez', texte: 'Discutez directement avec l\'enseignant pour préciser vos besoins.' },
-            { icon: CalendarCheck, titre: 'Réservez', texte: 'Demandez une séance, présentielle ou en ligne — l\'enseignant la confirme.' },
+            { icon: CalendarCheck, titre: 'Réservez', texte: 'Demandez une séance, présentielle ou en ligne : l\'enseignant la confirme.' },
           ].map(({ icon: Icon, titre, texte }) => (
             <div key={titre} className="bg-white rounded-2xl border border-ink/10 p-5 text-center">
               <div className="w-11 h-11 mx-auto rounded-xl bg-brand-light text-brand-dark grid place-items-center mb-3">
@@ -192,7 +192,7 @@ export default function HomePage() {
       {/* Quiz */}
       <section>
         <div className="text-center max-w-xl mx-auto mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Testez-vous — quiz gratuits</h2>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Testez-vous avec nos quiz gratuits</h2>
           <p className="text-ink-muted text-sm mt-1">Révisez à votre rythme, conçus selon le programme national guinéen.</p>
         </div>
 
@@ -280,7 +280,7 @@ export default function HomePage() {
         <MessageCircle size={28} className="mx-auto text-brand mb-3" strokeWidth={1.5} />
         <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">Les avis arrivent bientôt</h2>
         <p className="text-ink-muted text-sm mt-2 max-w-md mx-auto">
-          Gandal vient de démarrer en Guinée — les retours de nos premiers élèves, parents et enseignants apparaîtront ici dès qu'ils seront publiés.
+          Gandal vient de démarrer en Guinée : les retours de nos premiers élèves, parents et enseignants apparaîtront ici dès qu'ils seront publiés.
         </p>
       </section>
     </div>

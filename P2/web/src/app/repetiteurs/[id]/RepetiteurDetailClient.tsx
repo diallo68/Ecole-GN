@@ -76,7 +76,7 @@ export default function RepetiteurDetailClient() {
 
   const signaler = () => {
     if (!repetiteur) return;
-    const subject = encodeURIComponent(`Signalement profil Gandal — ${repetiteur.prenom} ${repetiteur.nom}`);
+    const subject = encodeURIComponent(`Signalement profil Gandal : ${repetiteur.prenom} ${repetiteur.nom}`);
     const body = encodeURIComponent(`Profil concerné : ${window.location.href}\n\nDécrivez le problème :\n`);
     window.location.href = `mailto:support.yougouyougou@gmail.com?subject=${subject}&body=${body}`;
   };

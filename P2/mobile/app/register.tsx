@@ -181,7 +181,7 @@ export default function RegisterScreen() {
           <Ionicons name="card-outline" size={32} color={Colors.brand} />
         </View>
         <Text style={styles.otpTitle}>Complète ton profil</Text>
-        <Text style={styles.otpSubtitle}>Une photo et une pièce d'identité — facultatif pour le moment.</Text>
+        <Text style={styles.otpSubtitle}>Une photo et une pièce d'identité, facultatif pour le moment.</Text>
 
         <View style={{ width: '100%', gap: 16 }}>
           <View style={{ gap: 6 }}>

@@ -97,7 +97,7 @@ export default function CompteScreen() {
             </View>
             <Text style={{ fontSize: 12, color: Colors.inkMuted, marginTop: 2 }}>
               {item.date.toLocaleString('fr-FR')}
-              {!isClasse && ` — ${(item.data as Reservation).mode === 'en_ligne' ? 'En ligne' : 'Présentiel'}`}
+              {!isClasse && ` · ${(item.data as Reservation).mode === 'en_ligne' ? 'En ligne' : 'Présentiel'}`}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
               <Text style={{ fontSize: 11, fontWeight: '700', color: Colors.brand, textTransform: 'capitalize' }}>

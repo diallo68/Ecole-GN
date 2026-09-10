@@ -104,7 +104,7 @@ export default function RepetiteurClassesScreen() {
           <View key={r._id} style={{ backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.surfaceBorder, borderRadius: 14, padding: 14 }}>
             <Text style={{ fontWeight: '800', color: Colors.ink }}>{r.matiere} · {niveauLabel(r.niveau)}</Text>
             <Text style={{ fontSize: 12, color: Colors.inkMuted, marginTop: 2 }}>
-              {new Date(r.dateHeure).toLocaleString('fr-FR')} — {r.mode === 'en_ligne' ? 'En ligne' : 'Présentiel'}
+              {new Date(r.dateHeure).toLocaleString('fr-FR')} · {r.mode === 'en_ligne' ? 'En ligne' : 'Présentiel'}
             </Text>
             <Text style={{ fontSize: 11, fontWeight: '700', color: Colors.brand, marginTop: 4, textTransform: 'capitalize' }}>{r.statut.replace('_', ' ')}</Text>
           </View>

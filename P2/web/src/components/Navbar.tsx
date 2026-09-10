@@ -43,7 +43,7 @@ export default function Navbar() {
   return (
     <header className="bg-white/90 backdrop-blur-md sticky top-0 z-20 border-b border-ink/10">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
-        <Link href="/" aria-label="Gandal — Accueil" className="flex items-center gap-2 text-xl font-bold tracking-tight text-ink shrink-0">
+        <Link href="/" aria-label="Gandal, page d'accueil" className="flex items-center gap-2 text-xl font-bold tracking-tight text-ink shrink-0">
           <span className="w-8 h-8 rounded-lg bg-brand text-white grid place-items-center shrink-0">
             <BookOpen size={16} strokeWidth={2.4} />
           </span>

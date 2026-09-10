@@ -9,8 +9,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     const res = await fetch(`${API_URL}/quiz/${params.id}`, { next: { revalidate: 300 } });
     if (!res.ok) return { title: 'Quiz' };
     const { quiz } = await res.json();
-    const titre = `${quiz.titre} — ${quiz.matiere} ${niveauLabel(quiz.niveau)}`;
-    const description = `Quiz gratuit de ${quiz.matiere} pour le niveau ${niveauLabel(quiz.niveau)} — teste tes connaissances sur Gandal.`;
+    const titre = `${quiz.titre} · ${quiz.matiere} ${niveauLabel(quiz.niveau)}`;
+    const description = `Quiz gratuit de ${quiz.matiere} pour le niveau ${niveauLabel(quiz.niveau)} : teste tes connaissances sur Gandal.`;
     return { title: titre, description, openGraph: { title: titre, description } };
   } catch {
     return { title: 'Quiz' };

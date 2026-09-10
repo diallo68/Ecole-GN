@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     if (!res.ok) return { title: 'Enseignant' };
     const { repetiteur } = await res.json();
     const matieres: string[] = repetiteur?.repetiteur?.matieres || [];
-    const titre = `${repetiteur.prenom} ${repetiteur.nom}${matieres.length ? ` — ${matieres.join(', ')}` : ''}`;
+    const titre = `${repetiteur.prenom} ${repetiteur.nom}${matieres.length ? ` · ${matieres.join(', ')}` : ''}`;
     const description = `${repetiteur.prenom} ${repetiteur.nom}, enseignant${matieres.length ? ` en ${matieres.join(', ')}` : ''}${repetiteur.city ? ` à ${repetiteur.city}` : ''} sur Gandal.`;
     return {
       title: titre,

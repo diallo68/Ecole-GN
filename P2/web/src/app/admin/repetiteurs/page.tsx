@@ -61,7 +61,7 @@ export default function AdminRepetiteursPage() {
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="font-semibold">{r.prenom} {r.nom} <span className="text-ink-muted font-normal text-sm">— {r.email}</span></p>
+                  <p className="font-semibold">{r.prenom} {r.nom} <span className="text-ink-muted font-normal text-sm">· {r.email}</span></p>
                   <p className="text-sm text-ink-muted">{r.city} · {r.repetiteur.matieres?.join(', ')} · {r.repetiteur.niveaux?.map(niveauLabel).join(', ')}</p>
                   <p className="text-xs text-ink-muted mt-0.5">{r.phone || 'Pas de téléphone renseigné'}</p>
                   <div className="flex items-center gap-2 mt-1.5">

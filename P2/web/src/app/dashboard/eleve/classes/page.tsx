@@ -34,7 +34,7 @@ export default function EleveClassesPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-extrabold text-ink">Classes virtuelles &amp; réservations</h1>
-        <p className="text-sm text-ink-muted">Tes séances programmées avec tes enseignants — en groupe ou en tête-à-tête.</p>
+        <p className="text-sm text-ink-muted">Tes séances programmées avec tes enseignants, en groupe ou en tête-à-tête.</p>
       </div>
 
       {loading ? (

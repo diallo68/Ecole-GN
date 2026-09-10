@@ -188,7 +188,7 @@ function ReservationRow({ r, highlight }: { r: Reservation; highlight?: boolean 
       <div className="min-w-0">
         <p className="font-semibold text-ink text-sm">{r.matiere} · {r.niveau}</p>
         <p className="text-xs text-ink-muted">
-          {new Date(r.dateHeure).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })} — {r.mode === 'en_ligne' ? 'En ligne' : 'Présentiel'}
+          {new Date(r.dateHeure).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })} · {r.mode === 'en_ligne' ? 'En ligne' : 'Présentiel'}
         </p>
         {r.lienVisio && <a href={r.lienVisio} target="_blank" rel="noreferrer" className="text-xs text-brand font-semibold hover:underline">Rejoindre la visio →</a>}
       </div>

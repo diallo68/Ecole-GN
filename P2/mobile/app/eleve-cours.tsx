@@ -27,7 +27,7 @@ export default function EleveCoursScreen() {
     <View style={{ flex: 1, backgroundColor: Colors.surfaceBg }}>
       <View style={{ padding: 12 }}>
         <Text style={{ fontSize: 12, color: Colors.inkMuted, marginBottom: 8 }}>
-          Supports et vidéos publiés par les enseignants Gandal{user?.eleve?.niveau ? ` — ${niveauLabel(user.eleve.niveau)}` : ''}.
+          Supports et vidéos publiés par les enseignants Gandal{user?.eleve?.niveau ? ` · ${niveauLabel(user.eleve.niveau)}` : ''}.
         </Text>
         <FlatList
           horizontal showsHorizontalScrollIndicator={false}

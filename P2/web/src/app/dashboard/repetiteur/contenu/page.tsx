@@ -219,7 +219,7 @@ function CopieRow({ soumission, onCorrigee }: { soumission: Soumission; onCorrig
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-ink">{eleve ? `${eleve.prenom} ${eleve.nom}` : 'Élève'}</p>
         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${soumission.statut === 'corrige' ? 'bg-brand-light text-brand-dark' : 'bg-accent/15 text-[#8a6400]'}`}>
-          {soumission.statut === 'corrige' ? `Corrigé — ${soumission.note ?? '—'}/20` : 'À corriger'}
+          {soumission.statut === 'corrige' ? `Corrigé · ${soumission.note ?? '—'}/20` : 'À corriger'}
         </span>
       </div>
       {soumission.reponseTexte && <p className="text-sm text-ink/70 whitespace-pre-wrap">{soumission.reponseTexte}</p>}

@@ -32,7 +32,7 @@ export default function EleveExercicesScreen() {
     <View style={{ flex: 1, backgroundColor: Colors.surfaceBg }}>
       <View style={{ padding: 12 }}>
         <Text style={{ fontSize: 12, color: Colors.inkMuted, marginBottom: 8 }}>
-          Exercices publiés par les enseignants Gandal{user?.eleve?.niveau ? ` — ${niveauLabel(user.eleve.niveau)}` : ''}.
+          Exercices publiés par les enseignants Gandal{user?.eleve?.niveau ? ` · ${niveauLabel(user.eleve.niveau)}` : ''}.
         </Text>
         <FlatList
           horizontal showsHorizontalScrollIndicator={false}
@@ -71,7 +71,7 @@ export default function EleveExercicesScreen() {
                     {mySoumission && (
                       <View style={{ backgroundColor: mySoumission.statut === 'corrige' ? Colors.brandLight : '#fff3cd', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 }}>
                         <Text style={{ fontSize: 10, fontWeight: '700', color: mySoumission.statut === 'corrige' ? Colors.brandDark : '#8a6400' }}>
-                          {mySoumission.statut === 'corrige' ? `Corrigé — ${mySoumission.note ?? '—'}/20` : 'Rendu'}
+                          {mySoumission.statut === 'corrige' ? `Corrigé · ${mySoumission.note ?? '—'}/20` : 'Rendu'}
                         </Text>
                       </View>
                     )}

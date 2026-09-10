@@ -90,7 +90,7 @@ export default function RepetiteurClassesPage() {
               <div>
                 <p className="font-semibold">{r.matiere} · {niveauLabel(r.niveau)}</p>
                 <p className="text-sm text-ink-muted">
-                  {new Date(r.dateHeure).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })} — {r.mode === 'en_ligne' ? 'En ligne' : 'Présentiel'}
+                  {new Date(r.dateHeure).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })} · {r.mode === 'en_ligne' ? 'En ligne' : 'Présentiel'}
                 </p>
                 {r.lienVisio && <a href={r.lienVisio} target="_blank" rel="noreferrer" className="text-sm text-brand font-semibold">Rejoindre la visio →</a>}
               </div>

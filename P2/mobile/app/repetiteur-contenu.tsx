@@ -237,7 +237,7 @@ function CopieRow({ soumission, onCorrigee }: { soumission: Soumission; onCorrig
         <Text style={{ fontSize: 13, fontWeight: '700', color: Colors.ink }}>{eleve ? `${eleve.prenom} ${eleve.nom}` : 'Élève'}</Text>
         <View style={{ backgroundColor: soumission.statut === 'corrige' ? Colors.brandLight : '#fff3cd', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 2 }}>
           <Text style={{ fontSize: 10, fontWeight: '700', color: soumission.statut === 'corrige' ? Colors.brandDark : '#8a6400' }}>
-            {soumission.statut === 'corrige' ? `Corrigé — ${soumission.note ?? '—'}/20` : 'À corriger'}
+            {soumission.statut === 'corrige' ? `Corrigé · ${soumission.note ?? '—'}/20` : 'À corriger'}
           </Text>
         </View>
       </View>

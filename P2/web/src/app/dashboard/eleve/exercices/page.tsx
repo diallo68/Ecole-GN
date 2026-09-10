@@ -34,7 +34,7 @@ export default function MesExercicesPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-extrabold text-ink">Mes exercices</h1>
-        <p className="text-sm text-ink-muted">Exercices publiés par les enseignants Gandal{user?.eleve?.niveau ? ` — ${niveauLabel(user.eleve.niveau)}` : ''}.</p>
+        <p className="text-sm text-ink-muted">Exercices publiés par les enseignants Gandal{user?.eleve?.niveau ? ` · ${niveauLabel(user.eleve.niveau)}` : ''}.</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -64,7 +64,7 @@ export default function MesExercicesPage() {
                   <div className="flex items-center gap-2 shrink-0">
                     {mySoumission && (
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${mySoumission.statut === 'corrige' ? 'bg-brand-light text-brand-dark' : 'bg-accent/15 text-[#8a6400]'}`}>
-                        {mySoumission.statut === 'corrige' ? `Corrigé — ${mySoumission.note ?? '—'}/20` : 'Rendu'}
+                        {mySoumission.statut === 'corrige' ? `Corrigé · ${mySoumission.note ?? '—'}/20` : 'Rendu'}
                       </span>
                     )}
                     <ChevronDown size={16} className={`text-ink-muted transition-transform ${open ? 'rotate-180' : ''}`} />

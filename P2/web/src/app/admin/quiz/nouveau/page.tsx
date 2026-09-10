@@ -60,7 +60,7 @@ export default function NouveauQuizPage() {
     <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-1">Nouveau quiz</h1>
       <p className="text-ink-muted mb-6 text-sm">
-        Vérifie les réponses et les explications avant de publier — le quiz est visible immédiatement.
+        Vérifie les réponses et les explications avant de publier : le quiz est visible immédiatement.
       </p>
 
       <div className="bg-white rounded-2xl border border-ink/10 p-4 mb-6 space-y-3">

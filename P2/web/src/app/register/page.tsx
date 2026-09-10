@@ -187,8 +187,8 @@ export default function RegisterPage() {
           <p className="font-bold text-ink mt-1">Complétez votre profil</p>
           <p className="text-sm text-ink-muted mt-1">
             {role === 'repetiteur'
-              ? "Une photo et une pièce d'identité — utilisées par notre équipe pour vérifier votre profil avant sa mise en ligne."
-              : "Une photo de profil — facultatif."}
+              ? "Une photo et une pièce d'identité, utilisées par notre équipe pour vérifier votre profil avant sa mise en ligne."
+              : "Une photo de profil, facultatif."}
           </p>
         </div>
         <div className="space-y-2">
@@ -243,7 +243,7 @@ export default function RegisterPage() {
         <div className="h-1 rounded-full bg-ink/10 overflow-hidden" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
           <div className="h-full bg-brand rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
         </div>
-        <span className="text-xs font-bold text-ink-muted">Étape 1 sur 3 — question {qIndex + 1} sur {questions.length}</span>
+        <span className="text-xs font-bold text-ink-muted">Étape 1 sur 3 · question {qIndex + 1} sur {questions.length}</span>
       </div>
 
       <div key={qIndex} className="flex flex-col gap-4 min-h-[280px] justify-center">

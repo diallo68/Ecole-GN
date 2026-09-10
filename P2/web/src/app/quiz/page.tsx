@@ -81,7 +81,7 @@ function QuizListContent() {
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <h1 className="text-2xl font-bold text-ink">Quiz — {niveauLabel(niveau)}</h1>
+        <h1 className="text-2xl font-bold text-ink">Quiz · {niveauLabel(niveau)}</h1>
         <Link href="/quiz" className="text-sm text-brand font-semibold hover:text-brand-dark">Changer de niveau</Link>
       </div>
       <p className="text-ink-muted mb-4">Teste tes connaissances gratuitement.</p>

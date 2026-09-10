@@ -33,7 +33,7 @@ export default function MesCoursPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-extrabold text-ink">Mes cours</h1>
-        <p className="text-sm text-ink-muted">Supports de cours publiés par les enseignants Gandal{user?.eleve?.niveau ? ` — ${niveauLabel(user.eleve.niveau)}` : ''}.</p>
+        <p className="text-sm text-ink-muted">Supports de cours publiés par les enseignants Gandal{user?.eleve?.niveau ? ` · ${niveauLabel(user.eleve.niveau)}` : ''}.</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
