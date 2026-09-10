@@ -84,6 +84,11 @@ export const authApi = {
   mesEnfants: () => get<{ enfants: Enfant[] }>('/auth/mes-enfants'),
   ajouterEnfant: (email: string) => post<{ success: boolean; enfant: Enfant }>('/auth/mes-enfants', { email }),
   retirerEnfant: (childId: string) => del<{ success: boolean }>(`/auth/mes-enfants/${childId}`),
+
+  // Enseignants favoris (élève uniquement).
+  mesFavoris: () => get<{ favoris: Repetiteur[] }>('/auth/favoris'),
+  ajouterFavori: (repetiteurId: string) => post<{ success: boolean }>(`/auth/favoris/${repetiteurId}`),
+  retirerFavori: (repetiteurId: string) => del<{ success: boolean }>(`/auth/favoris/${repetiteurId}`),
 };
 
 export const repetiteurApi = {
@@ -154,6 +159,7 @@ export const messagingApi = {
   startOrGet: (otherUserId: string) => post<{ conversation: Conversation }>('/messaging/conversations', { otherUserId }),
   messages: (id: string) => get<{ messages: Message[] }>(`/messaging/conversations/${id}/messages`),
   send: (id: string, text: string) => post<{ success: boolean; message: Message }>(`/messaging/conversations/${id}/messages`, { text }),
+  unreadCount: () => get<{ count: number }>('/messaging/unread-count'),
 };
 
 export const soumissionApi = {

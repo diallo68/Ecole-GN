@@ -16,4 +16,9 @@ router.get('/mes-enfants', auth, requireRole('parent'), authController.mesEnfant
 router.post('/mes-enfants', auth, requireRole('parent'), validate(schemas.ajouterEnfant), authController.ajouterEnfant);
 router.delete('/mes-enfants/:childId', auth, requireRole('parent'), authController.retirerEnfant);
 
+// Enseignants favoris — réservé aux élèves (demande explicite).
+router.get('/favoris', auth, requireRole('eleve'), authController.mesFavoris);
+router.post('/favoris/:repetiteurId', auth, requireRole('eleve'), authController.ajouterFavori);
+router.delete('/favoris/:repetiteurId', auth, requireRole('eleve'), authController.retirerFavori);
+
 module.exports = router;

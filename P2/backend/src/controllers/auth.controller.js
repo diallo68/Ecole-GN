@@ -199,6 +199,38 @@ const authController = {
       res.status(500).json({ error: 'Erreur serveur' });
     }
   },
+
+  // ── Enseignants favoris d'un élève ───────────────────────────────────
+  async mesFavoris(req, res) {
+    try {
+      const user = await User.findById(req.user.id).select('eleve.favoris');
+      const favoris = await User.find({ _id: { $in: user?.eleve?.favoris || [] }, role: 'repetiteur' })
+        .select('prenom nom city repetiteur');
+      res.json({ favoris });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
+  async ajouterFavori(req, res) {
+    try {
+      const repetiteur = await User.findOne({ _id: req.params.repetiteurId, role: 'repetiteur' });
+      if (!repetiteur) return res.status(404).json({ error: 'Enseignant introuvable' });
+      await User.updateOne({ _id: req.user.id }, { $addToSet: { 'eleve.favoris': repetiteur._id } });
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
+
+  async retirerFavori(req, res) {
+    try {
+      await User.updateOne({ _id: req.user.id }, { $pull: { 'eleve.favoris': req.params.repetiteurId } });
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+  },
 };
 
 module.exports = authController;

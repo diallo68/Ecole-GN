@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Home, MessageCircle, UserCog, BookOpen, Video, PenLine } from 'lucide-react';
+import { Home, MessageCircle, UserCog, BookOpen, Video, PenLine, Heart } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import DashboardShell, { type DashboardNavItem } from '@/components/DashboardShell';
 
@@ -36,6 +36,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       { href: '/dashboard/eleve/cours', label: 'Mes cours', icon: BookOpen },
       { href: '/dashboard/eleve/exercices', label: 'Mes exercices', icon: PenLine },
       { href: '/dashboard/eleve/classes', label: 'Classes virtuelles', icon: Video },
+      { href: '/dashboard/eleve/favoris', label: 'Mes favoris', icon: Heart },
     );
   }
 

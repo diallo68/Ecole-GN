@@ -10,6 +10,7 @@ import { useAuthStore } from '@/store/authStore';
 import { niveauLabel, tarifLabel, DISPONIBILITES } from '@/lib/constants';
 import ErrorState from '@/components/ErrorState';
 import Button from '@/components/Button';
+import FavoriButton from '@/components/FavoriButton';
 import type { Repetiteur, Enfant } from '@/types';
 
 // Composant client (interactions, réservation, état d'auth) — séparé de
@@ -130,6 +131,7 @@ export default function RepetiteurDetailClient() {
               En attente de vérification
             </span>
           )}
+          <FavoriButton repetiteurId={id} className="ml-auto" />
         </div>
         <p className="text-ink-muted">{repetiteur.city}</p>
         {repetiteur.repetiteur.ratingCount > 0 && (

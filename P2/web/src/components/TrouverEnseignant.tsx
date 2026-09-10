@@ -9,6 +9,7 @@ import { useFiltreEnseignantStore } from '@/store/filtreEnseignantStore';
 import FiltreEnseignantBar from './FiltreEnseignantBar';
 import ErrorState from './ErrorState';
 import EmptyState from './EmptyState';
+import FavoriButton from './FavoriButton';
 import type { Repetiteur } from '@/types';
 
 // Bloc résultats de recherche d'enseignants — utilisé sur la page dédiée
@@ -17,7 +18,7 @@ import type { Repetiteur } from '@/types';
 // premiers profils étaient chargés puis filtrés dans le navigateur : un
 // enseignant hors de ce lot était introuvable par nom).
 export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' | 'h2' }) {
-  const { matiere, niveau, tarifMax, ville, disponibilite, reset } = useFiltreEnseignantStore();
+  const { matiere, niveau, tarifMax, ville, disponibilite, reset, setVille } = useFiltreEnseignantStore();
   const [repetiteurs, setRepetiteurs] = useState<Repetiteur[]>([]);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -28,6 +29,18 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
   const [reloadKey, setReloadKey] = useState(0);
   const [filtresOpen, setFiltresOpen] = useState(false);
   const filtresActifs = [matiere, niveau, tarifMax, ville, disponibilite].filter(Boolean).length;
+
+  // Reprend une recherche lancée depuis la barre de la navbar (?q=...&ville=...)
+  // — lu une seule fois au montage, pas via useSearchParams pour éviter la
+  // contrainte de Suspense sur une page par ailleurs entièrement client.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q');
+    const v = params.get('ville');
+    if (q) setSearch(q);
+    if (v) setVille(v);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Un changement de filtre ou de recherche doit revenir à la page 1 —
   // sinon on peut se retrouver sur une page qui n'existe plus.
@@ -109,11 +122,14 @@ export default function TrouverEnseignant({ titreAs = 'h1' }: { titreAs?: 'h1' |
                   <div className="w-12 h-12 rounded-full bg-sand text-brand-dark font-bold grid place-items-center border border-ink/10">
                     {r.prenom?.[0]}{r.nom?.[0]}
                   </div>
-                  {r.repetiteur.ratingCount > 0 && (
-                    <div className="flex items-center gap-1 bg-sand px-2 py-1 rounded-lg text-xs font-semibold">
-                      ★ {r.repetiteur.avgRating}
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {r.repetiteur.ratingCount > 0 && (
+                      <div className="flex items-center gap-1 bg-sand px-2 py-1 rounded-lg text-xs font-semibold">
+                        ★ {r.repetiteur.avgRating}
+                      </div>
+                    )}
+                    <FavoriButton repetiteurId={r._id} />
+                  </div>
                 </div>
                 <p className="font-bold text-ink">{r.prenom} {r.nom}</p>
                 <p className="text-sm text-ink-muted mt-0.5">{r.repetiteur.matieres?.join(', ')}</p>

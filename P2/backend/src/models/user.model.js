@@ -34,6 +34,7 @@ const UserSchema = new mongoose.Schema({
     niveau: { type: String, enum: NIVEAUX_VALUES },
     classe: { type: String }, // ancien champ libre, conservé pour compat (ex: "6ème année")
     parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    favoris: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // enseignants mis en favori
   },
 
   // ── Champs répétiteur ─────────────────────────────────────

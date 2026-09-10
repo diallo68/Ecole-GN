@@ -162,6 +162,7 @@ export interface Conversation {
   participants: ConversationParticipant[];
   lastMessage?: string;
   lastMessageAt?: string;
+  unread?: number;
 }
 
 export interface Message {

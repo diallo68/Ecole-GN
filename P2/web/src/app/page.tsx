@@ -9,6 +9,7 @@ import type { LucideIcon } from 'lucide-react';
 import { repetiteurApi, quizApi } from '@/lib/api';
 import ErrorState from '@/components/ErrorState';
 import EmptyState from '@/components/EmptyState';
+import FavoriButton from '@/components/FavoriButton';
 import Button from '@/components/Button';
 import { niveauLabel, tarifLabel, CYCLES, niveauxDuCycle } from '@/lib/constants';
 import { useAuthStore } from '@/store/authStore';
@@ -167,11 +168,14 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-full bg-sand text-brand-dark font-bold grid place-items-center border border-ink/10">
                     {r.prenom?.[0]}{r.nom?.[0]}
                   </div>
-                  {r.repetiteur.ratingCount > 0 && (
-                    <div className="flex items-center gap-1 bg-sand px-2 py-1 rounded-lg text-xs font-semibold">
-                      ★ {r.repetiteur.avgRating}
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {r.repetiteur.ratingCount > 0 && (
+                      <div className="flex items-center gap-1 bg-sand px-2 py-1 rounded-lg text-xs font-semibold">
+                        ★ {r.repetiteur.avgRating}
+                      </div>
+                    )}
+                    <FavoriButton repetiteurId={r._id} />
+                  </div>
                 </div>
                 <p className="font-bold text-ink">{r.prenom} {r.nom}</p>
                 <p className="text-sm text-ink-muted mt-0.5">{r.repetiteur.matieres?.join(', ')}</p>

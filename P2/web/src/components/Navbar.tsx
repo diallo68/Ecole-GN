@@ -3,20 +3,22 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, ChevronDown, LayoutDashboard, LogOut, Menu, UserCircle, X, Zap } from 'lucide-react';
+import { BookOpen, ChevronDown, LayoutDashboard, LogOut, Menu, MessageCircle, UserCircle, X, Zap } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { messagingApi } from '@/lib/api';
+import NavSearchBar from './NavSearchBar';
 
 // Navigation globale — uniquement les destinations communes à tout le site.
 // Les filtres enseignants (matière/tarif/ville/disponibilité) ne vivent plus
 // ici : ils n'ont de sens que sur /repetiteurs et y vivent maintenant
 // directement (voir TrouverEnseignant.tsx), au lieu d'apparaître y compris
 // sur la page de connexion ou le catalogue Quiz.
-// "Chercher" et "Réserver" mènent tous les deux à /repetiteurs : il n'existe
-// pas de page de réservation autonome, la réservation démarre toujours par
-// la recherche d'un enseignant (choix explicite, pas un oubli). D'où la clé
-// "key" distincte du href pour ces deux entrées.
+// "Chercher" est devenu la barre de recherche inline (NavSearchBar) à partir
+// de lg ; en dessous, on retombe sur un simple lien "Chercher" (pas la place
+// pour input + select + bouton). "Réserver" mène aussi à /repetiteurs : il
+// n'existe pas de page de réservation autonome, la réservation démarre
+// toujours par la recherche d'un enseignant (choix explicite, pas un oubli).
 const NAV_LINKS = [
-  { key: 'chercher', href: '/repetiteurs', label: 'Chercher' },
   { key: 'reserver', href: '/repetiteurs', label: 'Réserver' },
   { key: 'quiz', href: '/quiz', label: 'Quiz' },
 ];
@@ -26,6 +28,17 @@ export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const connecte = isLoggedIn() && !!user;
+
+  // Compte de messages non lus pour le badge — rafraîchi périodiquement
+  // (pas de temps réel côté messagerie, voir dashboard/messages).
+  const [nonLus, setNonLus] = useState(0);
+  useEffect(() => {
+    if (!connecte) return;
+    const charger = () => messagingApi.unreadCount().then(d => setNonLus(d.count)).catch(() => {});
+    charger();
+    const t = setInterval(charger, 30000);
+    return () => clearInterval(t);
+  }, [connecte]);
 
   return (
     <header className="bg-white/90 backdrop-blur-md sticky top-0 z-20 border-b border-ink/10">
@@ -37,8 +50,17 @@ export default function Navbar() {
           <span className="hidden sm:inline">Gandal</span>
         </Link>
 
+        {/* Barre de recherche centrale — seulement à partir de lg, pas la
+            place avant (input + select + bouton + le reste de la nav). */}
+        <div className="hidden lg:flex flex-1 justify-center mx-4">
+          <NavSearchBar />
+        </div>
+
         {/* Desktop/tablette : liens et compte directement dans la barre */}
         <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-ink/70 shrink-0">
+          {/* Entre md et lg, la barre de recherche est cachée : on retombe
+              sur un simple lien vers la recherche. */}
+          <Link href="/repetiteurs" className="lg:hidden hover:text-ink transition-colors">Chercher</Link>
           {NAV_LINKS.map(l => (
             <Link key={l.key} href={l.href} aria-current={pathname === l.href ? 'page' : undefined}
               className={`hover:text-ink transition-colors ${pathname === l.href ? 'text-ink font-semibold' : ''}`}>
@@ -46,28 +68,41 @@ export default function Navbar() {
             </Link>
           ))}
           {connecte ? (
-            <UserMenu prenom={user!.prenom} nom={user!.nom} isAdmin={user!.role === 'admin'} onLogout={logout} />
+            <>
+              <Link href="/dashboard/messages" aria-label={`Messages${nonLus > 0 ? ` (${nonLus} non lus)` : ''}`}
+                aria-current={pathname === '/dashboard/messages' ? 'page' : undefined}
+                className={`relative hover:text-ink transition-colors ${pathname === '/dashboard/messages' ? 'text-ink' : ''}`}>
+                <MessageCircle size={20} strokeWidth={2} />
+                {nonLus > 0 && (
+                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-flag text-white text-[10px] font-bold grid place-items-center leading-none">
+                    {nonLus > 9 ? '9+' : nonLus}
+                  </span>
+                )}
+              </Link>
+              <UserMenu prenom={user!.prenom} nom={user!.nom} isAdmin={user!.role === 'admin'} onLogout={logout} />
+            </>
           ) : (
             <Link href="/login" className="bg-ink text-white px-5 py-2.5 rounded-full font-semibold hover:bg-stone-800 transition-colors shadow-sm">Connexion</Link>
           )}
         </nav>
 
         {/* Mobile : un seul bouton Menu — tout le reste vit dans le tiroir */}
-        <button onClick={() => setMenuOpen(true)} aria-label="Ouvrir le menu" aria-expanded={menuOpen} aria-controls="mobile-menu"
-          className="md:hidden flex items-center justify-center w-10 h-10 -mr-2 text-ink/70 hover:text-ink">
+        <button onClick={() => setMenuOpen(true)} aria-label={`Ouvrir le menu${nonLus > 0 ? ` (${nonLus} messages non lus)` : ''}`} aria-expanded={menuOpen} aria-controls="mobile-menu"
+          className="md:hidden relative flex items-center justify-center w-10 h-10 -mr-2 text-ink/70 hover:text-ink">
           <Menu size={22} />
+          {nonLus > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-flag" />}
         </button>
       </div>
 
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} pathname={pathname}
-        connecte={connecte} user={user} onLogout={logout} />
+        connecte={connecte} user={user} onLogout={logout} nonLus={nonLus} />
     </header>
   );
 }
 
-function MobileMenu({ open, onClose, pathname, connecte, user, onLogout }: {
+function MobileMenu({ open, onClose, pathname, connecte, user, onLogout, nonLus }: {
   open: boolean; onClose: () => void; pathname: string;
-  connecte: boolean; user: { prenom: string; nom?: string; role: string } | null; onLogout: () => void;
+  connecte: boolean; user: { prenom: string; nom?: string; role: string } | null; onLogout: () => void; nonLus: number;
 }) {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const triggerFocusRef = useRef<Element | null>(null);
@@ -112,6 +147,9 @@ function MobileMenu({ open, onClose, pathname, connecte, user, onLogout }: {
         </div>
 
         <div className="flex-1 overflow-y-auto p-3 space-y-1">
+          <div className="px-1 pb-3 mb-2 border-b border-ink/10">
+            <NavSearchBar vertical onSubmit={onClose} />
+          </div>
           {NAV_LINKS.map(l => (
             <Link key={l.key} href={l.href} onClick={onClose} aria-current={pathname === l.href ? 'page' : undefined} className={linkClass(l.href)}>
               {l.label === 'Quiz' && <Zap size={16} />} {l.label}
@@ -125,6 +163,14 @@ function MobileMenu({ open, onClose, pathname, connecte, user, onLogout }: {
               <div className="px-4 py-2 mb-1">
                 <p className="font-semibold text-ink text-sm truncate">{user.prenom} {user.nom}</p>
               </div>
+              <Link href="/dashboard/messages" onClick={onClose} className={`${linkClass('/dashboard/messages')} justify-between`}>
+                <span className="flex items-center gap-2.5"><MessageCircle size={16} /> Messages</span>
+                {nonLus > 0 && (
+                  <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-flag text-white text-[10px] font-bold grid place-items-center leading-none">
+                    {nonLus > 9 ? '9+' : nonLus}
+                  </span>
+                )}
+              </Link>
               <Link href="/profil" onClick={onClose} className={linkClass('/profil')}>
                 <UserCircle size={16} /> Mon profil
               </Link>

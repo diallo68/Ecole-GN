@@ -80,9 +80,14 @@ export default function MessagesPage() {
                   {other?.prenom?.[0]}{other?.nom?.[0]}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-ink truncate">{other?.prenom} {other?.nom}</p>
-                  <p className="text-xs text-ink-muted truncate">{c.lastMessage || 'Nouvelle conversation'}</p>
+                  <p className={`text-sm truncate ${c.unread ? 'font-bold text-ink' : 'font-semibold text-ink'}`}>{other?.prenom} {other?.nom}</p>
+                  <p className={`text-xs truncate ${c.unread ? 'text-ink font-medium' : 'text-ink-muted'}`}>{c.lastMessage || 'Nouvelle conversation'}</p>
                 </div>
+                {!!c.unread && (
+                  <span className="shrink-0 min-w-[18px] h-[18px] px-1 rounded-full bg-flag text-white text-[10px] font-bold grid place-items-center leading-none">
+                    {c.unread > 9 ? '9+' : c.unread}
+                  </span>
+                )}
               </button>
             );
           })
